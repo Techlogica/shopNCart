@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.app.shopncart">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:usesCleartextTraffic="true"
+        android:name="com.app.shopncart.utils.MultiLanguageApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.app.shopncart.about.AboutActivity"/>
+        <activity android:name="com.app.shopncart.login.LoginActivity" />
+        <activity android:name="com.app.shopncart.settings.payment_method.EditPaymentMethodActivity" />
+        <activity android:name="com.app.shopncart.settings.payment_method.AddPaymentMethodActivity" />
+        <activity android:name="com.app.shopncart.settings.payment_method.PaymentMethodActivity" />
+        <activity android:name="com.app.shopncart.settings.categories.CategoriesActivity" />
+        <activity android:name="com.app.shopncart.expense.EditExpenseActivity" />
+        <activity android:name="com.app.shopncart.suppliers.EditSuppliersActivity" />
+        <activity android:name="com.app.shopncart.customers.EditCustomersActivity" />
+        <activity android:name="com.app.shopncart.product.EditProductScannerViewActivity" />
+        <activity android:name="com.app.shopncart.pdf_report.ViewPDFActivity" />
+        <activity android:name="com.app.shopncart.pos.ScannerActivity" />
+        <activity android:name="com.app.shopncart.product.ScannerViewActivity" />
+        <activity android:name="com.app.shopncart.product.EditProductActivity" />
+        <activity android:name="com.app.shopncart.settings.shop.ShopInformationActivity" />
+        <activity android:name="com.app.shopncart.report.ExpenseGraphActivity" />
+        <activity android:name="com.app.shopncart.report.ExpenseReportActivity" />
+        <activity android:name="com.app.shopncart.expense.AddExpenseActivity" />
+        <activity android:name="com.app.shopncart.settings.SettingsActivity" />
+        <activity android:name="com.app.shopncart.expense.ExpenseActivity" />
+        <activity android:name="com.app.shopncart.report.GraphReportActivity" />
+        <activity android:name="com.app.shopncart.report.SalesReportActivity" />
+        <activity android:name="com.app.shopncart.report.ReportActivity" />
+        <activity android:name="com.app.shopncart.orders.OrderDetailsActivity" />
+        <activity android:name="com.app.shopncart.orders.OrdersActivity" />
+        <activity android:name="com.app.shopncart.pos.ProductCart" />
+        <activity android:name="com.app.shopncart.pos.PosActivity" />
+        <activity android:name="com.app.shopncart.product.AddProductActivity" />
+        <activity android:name="com.app.shopncart.product.ProductActivity" />
+        <activity android:name="com.app.shopncart.suppliers.AddSuppliersActivity" />
+        <activity android:name="com.app.shopncart.suppliers.SuppliersActivity" />
+        <activity android:name="com.app.shopncart.customers.AddCustomersActivity" />
+        <activity android:name="com.app.shopncart.customers.CustomersActivity" />
+        <activity android:name="com.app.shopncart.HomeActivity" />
+        <activity android:name="com.app.shopncart.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS" />
+        </provider>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/admob_application_id" />
+
+
+
+    </application>
+
+</manifest>

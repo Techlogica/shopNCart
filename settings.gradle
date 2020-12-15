@@ -1,0 +1,3 @@
+include ':sunmiprinterutill'
+include ':app'
+rootProject.name='ShopNCart'
