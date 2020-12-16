@@ -118,13 +118,13 @@ public class SalesReportActivity extends BaseActivity {
                 return true;
 
             case R.id.menu_daily:
-                getReport("daily",shopID,ownerId);
+                getReport("Today",shopID,ownerId);
                 getSupportActionBar().setTitle(R.string.daily);
 
                 return true;
 
             case R.id.menu_weekly:
-                getReport("weekly",shopID,ownerId);
+                getReport("Last 7 Days",shopID,ownerId);
                 getSupportActionBar().setTitle(R.string.weekly);
 
                 return true;
