@@ -165,9 +165,6 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-
-
-
     public void getSalesReport(String type,String shopId,String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -233,10 +230,6 @@ public class SalesReportActivity extends BaseActivity {
 
 
     }
-
-
-
-
 
 
     public void getReportList(String type,String shopId,String ownerId) {

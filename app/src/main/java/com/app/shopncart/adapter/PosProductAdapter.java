@@ -88,7 +88,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
 
         holder.txtProductName.setText(productName);
         holder.txtWeight.setText(productWeight + " " + weightUnit);
-        holder.txtPrice.setText(currency + productPrice);
+        holder.txtPrice.setText(currency +" "+productPrice);
 
 
         double itemPrice=Double.parseDouble(productPrice);
@@ -108,7 +108,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
                 holder.txtCGST.setVisibility(View.VISIBLE);
                 holder.txtHintCGST.setVisibility(View.VISIBLE);
                 holder.txtHintCGST.setText("VAT");
-                holder.txtCGST.setText(currency+cgstAmount+ " (" +cgst+"%)");
+                holder.txtCGST.setText(currency+" "+cgstAmount+ " (" +cgst+"%)");
             } else {
                 holder.txtCGST.setVisibility(View.GONE);
                 holder.txtHintCGST.setVisibility(View.GONE);
@@ -131,7 +131,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
             if (cgstAmount != 0) {
                 holder.txtCGST.setVisibility(View.VISIBLE);
                 holder.txtHintCGST.setVisibility(View.VISIBLE);
-                holder.txtCGST.setText(currency+cgstAmount+ " (" +cgst+"%)");
+                holder.txtCGST.setText(currency+" "+cgstAmount+ " (" +cgst+"%)");
             } else {
                 holder.txtCGST.setVisibility(View.GONE);
                 holder.txtHintCGST.setVisibility(View.GONE);
@@ -140,7 +140,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
             if (sgstAmount != 0) {
                 holder.txtSGST.setVisibility(View.VISIBLE);
                 holder.txtHintSGST.setVisibility(View.VISIBLE);
-                holder.txtSGST.setText(currency +sgstAmount+" ("+sgst+"%)");
+                holder.txtSGST.setText(currency +" "+sgstAmount+" ("+sgst+"%)");
             } else {
                 holder.txtSGST.setVisibility(View.GONE);
                 holder.txtHintSGST.setVisibility(View.GONE);
@@ -153,7 +153,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
             } else {
                 holder.txtLabelCESS.setVisibility(View.VISIBLE);
                 holder.txtCESS.setVisibility(View.VISIBLE);
-                holder.txtCESS.setText(currency + cessAmount + " (" + cess + "%)");
+                holder.txtCESS.setText(currency +" "+ cessAmount + " (" + cess + "%)");
             }
 
         }

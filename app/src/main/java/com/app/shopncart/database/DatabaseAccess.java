@@ -326,8 +326,6 @@ public class DatabaseAccess {
     }
 
 
-
-
     //calculate total CGST
     public double getTotalCGST() {
 

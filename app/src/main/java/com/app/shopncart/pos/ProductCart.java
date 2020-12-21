@@ -64,7 +64,7 @@ public class ProductCart extends BaseActivity {
     CartAdapter productCartAdapter;
     ImageView imgNoProduct;
     Button btnSubmitOrder;
-    TextView txtNoProduct, txtTotalPrice;
+    TextView txtNoProduct, txtTotalPrice, txtTotalCgst,txtTotalSgst, txtTotalCess, txtTotalDisc;
     LinearLayout linearLayout;
     DatabaseAccess databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
     ProgressDialog loading;
@@ -134,7 +134,12 @@ public class ProductCart extends BaseActivity {
         btnSubmitOrder = findViewById(R.id.btn_submit_order);
         txtNoProduct = findViewById(R.id.txt_no_product);
         linearLayout = findViewById(R.id.linear_layout);
+
         txtTotalPrice = findViewById(R.id.txt_total_price);
+        txtTotalCgst = findViewById(R.id.txt_total_cgst);
+        txtTotalSgst = findViewById(R.id.txt_total_sgst);
+        txtTotalCess = findViewById(R.id.txt_total_cess);
+        txtTotalDisc = findViewById(R.id.txt_total_discount);
 
         txtNoProduct.setVisibility(View.GONE);
 
@@ -165,11 +170,15 @@ public class ProductCart extends BaseActivity {
             recyclerView.setVisibility(View.GONE);
             linearLayout.setVisibility(View.GONE);
             txtTotalPrice.setVisibility(View.GONE);
+            txtTotalSgst.setVisibility(View.GONE);
+            txtTotalCgst.setVisibility(View.GONE);
+            txtTotalCess.setVisibility(View.GONE);
+            txtTotalDisc.setVisibility(View.GONE);
         } else {
 
 
             imgNoProduct.setVisibility(View.GONE);
-            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct);
+            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct,txtTotalCgst,txtTotalSgst, txtTotalCess, txtTotalDisc);
 
             recyclerView.setAdapter(productCartAdapter);
 

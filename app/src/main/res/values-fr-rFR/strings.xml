@@ -223,6 +223,10 @@
     <string name="unit_product_cost_price">Unit Product Cost Price</string>
     <string name="product_cost_price">Product Cost Price</string>
     <string name="product_cost_price_cannot_be_empty">Product Cost price can\'t be empty!</string>
+    <string name="price_with_tax">Price with Tax:</string>
+    <string name="total_cess_cart">Total Cess:</string>
+    <string name="total_sgst_cart">Total Sgst:</string>
+    <string name="total_cgst_cart">Total Cgst:</string>
 
 
 </resources>

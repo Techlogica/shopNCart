@@ -509,7 +509,6 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -532,7 +531,6 @@ public class EditProductActivity extends BaseActivity {
         }
 
     }
-
 
     public void getProductsData(String productId, String shopId) {
 
@@ -645,7 +643,6 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-
     public void getProductCategory(String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -686,7 +683,6 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-
     public void getProductSuppliers(String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
@@ -725,7 +721,6 @@ public class EditProductActivity extends BaseActivity {
 
 
     }
-
 
     public void getWeightUnits() {
 
@@ -768,7 +763,6 @@ public class EditProductActivity extends BaseActivity {
 
 
     }
-
 
     // Uploading Image/Video
     private void updateProduct(String productName, String productCode, String productCategoryId, String productDescription, String productCostPrice, String productSellPrice, String productWeight, String productWeightUnitId, String productSupplierId, String productStock, String cgst, String sgst, String cess) {
@@ -859,7 +853,6 @@ public class EditProductActivity extends BaseActivity {
             }
         });
     }
-
 
     //for back button
     @Override
