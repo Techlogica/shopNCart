@@ -206,7 +206,7 @@
     <string name="tax_in_percentage">Tax in percentage (%)</string>
     <string name="total_tax">Total Tax</string>
     <string name="sub_total">Sub Total:</string>
-    <string name="discount">Discount:</string>
+    <string name="discount">Total Discount:</string>
     <string name="discount_cant_be_greater_than_total_price">Discount can\'t be greater than total price</string>
     <string name="net_sales">Net Sales</string>
     <string name="total_discount">Totat Discount</string>
@@ -249,5 +249,7 @@
     <string name="total_cess_cart">Total Cess:</string>
     <string name="total_sgst_cart">Total Sgst:</string>
     <string name="total_cgst_cart">Total Cgst:</string>
+    <string name="total_product_discount">Total Discount:</string>
+
 
 </resources>

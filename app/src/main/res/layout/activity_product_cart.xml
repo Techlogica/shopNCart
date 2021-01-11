@@ -60,6 +60,15 @@
                 android:textSize="18sp"
                 app:fontFamily="@font/sailec_regular" />
             <TextView
+                android:id="@+id/txt_total_discount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:text="@string/total_product_discount"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp"
+                app:fontFamily="@font/sailec_regular" />
+            <TextView
                 android:id="@+id/txt_total_cgst"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -87,7 +96,7 @@
                 android:textSize="18sp"
                 app:fontFamily="@font/sailec_regular" />
             <TextView
-                android:id="@+id/txt_total_discount"
+                android:id="@+id/txt_price_with_tax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"

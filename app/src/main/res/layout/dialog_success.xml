@@ -322,6 +322,37 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layout_discount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sailec_regular"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Discount (-)"
+                        android:textSize="12sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/discount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:fontFamily="@font/sailec_regular"
+                        android:textSize="12sp"
+                        />
+
+                </LinearLayout>
+
+
+                <LinearLayout
                     android:id="@+id/cgst_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -408,35 +439,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/layout_discount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginRight="20dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/sailec_regular"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Discount (-)"
-                        android:textSize="12sp"
-                        />
-
-                    <TextView
-                        android:id="@+id/discount"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="right"
-                        android:fontFamily="@font/sailec_regular"
-                        android:textSize="12sp"
-                        />
-
-                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"

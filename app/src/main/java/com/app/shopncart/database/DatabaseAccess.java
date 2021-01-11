@@ -62,9 +62,6 @@ public class DatabaseAccess {
     }
 
 
-
-
-
     //insert payment method
     public boolean addPaymentMethod(String paymentMethodName) {
 
@@ -111,7 +108,7 @@ public class DatabaseAccess {
 
 
     //Add product into cart
-    public int addToCart(String productId, String productName, String weight, String weightUnit, String price, int qty, String productImage,String productStock,double cgst,double sgst,double cess) {
+    public int addToCart(String productId, String productName, String weight, String weightUnit, String price, int qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount,String cgstPercent,String sgstPercent,String cessPercent,double discountedTotal,double lineTotal) {
 
 
         Cursor result = database.rawQuery("SELECT * FROM product_cart WHERE product_id='" + productId + "'", null);
@@ -133,6 +130,12 @@ public class DatabaseAccess {
             values.put(Constant.KEY_CGST, cgst);
             values.put(Constant.KEY_SGST, sgst);
             values.put(Constant.KEY_CESS, cess);
+            values.put(Constant.PRODUCT_DISC, discount);
+            values.put(Constant.PRODUCT_CGST_PERCENT, cgstPercent);
+            values.put(Constant.PRODUCT_SGST_PERCENT, sgstPercent);
+            values.put(Constant.PRODUCT_CESS_PERCENT, cessPercent);
+            values.put(Constant.PRODUCT_DISCOUNTED_TOTAL, discountedTotal);
+            values.put(Constant.PRODUCT_LINE_TOTAL, lineTotal);
 
             long check = database.insert(Constant.productCart, null, values);
 
@@ -160,7 +163,6 @@ public class DatabaseAccess {
             do {
                 HashMap<String, String> map = new HashMap<>();
 
-
                 map.put(Constant.CART_ID, cursor.getString(cursor.getColumnIndex("cart_id")));
                 map.put(Constant.PRODUCT_ID, cursor.getString(cursor.getColumnIndex("product_id")));
                 map.put(Constant.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex("product_name")));
@@ -177,7 +179,12 @@ public class DatabaseAccess {
 
                 map.put(Constant.KEY_CESS, cursor.getString(cursor.getColumnIndex("cess")));
 
-
+                map.put(Constant.PRODUCT_DISC, cursor.getString(cursor.getColumnIndex("product_discount")));
+                map.put(Constant.PRODUCT_CGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_cegst_percent")));
+                map.put(Constant.PRODUCT_SGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_sgst_percent")));
+                map.put(Constant.PRODUCT_CESS_PERCENT, cursor.getString(cursor.getColumnIndex("product_cess_percent")));
+                map.put(Constant.PRODUCT_DISCOUNTED_TOTAL, cursor.getString(cursor.getColumnIndex("product_discounted_total")));
+                map.put(Constant.PRODUCT_LINE_TOTAL, cursor.getString(cursor.getColumnIndex("product_line_total")));
 
                 product.add(map);
             } while (cursor.moveToNext());
@@ -217,7 +224,6 @@ public class DatabaseAccess {
 
     }
 
-
     //get cart item count
     public int getCartItemCount() {
 
@@ -229,7 +235,6 @@ public class DatabaseAccess {
         database.close();
         return itemCount;
     }
-
 
     //delete product from cart
     public void updateProductQty(String id, String qty) {
@@ -243,8 +248,62 @@ public class DatabaseAccess {
 
     }
 
+    //update product discount cart
+    public void updateProductDiscount(String id, String discount) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("product_discount", discount);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
 
 
+    }
+
+    public void updatecgst(String id, String cgst) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("cgst", cgst);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
+
+
+    }
+
+    public void updatesgst(String id, String sgst) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("sgst", sgst);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
+
+
+    }
+
+    public void updatecess(String id, String cess) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("cess", cess);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
+
+
+    }
+
+    //update product discount cart
+    public void updateLineTotal(String id, String lineTotal) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("product_line_total", lineTotal);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
+
+
+    }
 
     //get product name
     public String getCurrency() {
@@ -268,7 +327,6 @@ public class DatabaseAccess {
         database.close();
         return currency;
     }
-
 
     //calculate total price of product
     public double getTotalPrice() {
@@ -295,8 +353,30 @@ public class DatabaseAccess {
         return totalPrice;
     }
 
+    //calculate total price of product
+    public double getFinalTotalPrice() {
 
 
+        double totalPrice = 0;
+
+        Cursor cursor = database.rawQuery("SELECT * FROM product_cart", null);
+        if (cursor.moveToFirst()) {
+            do {
+
+                double price = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_line_total")));
+                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double subTotal = price * qty;
+                totalPrice = totalPrice + price;
+
+
+            } while (cursor.moveToNext());
+        } else {
+            totalPrice = 0;
+        }
+        cursor.close();
+        database.close();
+        return totalPrice;
+    }
 
     //calculate total price of product
     public double getTotalTax() {
@@ -312,7 +392,7 @@ public class DatabaseAccess {
                 double sgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("sgst")));
                 double cess = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cess")));
                 int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
-                double subTotal = cgst * qty+sgst*qty+cess*qty;
+                double subTotal = cgst+sgst+cess;
                 totalTax = totalTax + subTotal;
 
 
@@ -324,7 +404,6 @@ public class DatabaseAccess {
         database.close();
         return totalTax;
     }
-
 
     //calculate total CGST
     public double getTotalCGST() {
@@ -339,7 +418,7 @@ public class DatabaseAccess {
                 double cgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cgst")));
                 int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = cgst * qty;
-                totalCGST = totalCGST + subTotal;
+                totalCGST = totalCGST + cgst;
 
 
             } while (cursor.moveToNext());
@@ -350,8 +429,6 @@ public class DatabaseAccess {
         database.close();
         return totalCGST;
     }
-
-
 
     //calculate total SGST
     public double getTotalSGST() {
@@ -366,7 +443,7 @@ public class DatabaseAccess {
                 double sgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("sgst")));
                 int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = sgst * qty;
-                totalSGST = totalSGST + subTotal;
+                totalSGST = totalSGST + sgst;
 
 
             } while (cursor.moveToNext());
@@ -378,8 +455,6 @@ public class DatabaseAccess {
         return totalSGST;
     }
 
-
-
     //calculate total SGST
     public double getTotalCESS() {
 
@@ -390,10 +465,10 @@ public class DatabaseAccess {
         if (cursor.moveToFirst()) {
             do {
 
-                double sgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cess")));
+                double cess = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cess")));
                 int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
-                double subTotal = sgst * qty;
-                totalCess = totalCess + subTotal;
+                double subTotal = cess * qty;
+                totalCess = totalCess + cess;
 
 
             } while (cursor.moveToNext());
@@ -403,6 +478,28 @@ public class DatabaseAccess {
         cursor.close();
         database.close();
         return totalCess;
+    }
+
+    //calculate total discount
+    public double getTotalProductDiscount() {
+
+
+        double totalDiscount = 0;
+
+        Cursor cursor = database.rawQuery("SELECT * FROM product_cart", null);
+        if (cursor.moveToFirst()) {
+            do {
+                double discount = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_discount")));
+                totalDiscount = totalDiscount + discount;
+
+
+            } while (cursor.moveToNext());
+        } else {
+            totalDiscount = 0;
+        }
+        cursor.close();
+        database.close();
+        return totalDiscount;
     }
 
 
@@ -705,6 +802,19 @@ public class DatabaseAccess {
         database.close();
         return paymentMethod;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     //get customer data

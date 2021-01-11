@@ -60,13 +60,12 @@ import retrofit2.Response;
 
 public class ProductCart extends BaseActivity {
 
-
     CartAdapter productCartAdapter;
     ImageView imgNoProduct;
     Button btnSubmitOrder;
-    TextView txtNoProduct, txtTotalPrice, txtTotalCgst,txtTotalSgst, txtTotalCess, txtTotalDisc;
+    TextView txtNoProduct, txtTotalPrice, txtTotalCgst,txtTotalSgst, txtTotalCess, txtFinalTotal,txtTotalDiscount;
     LinearLayout linearLayout;
-    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
+    DatabaseAccess databaseAccess;
     ProgressDialog loading;
     double getTax = 0;
 
@@ -105,6 +104,7 @@ public class ProductCart extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_cart);
         printMe = new PrintMe(this);
+        databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.product_cart);
@@ -136,10 +136,11 @@ public class ProductCart extends BaseActivity {
         linearLayout = findViewById(R.id.linear_layout);
 
         txtTotalPrice = findViewById(R.id.txt_total_price);
+        txtTotalDiscount = findViewById(R.id.txt_total_discount);
         txtTotalCgst = findViewById(R.id.txt_total_cgst);
         txtTotalSgst = findViewById(R.id.txt_total_sgst);
         txtTotalCess = findViewById(R.id.txt_total_cess);
-        txtTotalDisc = findViewById(R.id.txt_total_discount);
+        txtFinalTotal = findViewById(R.id.txt_price_with_tax);
 
         txtNoProduct.setVisibility(View.GONE);
 
@@ -173,12 +174,13 @@ public class ProductCart extends BaseActivity {
             txtTotalSgst.setVisibility(View.GONE);
             txtTotalCgst.setVisibility(View.GONE);
             txtTotalCess.setVisibility(View.GONE);
-            txtTotalDisc.setVisibility(View.GONE);
+            txtFinalTotal.setVisibility(View.GONE);
+            txtTotalDiscount.setVisibility(View.GONE);
         } else {
 
 
             imgNoProduct.setVisibility(View.GONE);
-            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct,txtTotalCgst,txtTotalSgst, txtTotalCess, txtTotalDisc);
+            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct,txtTotalCgst,txtTotalSgst, txtTotalCess, txtFinalTotal,txtTotalDiscount);
 
             recyclerView.setAdapter(productCartAdapter);
 
@@ -254,6 +256,7 @@ public class ProductCart extends BaseActivity {
                         String productId = lines.get(i).get("product_id");
                         String productName = lines.get(i).get("product_name");
                         String productImage = lines.get(i).get("product_image");
+                        String productDiscount = lines.get(i).get("product_discount");
 
 
                         String productWeightUnit = lines.get(i).get("product_weight_unit");
@@ -266,6 +269,7 @@ public class ProductCart extends BaseActivity {
                         objp.put("product_image", productImage);
                         objp.put("product_weight", lines.get(i).get("product_weight") + " " + productWeightUnit);
                         objp.put("product_qty", lines.get(i).get("product_qty"));
+                        objp.put("product_discount", productDiscount);
                         objp.put("product_price", lines.get(i).get("product_price"));
                         objp.put("product_order_date", currentDate);
                         objp.put("cgst", lines.get(i).get("cgst"));
@@ -404,7 +408,7 @@ public class ProductCart extends BaseActivity {
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
         email = sp.getString(Constant.SP_EMAIL, "");
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
-        calculatedTotalCostPrint = Double.valueOf(orderPrice) + Double.valueOf(getTax) - Double.valueOf(discount1);
+        calculatedTotalCostPrint = (Double.valueOf(orderPrice)- Double.valueOf(discount1)) + Double.valueOf(getTax) ;
 
         txtShopName.setText(shopName);
         txtShopAddress.setText(address);
@@ -668,6 +672,9 @@ public class ProductCart extends BaseActivity {
         databaseAccess.open();
         double totalCESS = databaseAccess.getTotalCESS();
 
+        databaseAccess.open();
+        double totalDiscount = databaseAccess.getTotalProductDiscount();
+
 
         String shopCurrency = currency;
         // String tax = shopTax;
@@ -695,7 +702,7 @@ public class ProductCart extends BaseActivity {
         final TextView dialogTxtTotalTax = dialogView.findViewById(R.id.dialog_txt_total_tax);
         final TextView dialogTxtLevelTax = dialogView.findViewById(R.id.dialog_level_tax);
         final TextView dialogTxtTotalCost = dialogView.findViewById(R.id.dialog_txt_total_cost);
-        final EditText dialogEtxtDiscount = dialogView.findViewById(R.id.etxt_dialog_discount);
+        final TextView dialogtxtDiscount = dialogView.findViewById(R.id.dialog_txt_total_discount);
 
 
         final ImageButton dialogImgCustomer = dialogView.findViewById(R.id.img_select_customer);
@@ -706,57 +713,13 @@ public class ProductCart extends BaseActivity {
         dialogTxtLevelTax.setText(getString(R.string.total_tax));
         double totalCost = CartAdapter.totalPrice;
         dialogTxtTotal.setText(shopCurrency + totalCost);
+        dialogtxtDiscount.setText(shopCurrency + totalDiscount);
 
 
         dialogTxtTotalTax.setText(shopCurrency + f.format(getTax));
 
-
-        double discount = 0;
-        double calculatedTotalCost = totalCost + getTax - discount;
+        double calculatedTotalCost = totalCost- totalDiscount + getTax ;
         dialogTxtTotalCost.setText(shopCurrency + calculatedTotalCost);
-
-
-        dialogEtxtDiscount.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("data", s.toString());
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-                double discount = 0;
-                String getDiscount = s.toString();
-                if (!getDiscount.isEmpty() && !getDiscount.equals(".")) {
-                    double calculatedTotalCost = totalCost + getTax;
-                    discount = Double.parseDouble(getDiscount);
-                    if (discount > calculatedTotalCost) {
-                        dialogEtxtDiscount.setError(getString(R.string.discount_cant_be_greater_than_total_price));
-                        dialogEtxtDiscount.requestFocus();
-
-                        dialogBtnSubmit.setVisibility(View.INVISIBLE);
-
-                    } else {
-
-                        dialogBtnSubmit.setVisibility(View.VISIBLE);
-                        calculatedTotalCost = totalCost + getTax - discount;
-                        dialogTxtTotalCost.setText(shopCurrency + calculatedTotalCost);
-                    }
-                } else {
-
-                    double calculatedTotalCost = totalCost + getTax - discount;
-                    dialogTxtTotalCost.setText(shopCurrency + calculatedTotalCost);
-                }
-
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("data", s.toString());
-            }
-        });
 
 
         orderTypeNames = new ArrayList<>();
@@ -970,7 +933,7 @@ public class ProductCart extends BaseActivity {
             String orderType1 = dialogOrderType.getText().toString().trim();
             String orderPaymentMethod = dialogOrderPaymentMethod.getText().toString().trim();
             customerName = dialogCustomer.getText().toString().trim();
-            discount1 = dialogEtxtDiscount.getText().toString().trim();
+            discount1 =String.valueOf(totalDiscount);
             if (discount1.isEmpty()) {
                 discount1 = "0.00";
             }

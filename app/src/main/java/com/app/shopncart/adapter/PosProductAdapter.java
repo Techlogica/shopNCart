@@ -92,9 +92,17 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
 
 
         double itemPrice=Double.parseDouble(productPrice);
-        double getCgst=Double.parseDouble(cgst);
-        double getSgst=Double.parseDouble(sgst);
-        double getCess=Double.parseDouble(cess);
+
+        double getCgst=0;
+        double getSgst=0;
+        double getCess=0;
+
+        if(cgst!=null&&!cgst.equals("")){
+         getCgst=Double.parseDouble(cgst);}
+        if(sgst!=null&&!sgst.equals("")){
+         getSgst=Double.parseDouble(sgst);}
+        if(cess!=null&&!cess.equals("")){
+         getCess=Double.parseDouble(cess);}
 
 
         double cgstAmount=(itemPrice*getCgst)/100;
@@ -204,7 +212,7 @@ public class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.My
 
                     databaseAccess.open();
 
-                    int check = databaseAccess.addToCart(productId,productName, productWeight, weightUnit, productPrice, 1,productImage,productStock,cgstAmount,sgstAmount,cessAmount);
+                    int check = databaseAccess.addToCart(productId,productName, productWeight, weightUnit, productPrice, 1,productImage,productStock,cgstAmount,sgstAmount,cessAmount,0,cgst,sgst,cess,0,0);
 
                     if (check == 1) {
                         Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();

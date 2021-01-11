@@ -248,6 +248,7 @@
     <string name="total_cess_cart">Total Cess:</string>
     <string name="total_sgst_cart">Total Sgst:</string>
     <string name="total_cgst_cart">Total Cgst:</string>
+    <string name="total_product_discount">Total Discount:</string>
 
 
 </resources>

@@ -11,8 +11,8 @@ public class Constant {
 //    public static final String BASE_URL = "https://demo.onlinesoftsell.com/shopncart";
 //    public static final String BASE_URL = "http://techorbit.dyndns.org:7777/shopncart";
 //    public static final String BASE_URL = "https://techorbit.dyndns.org/shopncart";
-    public static final String BASE_URL = "https://shopncart.co/app";
-//    public static final String BASE_URL = "https://shopncart.co/SHOPNCART/app";
+//    public static final String BASE_URL = "https://shopncart.co/app";
+    public static final String BASE_URL = "https://shopncart.co/SHOPNCART/app";
 
     //For retrofit base url must end with /
     public static final String PRODUCT_IMAGE_URL = BASE_URL+"/product_images/";
@@ -92,7 +92,6 @@ public class Constant {
     public static final String SUPPLIERS_CELL="suppliers_cell";
     public static final String SUPPLIERS_EMAIL="suppliers_email";
     public static final String SUPPLIERS_ADDRESS="suppliers_address";
-
     public static final String KEY_FILE="file";
     public static final String PRODUCT_ID="product_id";
     public static final String PRODUCT_NAME="product_name";
@@ -105,6 +104,12 @@ public class Constant {
     public static final String PRODUCT_STOCK="product_stock";
     public static final String PRODUCT_PRICE="product_price";
     public static final String PRODUCT_QTY="product_qty";
+    public static final String PRODUCT_DISC="product_discount";
+    public static final String PRODUCT_CGST_PERCENT="product_cegst_percent";
+    public static final String PRODUCT_SGST_PERCENT="product_sgst_percent";
+    public static final String PRODUCT_CESS_PERCENT="product_cess_percent";
+    public static final String PRODUCT_DISCOUNTED_TOTAL="product_discounted_total";
+    public static final String PRODUCT_LINE_TOTAL="product_line_total";
     public static final String PRODUCT_SUPPLIER="product_supplier";
     public static final String PRODUCT_SELL_PRICE="product_sell_price";
     public static final String PRODUCT_COST_PRICE="product_cost_price";

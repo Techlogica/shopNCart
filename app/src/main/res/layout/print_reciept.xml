@@ -131,6 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             tools:listitem="@layout/cart_print_item"
+            android:layout_marginBottom="30dp"
             />
 
     </LinearLayout>
@@ -186,6 +187,37 @@
             />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_discount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:fontFamily="@font/candal"
+            android:text="Discount (-)"
+            android:textSize="12sp"
+            />
+
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="right"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -314,35 +346,6 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/layout_discount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:fontFamily="@font/candal"
-            android:text="Discount (-)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/discount"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="right"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
