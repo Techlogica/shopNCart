@@ -6,7 +6,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +33,10 @@ import retrofit2.Response;
 public class LoginActivity extends BaseActivity {
 
     EditText etxtEmail, etxtPassword;
-    TextView txtLogin;
+    TextView txtLogin, login;
+    ImageView logo, title;
+    View line;
+    Animation topAnim, bottomAnim, sideAnim, fadeAnim;
     SharedPreferences sp;
     ProgressDialog loading;
     Utils utils;
@@ -42,9 +49,29 @@ public class LoginActivity extends BaseActivity {
 
         getSupportActionBar().hide();
 
+        topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
+        sideAnim = AnimationUtils.loadAnimation(this, R.anim.side_animation);
+        fadeAnim = AnimationUtils.loadAnimation(this, R.anim.fade_animation);
+
         etxtEmail = findViewById(R.id.etxt_email);
         etxtPassword = findViewById(R.id.etxt_password);
         txtLogin = findViewById(R.id.txt_login);
+        login = findViewById(R.id.login);
+        logo = findViewById(R.id.applogo);
+        title = findViewById(R.id.apptitle);
+        line = findViewById(R.id.line);
+        utils = new Utils();
+
+        logo.setAnimation(topAnim);
+        title.setAnimation(topAnim);
+        login.setAnimation(fadeAnim);
+        etxtEmail.setAnimation(sideAnim);
+        etxtPassword.setAnimation(sideAnim);
+        txtLogin.setAnimation(bottomAnim);
+        line.setAnimation(fadeAnim);
+
+
         utils = new Utils();
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);

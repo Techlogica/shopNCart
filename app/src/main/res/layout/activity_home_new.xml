@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bgcolor"
+    tools:context=".HomeActivity">
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/menu_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_menu_button"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"/>
+
+        <ImageView
+            android:id="@+id/home_cart"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/ic_cart"/>
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar_layout">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:layout_margin="10dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="10dp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/cart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_autoPlay="true"
+                android:layout_marginLeft="135dp"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/banner_bg"
+                tools:ignore="DuplicateIds" />
+
+
+            <!--                    <com.scwang.wave.MultiWaveHeader-->
+            <!--                        android:id="@+id/waveHeader"-->
+            <!--                        android:layout_width="match_parent"-->
+            <!--                        android:layout_height="130dp"-->
+            <!--                        android:scaleType="centerCrop"-->
+            <!--                        app:mwhCloseColor="#0145AC"-->
+            <!--                        app:mwhColorAlpha="0.15"-->
+            <!--                        app:mwhGradientAngle="270"-->
+            <!--                        app:mwhIsRunning="true"-->
+            <!--                        app:mwhProgress="1"-->
+            <!--                        app:mwhStartColor="#0C91E1"-->
+            <!--                        app:mwhVelocity="1"-->
+            <!--                        app:mwhWaveHeight="50dp"-->
+            <!--                        tools:ignore="VectorDrawableCompat"-->
+            <!--                        app:mwhWaves="MultiWave"></com.scwang.wave.MultiWaveHeader>-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/txt_shop_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/sailec_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:padding="5dp"
+
+                    android:text="@string/app_name"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_sub_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_shop_name"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="cursive"
+                    android:gravity="center"
+                    android:maxLines="2"
+                    android:padding="5dp"
+                    android:text="Smart Solution for Your Shop"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+
+
+            </RelativeLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/cart"
+        android:layout_below="@+id/toplayout"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/background_effect"
+        tools:ignore="DuplicateIds" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toplayout"
+        android:layout_above="@+id/add_layout"
+        android:layout_marginTop="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+
+
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/card_customers"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_customer"></ImageView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:padding="1dp"
+                                    android:textAllCaps="true"
+                                    android:text="@string/customers"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/card_suppliers"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:layout_marginTop="20dp"
+                                android:src="@drawable/ic_suppliers"></ImageView>
+
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center"
+                                        android:padding="1dp"
+                                        android:fontFamily="@font/sourcesanspro_semibold"
+                                        android:textAllCaps="true"
+                                        android:text="@string/suppliers"
+                                        android:minHeight="30dp"
+                                        android:textColor="@color/darkBlue"
+                                        android:background="@drawable/cardshape_icon"
+                                        android:textSize="14sp"
+                                        android:textStyle="bold" />
+                                    <View
+                                        android:layout_width="match_parent"
+                                        android:layout_height="5dp"
+                                        android:layout_marginTop="1dp"
+                                        android:layout_gravity="center"
+                                        android:background="@color/white" />
+                                </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/card_products"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_prodect"></ImageView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/products"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/card_pos"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:layout_marginTop="20dp"
+                                android:src="@drawable/ic_pos"></ImageView>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/pos"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/card_expense"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_expense"></ImageView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/expense"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/card_all_orders"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:layout_marginTop="20dp"
+                                android:src="@drawable/ic_order"></ImageView>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/all_orders"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/card_reports"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_report"></ImageView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/report"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/card_settings"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:layout_marginTop="20dp"
+                                android:src="@drawable/ic_settings" />
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/action_settings"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </ScrollView>
+
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/add_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:padding="2dp">
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:adSize="BANNER"
+            app:adUnitId="@string/admob_banner_ads_id" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

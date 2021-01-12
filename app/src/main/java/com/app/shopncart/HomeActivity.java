@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 
 import com.app.shopncart.about.AboutActivity;
@@ -22,6 +24,7 @@ import com.app.shopncart.expense.ExpenseActivity;
 import com.app.shopncart.login.LoginActivity;
 import com.app.shopncart.orders.OrdersActivity;
 import com.app.shopncart.pos.PosActivity;
+import com.app.shopncart.pos.ProductCart;
 import com.app.shopncart.product.ProductActivity;
 import com.app.shopncart.report.ReportActivity;
 import com.app.shopncart.settings.SettingsActivity;
@@ -46,10 +49,10 @@ import es.dmoral.toasty.Toasty;
 
 import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 
-public class HomeActivity extends BaseActivity {
+public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemClickListener {
 
 
-    CardView cardCustomers, cardProducts, cardSupplier, cardPos, cardOrderList, cardReport, cardSettings, cardExpense, cardAbout, cardLogout;
+    LinearLayout cardCustomers, cardProducts, cardSupplier, cardPos, cardOrderList, cardReport, cardSettings, cardExpense, cardAbout, cardLogout;
     //for double back press to exit
     private static final int TIME_DELAY = 2000;
     private static long backPressed;
@@ -65,11 +68,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-
-        getSupportActionBar().setTitle(R.string.app_name);
-        getSupportActionBar().setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_gradient));
-        getSupportActionBar().setElevation(0);
+        setContentView(R.layout.activity_home_new);
 
 
         cardCustomers = findViewById(R.id.card_customers);
@@ -80,8 +79,8 @@ public class HomeActivity extends BaseActivity {
         cardReport = findViewById(R.id.card_reports);
         cardSettings = findViewById(R.id.card_settings);
         cardExpense = findViewById(R.id.card_expense);
-        cardAbout = findViewById(R.id.card_about_us);
-        cardLogout = findViewById(R.id.card_logout);
+//        cardAbout = findViewById(R.id.card_about_us);
+//        cardLogout = findViewById(R.id.card_logout);
         txtShopName = findViewById(R.id.txt_shop_name);
         txtSubText = findViewById(R.id.txt_sub_text);
 
@@ -94,6 +93,16 @@ public class HomeActivity extends BaseActivity {
         String staffName = sp.getString(Constant.SP_STAFF_NAME, "");
         txtShopName.setText(shopName);
         txtSubText.setText("Hi "+staffName);
+
+        findViewById(R.id.menu_bar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(HomeActivity.this, view);
+                popupMenu.setOnMenuItemClickListener(HomeActivity.this);
+                popupMenu.inflate(R.menu.home_menu);
+                popupMenu.show();
+            }
+        });
 
 
 
@@ -212,18 +221,28 @@ public class HomeActivity extends BaseActivity {
                 }
             }
         });
+        findViewById(R.id.home_cart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ProductCart.class);
+                startActivity(intent);
+            }
+        });
 
 
-        cardAbout.setOnClickListener(new View.OnClickListener() {
+
+
+        /*cardAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
                 startActivity(intent);
 
             }
-        });
+        });*/
 
 
+/*
         cardLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -265,61 +284,9 @@ public class HomeActivity extends BaseActivity {
 
             }
         });
+*/
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.language_menu, menu);
-        return true;
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-
-
-            case R.id.local_french:
-                setNewLocale(this, LocaleManager.FRENCH);
-                return true;
-
-
-            case R.id.local_english:
-                setNewLocale(this, LocaleManager.ENGLISH);
-                return true;
-
-
-            case R.id.local_bangla:
-                setNewLocale(this, LocaleManager.BANGLA);
-                return true;
-
-            case R.id.local_spanish:
-                setNewLocale(this, LocaleManager.SPANISH);
-                return true;
-
-            case R.id.local_hindi:
-                setNewLocale(this, LocaleManager.HINDI);
-                return true;
-            case R.id.local_malayalam:
-                setNewLocale(this, LocaleManager.MALAYALAM);
-                return true;
-            default:
-                Log.d("Default", "default");
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    private void setNewLocale(AppCompatActivity mContext, @LocaleManager.LocaleDef String language) {
-        LocaleManager.setNewLocale(this, language);
-        Intent intent = mContext.getIntent();
-        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK));
-    }
 
     //double back press to exit
     @Override
@@ -367,5 +334,60 @@ public class HomeActivity extends BaseActivity {
                 withErrorListener(error -> Toast.makeText(getApplicationContext(), R.string.error, Toast.LENGTH_SHORT).show())
                 .onSameThread()
                 .check();
+    }
+
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_about_us:
+                Intent intent1 = new Intent(HomeActivity.this, AboutActivity.class);
+                startActivity(intent1);
+                return true;
+            case R.id.item_settings:
+
+                if (userType.equals(Constant.ADMIN)) {
+                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            case R.id.item_logout:
+
+                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(HomeActivity.this);
+                dialogBuilder
+                        .withTitle(getString(R.string.logout))
+                        .withMessage(R.string.want_to_logout_from_app)
+                        .withEffect(Slidetop)
+                        .withDialogColor("#2979ff") //use color code for dialog
+                        .withButton1Text(getString(R.string.yes))
+                        .withButton2Text(getString(R.string.cancel))
+                        .setButton1Click(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                editor.putString(Constant.SP_PHONE, "");
+                                editor.putString(Constant.SP_PASSWORD, "");
+                                editor.putString(Constant.SP_USER_NAME, "");
+                                editor.putString(Constant.SP_USER_TYPE, "");
+                                editor.apply();
+
+                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+
+                                dialogBuilder.dismiss();
+                            }
+                        })
+                        .setButton2Click(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                dialogBuilder.dismiss();
+                            }
+                        })
+                        .show();
+                return true;
+        }
+        return true;
+
     }
 }

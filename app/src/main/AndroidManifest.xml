@@ -55,7 +55,8 @@
         <activity android:name="com.app.shopncart.suppliers.SuppliersActivity" />
         <activity android:name="com.app.shopncart.customers.AddCustomersActivity" />
         <activity android:name="com.app.shopncart.customers.CustomersActivity" />
-        <activity android:name="com.app.shopncart.HomeActivity" />
+        <activity android:name="com.app.shopncart.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name="com.app.shopncart.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

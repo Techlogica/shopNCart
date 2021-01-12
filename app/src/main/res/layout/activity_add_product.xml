@@ -286,7 +286,7 @@
                 android:background="@drawable/round_border"
                 android:fontFamily="@font/sailec_regular"
                 android:hint="@string/cgst"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:padding="16dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp" />
@@ -310,7 +310,7 @@
                 android:background="@drawable/round_border"
                 android:fontFamily="@font/sailec_regular"
                 android:hint="@string/sgst"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:padding="16dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp" />
@@ -334,7 +334,7 @@
                 android:background="@drawable/round_border"
                 android:fontFamily="@font/sailec_regular"
                 android:hint="@string/cess"
-                android:inputType="number"
+                android:inputType="numberDecimal"
                 android:padding="16dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp" />

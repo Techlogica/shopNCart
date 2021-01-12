@@ -17,6 +17,7 @@ import com.app.shopncart.R;
 import com.app.shopncart.model.OrderDetails;
 import com.bumptech.glide.Glide;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapter.MyViewHolder> {
@@ -27,6 +28,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
     public static double subTotalPrice=0;
     SharedPreferences sp;
     String currency;
+    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
 
 
 
@@ -72,7 +74,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
 
 
 
-        holder.txtTotalCost.setText(currency + unitPrice + " x " + qty + " = " + currency + cost);
+        holder.txtTotalCost.setText(currency + decimn.format(price) + " x " + qty + " = " + currency + decimn.format(cost));
 
         if (productImage != null) {
             if (productImage.isEmpty()) {

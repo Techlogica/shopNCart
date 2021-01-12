@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import com.app.shopncart.model.WeightUnit;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
 import com.app.shopncart.utils.BaseActivity;
+import com.app.shopncart.utils.InputFilterMinMax;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
@@ -103,6 +105,9 @@ public class EditProductActivity extends BaseActivity {
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
+
+        etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1","1000000000"), new InputFilter.LengthFilter(30)});
+
 
 
         etxtProductName.setEnabled(false);
@@ -829,8 +834,9 @@ public class EditProductActivity extends BaseActivity {
 
                         loading.dismiss();
 
-                        Toasty.error(EditProductActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
-                        finish();
+                        String message = response.body().getMessage();
+                        Toasty.error(EditProductActivity.this,message, Toast.LENGTH_SHORT).show();
+
 
                     } else {
                         loading.dismiss();

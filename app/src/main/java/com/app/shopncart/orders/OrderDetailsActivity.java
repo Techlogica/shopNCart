@@ -88,7 +88,7 @@ public class OrderDetailsActivity extends BaseActivity {
         shopAddress = sp.getString(Constant.SP_SHOP_ADDRESS, "N/A");
         userName = sp.getString(Constant.SP_STAFF_NAME, "N/A");
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "N/A");
-        f = new DecimalFormat("#0.00");
+        f = new DecimalFormat("#,###,#0.00");
 
 
         orderPrice = getIntent().getExtras().getString(Constant.ORDER_PRICE);
@@ -128,7 +128,7 @@ public class OrderDetailsActivity extends BaseActivity {
 
         txtSubTotalPrice.setText(getString(R.string.sub_total)+": "+currency+f.format(getOrderPrice));
         txtTax.setText(getString(R.string.total_tax) + " : " + currency + f.format(getTax));
-        txtDiscount.setText(getString(R.string.discount) + " : " + currency+ discount);
+        txtDiscount.setText(getString(R.string.discount) + " : " + currency+  f.format(Double.parseDouble(discount)));
 
         OrderDetailsAdapter.subTotalPrice=0;
 
@@ -198,8 +198,8 @@ public class OrderDetailsActivity extends BaseActivity {
         }
         rows.add(new String[]{"..........................................", ".................................."});
         rows.add(new String[]{"Sub Total: ", "(+)"+currency + f.format(Double.parseDouble(orderPrice))});
+        rows.add(new String[]{"Discount: ", "(-)"+currency + f.format(Double.parseDouble(discount))});
         rows.add(new String[]{"Total Tax: ", "(+)"+currency + f.format(Double.parseDouble(tax))});
-        rows.add(new String[]{"Discount: ", "(-)"+currency + discount});
         rows.add(new String[]{"..........................................", ".................................."});
         rows.add(new String[]{"Total Price: ", currency + f.format(calculatedTotalPrice)});
 

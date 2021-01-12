@@ -69,7 +69,7 @@ public class Product {
     private String value;
 
     @SerializedName("message")
-    private String massage;
+    private String message;
 
     public String getProductId() {
         return productId;
@@ -133,6 +133,10 @@ public class Product {
 
     public String getValue() {
         return value;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public String getCgst() {

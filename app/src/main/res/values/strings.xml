@@ -3,17 +3,17 @@
 
     <string name="text_french" translatable="false">French</string>
     <string name="text_english" translatable="false">English</string>
-    <string name="text_bangla" translatable="false">বাংলা</string>
+    <string name="text_bangla" translatable="false">à¦¬à¦¾à¦‚à¦²à¦¾</string>
     <string name="text_spanish" translatable="false">Spanish</string>
-    <string name="text_hindi" translatable="false"> हिंदी </string>
-    <string name="text_malayalam" translatable="false"> മലയാളം </string>
+    <string name="text_hindi" translatable="false"> à¤¹à¤¿à¤‚à¤¦à¥€ </string>
+    <string name="text_malayalam" translatable="false"> à´®à´²à´¯à´¾à´³à´‚ </string>
 
 
     <!--Replace your adMob application ID here -->
     <string name="admob_application_id" translatable="false">ca-app-pub-5657501787263234~9247968350</string>
 
     <!--Replace your adMob Banner Ads ID here -->
-<!--    <string name="admob_banner_ads_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>-->
+    <!--    <string name="admob_banner_ads_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>-->
     <string name="admob_banner_ads_id" translatable="false">ca-app-pub-5657501787263234/6681277084</string>
 
     <!--Replace your admob Interstitial Ads ID here -->
@@ -199,7 +199,7 @@
     <string name="please_enter_password">Please enter password</string>
     <string name="logout">Logout</string>
     <string name="you_dont_have_permission_to_access_this_page">You don\'t have permission to access this page</string>
-    <string name="about_us">About US</string>
+    <string name="about_us">About Us</string>
     <string name="want_to_logout_from_app">Want to logout from app ?</string>
     <string name="delete">DELETE</string>
     <string name="tax">Tax</string>

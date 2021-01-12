@@ -281,18 +281,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
+                            txtTotalCgst.setVisibility(View.VISIBLE);
                             txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
+                            txtTotalSgst.setVisibility(View.VISIBLE);
                             txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
+                            txtTotalCess.setVisibility(View.VISIBLE);
                             txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
@@ -300,6 +303,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                     }
                     if (Double.valueOf(priceWithTax) != 0) {
+                        txtFinalTotal.setVisibility(View.VISIBLE);
                         txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(priceWithTax));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
@@ -396,18 +400,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     } else {
 
                         if (Double.valueOf(itemCgst) != 0) {
+                            holder.txtCgst.setVisibility(View.VISIBLE);
                             holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + f.format(itemCgst));
                         } else {
                             holder.txtCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(itemSgst) != 0) {
+                            holder.txtSgst.setVisibility(View.VISIBLE);
                             holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + f.format(itemSgst));
                         } else {
                             holder.txtSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(itemCess) != 0) {
+                            holder.txtCess.setVisibility(View.VISIBLE);
                             holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + f.format(itemCess));
                         } else {
                             holder.txtCess.setVisibility(View.GONE);
@@ -440,18 +447,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
+                            txtTotalCgst.setVisibility(View.VISIBLE);
                             txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
+                            txtTotalSgst.setVisibility(View.VISIBLE);
                             txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
+                            txtTotalCess.setVisibility(View.VISIBLE);
                             txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
@@ -464,6 +474,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     finalTotal= (totalPrice-allDiscount)+allDiscountedTax;
 
                     if (Double.valueOf(finalTotal) != 0) {
+                        txtFinalTotal.setVisibility(View.VISIBLE);
                         txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
@@ -527,18 +538,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     } else {
 
                         if (Double.valueOf(itemCgst) != 0) {
+                            holder.txtCgst.setVisibility(View.VISIBLE);
                             holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + f.format(itemCgst));
                         } else {
                             holder.txtCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(itemSgst) != 0) {
+                            holder.txtSgst.setVisibility(View.VISIBLE);
                             holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + f.format(itemSgst));
                         } else {
                             holder.txtSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(itemCess) != 0) {
+                            holder.txtCess.setVisibility(View.VISIBLE);
                             holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + f.format(itemCess));
                         } else {
                             holder.txtCess.setVisibility(View.GONE);
@@ -570,18 +584,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
+                            txtTotalCgst.setVisibility(View.VISIBLE);
                             txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
+                            txtTotalSgst.setVisibility(View.VISIBLE);
                             txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
+                            txtTotalCess.setVisibility(View.VISIBLE);
                             txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
@@ -598,6 +615,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     finalTotal= (totalPrice-allDiscount)+allDiscountedTax;
 
                     if (finalTotal != 0) {
+                        txtFinalTotal.setVisibility(View.VISIBLE);
                         txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
@@ -672,26 +690,29 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                 // setting  tax amount to the item
                 if (country.equals("UAE")) {
-                    holder.txtCgst.setText("VAT" + " " + currency + cgstAmount);
+                    holder.txtCgst.setText("VAT" + " " + currency + f.format(cgstAmount));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
                     holder.txtSgst.setVisibility(View.GONE);
                     holder.txtCess.setVisibility(View.GONE);
                 } else {
 
                     if (Double.valueOf(cgst) != 0) {
-                        holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + cgstAmount);
+                        holder.txtCgst.setVisibility(View.VISIBLE);
+                        holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + f.format(cgstAmount));
                     } else {
                         holder.txtCgst.setVisibility(View.GONE);
                     }
 
                     if (Double.valueOf(sgst) != 0) {
-                        holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + sgstAmount);
+                        holder.txtSgst.setVisibility(View.VISIBLE);
+                        holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + f.format(sgstAmount));
                     } else {
                         holder.txtSgst.setVisibility(View.GONE);
                     }
 
                     if (Double.valueOf(cess) != 0) {
-                        holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + cessAmount);
+                        holder.txtCess.setVisibility(View.VISIBLE);
+                        holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + f.format(cessAmount));
                     } else {
                         holder.txtCess.setVisibility(View.GONE);
                     }

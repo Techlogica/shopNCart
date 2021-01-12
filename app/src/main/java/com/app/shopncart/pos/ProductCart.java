@@ -79,7 +79,7 @@ public class ProductCart extends BaseActivity {
     String customerName = "";
     double calculatedTotalCostPrint = 0;
     List<OrderDetails> orderDetails = new ArrayList<>();
-    DecimalFormat decimn = new DecimalFormat("#,###,#00.00");
+    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
     private PrintMe printMe;
 
 

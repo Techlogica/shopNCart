@@ -106,28 +106,30 @@
             app:fontFamily="@font/sailec_regular" />
 
         <TextView
+            android:id="@+id/txt_total_discount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="@string/total_product_discount"
+            android:gravity="right"
+            android:padding="3dp"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            app:fontFamily="@font/sailec_regular" />
+
+
+        <TextView
             android:id="@+id/txt_total_tax"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:gravity="right"
             android:padding="3dp"
-            android:text="@string/total_price"
+            android:text="@string/total_tax"
             android:textColor="#fff"
             android:textSize="14sp"
             app:fontFamily="@font/sailec_regular" />
 
-        <TextView
-            android:id="@+id/txt_total_discount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:gravity="right"
-            android:padding="3dp"
-            android:text="@string/total_price"
-            android:textColor="#fff"
-            android:textSize="14sp"
-            app:fontFamily="@font/sailec_regular" />
 
         <TextView
             android:id="@+id/txt_net_sales"

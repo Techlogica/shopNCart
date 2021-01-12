@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import com.app.shopncart.model.WeightUnit;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
 import com.app.shopncart.utils.BaseActivity;
+import com.app.shopncart.utils.InputFilterMinMax;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,6 +100,8 @@ public class AddProductActivity extends BaseActivity {
         imgProduct = findViewById(R.id.image_product);
         imgScanCode = findViewById(R.id.img_scan_code);
         txtChooseImage = findViewById(R.id.txt_choose_image);
+        etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1","1000000000"), new InputFilter.LengthFilter(30)});
+
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
@@ -523,9 +527,9 @@ public class AddProductActivity extends BaseActivity {
                         } else if (value.equals(Constant.KEY_FAILURE)) {
 
                             loading.dismiss();
+                            String message = response.body().getMessage();
+                            Toasty.error(AddProductActivity.this,message, Toast.LENGTH_SHORT).show();
 
-                            Toasty.error(AddProductActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
-                            finish();
 
                         } else {
                             loading.dismiss();

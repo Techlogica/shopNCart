@@ -211,9 +211,6 @@ public class OrdersActivity extends BaseActivity {
 
     }
 
-
-
-
     //for back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

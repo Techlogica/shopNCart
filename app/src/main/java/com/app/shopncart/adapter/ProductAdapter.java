@@ -23,6 +23,7 @@ import com.app.shopncart.utils.Utils;
 import com.bumptech.glide.Glide;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -40,6 +41,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     Utils utils;
     SharedPreferences sp;
     String currency;
+    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
+
 
 
     public ProductAdapter(Context context, List<Product> productData) {
@@ -77,7 +80,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
         holder.txtProductName.setText(name);
         holder.txtSupplierName.setText(context.getString(R.string.stock) + " :" + stock);
-        holder.txtSellPrice.setText(context.getString(R.string.sell_price) + currency + sellPrice);
+        holder.txtSellPrice.setText(context.getString(R.string.sell_price) + currency + decimn.format(Double.parseDouble(sellPrice)));
 
 
         if (productImage != null) {
