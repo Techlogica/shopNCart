@@ -48,6 +48,8 @@ public class Constant {
     public static final String SP_SHOP_EMAIL="shop_email";
     public static final String SP_SHOP_CONTACT="shop_contact";
     public static final String SP_SHOP_COUNTRY="shop_country";
+    public static final String SP_SHOP_TAX_ID="Taxid";
+    public static final String SP_TODAY_SALES="total_order_price";
 
     public static final String SP_SHOP_STATUS="shop_status";
     public static final String SP_CURRENCY_SYMBOL="currency_symbol";

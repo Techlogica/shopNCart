@@ -65,11 +65,15 @@ public class Product {
     @SerializedName("cess")
     private String cess;
 
+    @SerializedName("total_order_price")
+    private String total_order_price;
+
     @SerializedName("value")
     private String value;
 
     @SerializedName("message")
     private String message;
+
 
     public String getProductId() {
         return productId;
@@ -149,5 +153,7 @@ public class Product {
         return cess;
     }
 
-
+    public String getTotal_order_price() {
+        return total_order_price;
+    }
 }

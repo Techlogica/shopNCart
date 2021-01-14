@@ -65,7 +65,7 @@ public class GraphReportActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
-        f = new DecimalFormat("#,###,#0.00");
+        f = new DecimalFormat("#,###,##0.00");
 
         barChart = findViewById(R.id.barchart);
         txtTotalSales = findViewById(R.id.txt_total_sales);
@@ -190,7 +190,7 @@ public class GraphReportActivity extends BaseActivity {
 
                         txtTotalTax.setText(getString(R.string.total_tax) + ":" + currency + f.format(totalTax));
                         txtTotalDiscount.setText(getString(R.string.total_discount) + ":" + currency + f.format(totalDiscount));
-                        float netSales = totalOrderPrice + totalTax - totalDiscount;
+                        float netSales = (totalOrderPrice- totalDiscount) + totalTax ;
 
                         txtNetSales.setText(getString(R.string.total_sales) + currency + f.format(netSales));
 

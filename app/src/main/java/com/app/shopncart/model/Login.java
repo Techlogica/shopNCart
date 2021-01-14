@@ -59,6 +59,10 @@ public class Login {
 
     @SerializedName("owner_id")
     private String ownerID;
+    @SerializedName("Taxid")
+    private String tax_id;
+    @SerializedName("total_order_price")
+    private String total_order_price;
 
 
 
@@ -151,4 +155,11 @@ public class Login {
         return shopCountry;
     }
 
+    public String getTax_id() {
+        return tax_id;
+    }
+
+    public String getTotal_order_price() {
+        return total_order_price;
+    }
 }

@@ -11,11 +11,11 @@
 
         <TextView
             android:id="@+id/txt_order_item"
-            android:layout_width="0dp"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:padding="10dp"
+            android:padding="3dp"
             android:fontFamily="@font/candal"
+            android:maxLines="2"
             android:gravity="left"
             android:textStyle="bold"
             android:textSize="10sp"
@@ -24,15 +24,13 @@
 
         <TextView
             android:id="@+id/order_item_price"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:fontFamily="@font/candal"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_weight=".5"
+            android:padding="3dp"
             android:gravity="right"
-            android:layout_marginRight="30dp"
             android:textStyle="bold"
-            android:textSize="12sp"
+            android:textSize="10sp"
             />
 
 </LinearLayout>

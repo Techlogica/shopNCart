@@ -14,19 +14,25 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.cardview.widget.CardView;
 
 import com.app.shopncart.about.AboutActivity;
 import com.app.shopncart.customers.CustomersActivity;
+import com.app.shopncart.database.DatabaseAccess;
 import com.app.shopncart.expense.ExpenseActivity;
 import com.app.shopncart.login.LoginActivity;
+import com.app.shopncart.model.SalesReport;
+import com.app.shopncart.networking.ApiClient;
+import com.app.shopncart.networking.ApiInterface;
 import com.app.shopncart.orders.OrdersActivity;
 import com.app.shopncart.pos.PosActivity;
 import com.app.shopncart.pos.ProductCart;
 import com.app.shopncart.product.ProductActivity;
 import com.app.shopncart.report.ReportActivity;
+import com.app.shopncart.report.SalesReportActivity;
 import com.app.shopncart.settings.SettingsActivity;
 import com.app.shopncart.suppliers.SuppliersActivity;
 import com.app.shopncart.utils.BaseActivity;
@@ -43,9 +49,14 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 
@@ -56,11 +67,15 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     //for double back press to exit
     private static final int TIME_DELAY = 2000;
     private static long backPressed;
+TextView txtNetSales;
 
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     String userType;
-    TextView txtShopName,txtSubText;
+    TextView txtShopName,txtSubText,txtCounterText;
+    DatabaseAccess databaseAccess;
+    String currency="";
+    DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
     private AdView adView;
 
@@ -83,16 +98,31 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
 //        cardLogout = findViewById(R.id.card_logout);
         txtShopName = findViewById(R.id.txt_shop_name);
         txtSubText = findViewById(R.id.txt_sub_text);
+        txtCounterText = findViewById(R.id.home_cart_counter);
+        txtNetSales = findViewById(R.id.txt_sales);
 
-
+        databaseAccess = DatabaseAccess.getInstance(this);
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         editor = sp.edit();
 
         userType = sp.getString(Constant.SP_USER_TYPE, "");
         String shopName = sp.getString(Constant.SP_SHOP_NAME, "");
         String staffName = sp.getString(Constant.SP_STAFF_NAME, "");
+        currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
+        String shopID = sp.getString(Constant.SP_SHOP_ID, "");
+        String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+
         txtShopName.setText(shopName);
         txtSubText.setText("Hi "+staffName);
+
+        String netSales=sp.getString(Constant.SP_TODAY_SALES, "");
+        double todaySales=Double.parseDouble(netSales);
+        txtNetSales.setText(getString(R.string.daily) + "=" + currency + decimn.format(todaySales));
+
+
+
+        counterSetiings();
+
 
         findViewById(R.id.menu_bar).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +193,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, PosActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
 
 
             }
@@ -225,7 +255,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, ProductCart.class);
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         });
 
@@ -390,4 +420,40 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         return true;
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == 1) {
+                if (resultCode == RESULT_OK) {
+                  counterSetiings();
+                  String netSales=sp.getString(Constant.SP_TODAY_SALES, "");
+                  double todaySales=Double.parseDouble(netSales);
+                    txtNetSales.setText(getString(R.string.daily) + "=" + currency + decimn.format(todaySales));
+                }
+            }
+        } catch (Exception ex) {
+            Toast.makeText(HomeActivity.this, ex.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void counterSetiings() {
+        databaseAccess.open();
+        //get data from local database
+        List<HashMap<String, String>> cartProductList;
+        cartProductList = databaseAccess.getCartProduct();
+        if(cartProductList!=null&&cartProductList.size()!=0){
+            txtCounterText.setVisibility(View.VISIBLE);
+            txtCounterText.setText(String.valueOf(cartProductList.size()));
+        }else{
+            txtCounterText.setVisibility(View.GONE);
+
+        }
+    }
+
+
 }

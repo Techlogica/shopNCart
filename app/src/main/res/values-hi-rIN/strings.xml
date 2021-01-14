@@ -219,14 +219,17 @@
     <string name="toast_4">Bluetooth device not detected. Please open Bluetooth!</string>
     <string name="toast_5">Not Found InnterPrinter!</string>
     <string name="toast_6">Bluetooth connect failed!</string>
-    <string name="unit_product_cost_price">Unit Product Cost Price</string>
-    <string name="product_cost_price">Product Cost Price</string>
-    <string name="product_cost_price_cannot_be_empty">Product Cost price can\'t be empty!</string>
+    <string name="unit_product_cost_price">यूनिट उत्पाद लागत मूल्य</string>
+    <string name="product_cost_price">उत्पाद लागत मूल्य</string>
+    <string name="product_cost_price_cannot_be_empty">उत्पाद लागत मूल्य खाली नहीं हो सकता!</string>
     <string name="price_with_tax">Price with Tax:</string>
-    <string name="total_cess_cart">Total Cess:</string>
-    <string name="total_sgst_cart">Total Sgst:</string>
-    <string name="total_cgst_cart">Total Cgst:</string>
-    <string name="total_product_discount">Total Discount:</string>
+    <string name="total_cess_cart">कुल सेस:</string>
+    <string name="total_sgst_cart">कुल एसजीएसटी:</string>
+    <string name="total_cgst_cart">कुल सीजीएसटी:</string>
+    <string name="total_product_discount">कुल छूट:</string>
+    <string name="line_discount">दर्ज छूट</string>
+    <string name="grand_total">अंतिम रकम:</string>
+
 
 
 </resources>

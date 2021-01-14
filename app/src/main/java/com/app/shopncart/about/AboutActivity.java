@@ -1,13 +1,22 @@
 package com.app.shopncart.about;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.app.shopncart.Constant;
 import com.app.shopncart.R;
 
 public class AboutActivity extends AppCompatActivity {
+
+    SharedPreferences sp;
+    SharedPreferences.Editor editor;
+    String country="";
+    ImageView logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +26,16 @@ public class AboutActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.about_us);
+        logo=findViewById(R.id.logo);
+
+        sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        editor = sp.edit();
+        country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
+        if(country.equals("INDIA")){
+            logo.setBackground(getResources().getDrawable(R.drawable.kun_logo));
+        }else{
+            logo.setBackground(getResources().getDrawable(R.drawable.tech_logo));
+        }
     }
 
     //for back button

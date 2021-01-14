@@ -55,7 +55,7 @@ public class ExpenseReportActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
 
-        f = new DecimalFormat("#,###,#0.00");
+        f = new DecimalFormat("#,###,##0.00");
 
         txtNoProducts = findViewById(R.id.txt_no_products);
         txtTotalPrice = findViewById(R.id.txt_total_price);

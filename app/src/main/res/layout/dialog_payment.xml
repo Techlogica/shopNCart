@@ -81,6 +81,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
+                    android:textSize="14sp"
                     android:text="Walk In Customer"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@color/grey_60" />
@@ -116,6 +117,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
+                    android:textSize="14sp"
                     android:text="PICK UP"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@color/grey_60" />
@@ -152,6 +154,7 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:text="CASH"
+                    android:textSize="14sp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@color/grey_60" />
 
@@ -184,7 +187,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="15dp"
                     android:text="@string/sub_total"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dialog_txt_total"
@@ -195,7 +198,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="15dp"
                     android:text="00"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <View
@@ -216,7 +219,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="10dp"
                     android:text="@string/discount"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dialog_txt_total_discount"
@@ -227,7 +230,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="15dp"
                     android:text="00"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -245,7 +248,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="15dp"
                     android:text="@string/total_tax"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dialog_txt_total_tax"
@@ -256,7 +259,7 @@
                     android:padding="15dp"
                     android:fontFamily="@font/sailec_regular"
                     android:text="00"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -272,7 +275,7 @@
                     android:fontFamily="@font/sailec_regular"
                     android:padding="15dp"
                     android:text="@string/total_price"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/dialog_txt_total_cost"
@@ -283,7 +286,7 @@
                     android:gravity="right"
                     android:padding="15dp"
                     android:text="00"
-                    android:textSize="18sp" />
+                    android:textSize="14sp" />
             </LinearLayout>
 
 

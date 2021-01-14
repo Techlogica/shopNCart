@@ -62,7 +62,7 @@ public class ExpenseGraphActivity extends BaseActivity {
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "N/A");
-        f = new DecimalFormat("#,###,#0.00");
+        f = new DecimalFormat("#,###,##0.00");
         String shopId = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 

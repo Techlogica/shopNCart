@@ -19,6 +19,7 @@ import com.app.shopncart.model.Category;
 import com.app.shopncart.model.Product;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
+import com.app.shopncart.pos.PosActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.List;
@@ -148,7 +149,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
 
                         recyclerView.setVisibility(View.VISIBLE);
                         imgNoProduct.setVisibility(View.GONE);
-                        PosProductAdapter productAdapter = new PosProductAdapter(context, productsList);
+                        PosActivity.PosProductAdapter productAdapter = new PosActivity.PosProductAdapter(context, productsList);
 
                         recyclerView.setAdapter(productAdapter);
 

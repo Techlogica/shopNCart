@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,6 +69,7 @@ public class ProductCart extends BaseActivity {
     DatabaseAccess databaseAccess;
     ProgressDialog loading;
     double getTax = 0;
+    List<HashMap<String, String>> cartProductList;
 
     double getSgst = 0;
     double getCgst = 0;
@@ -79,7 +81,7 @@ public class ProductCart extends BaseActivity {
     String customerName = "";
     double calculatedTotalCostPrint = 0;
     List<OrderDetails> orderDetails = new ArrayList<>();
-    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
+    DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
     private PrintMe printMe;
 
 
@@ -95,6 +97,7 @@ public class ProductCart extends BaseActivity {
     String email = "";
     String contact = "";
     String country = "";
+    String taxId = "";
 
     DecimalFormat f;
     String invoiceNumber = "";
@@ -105,10 +108,11 @@ public class ProductCart extends BaseActivity {
         setContentView(R.layout.activity_product_cart);
         printMe = new PrintMe(this);
         databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.product_cart);
-        f = new DecimalFormat("#0.00");
+        f = new DecimalFormat("#,###,##0.00");
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
         userType = sp.getString(Constant.SP_USER_TYPE, "");
@@ -122,6 +126,7 @@ public class ProductCart extends BaseActivity {
         email = sp.getString(Constant.SP_EMAIL, "");
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
+        taxId = sp.getString(Constant.SP_SHOP_TAX_ID, "");
 
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
@@ -157,7 +162,7 @@ public class ProductCart extends BaseActivity {
 
 
         //get data from local database
-        List<HashMap<String, String>> cartProductList;
+
         cartProductList = databaseAccess.getCartProduct();
 
         Log.d("CartSize", "" + cartProductList.size());
@@ -472,7 +477,7 @@ public class ProductCart extends BaseActivity {
         }
 
         txtSTotalTax.setText(String.valueOf(decimn.format(getTax)));
-        totalPrice.setText(getResources().getString(R.string.rupee) + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
+        totalPrice.setText(currency + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
 
         getProductsData(invoiceNumber, recyclerViewDialog);
 
@@ -484,8 +489,7 @@ public class ProductCart extends BaseActivity {
         dialogBtnCloseDialog.setOnClickListener(v -> {
 
             alertDialogSuccess.dismiss();
-            Intent intent = new Intent(ProductCart.this, PosActivity.class);
-            startActivity(intent);
+            setResult(RESULT_OK);
             finish();
 
         });
@@ -555,7 +559,7 @@ public class ProductCart extends BaseActivity {
             layoutSgst.setVisibility(View.GONE);
 
             if (getCgst != 0) {
-                txtHintCgst.setText("VAT");
+                txtHintCgst.setText("VAT (+)");
                 layoutCgst.setVisibility(View.VISIBLE);
                 txtSCgst.setText(decimn.format(Double.valueOf(getCgst)));
             } else {
@@ -601,7 +605,7 @@ public class ProductCart extends BaseActivity {
             layoutDisc.setVisibility(View.GONE);
         }
 
-        totalPrice.setText(getResources().getString(R.string.rupee) + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
+        totalPrice.setText(currency + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
 
 
         CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderDetails);
@@ -712,14 +716,14 @@ public class ProductCart extends BaseActivity {
 
         dialogTxtLevelTax.setText(getString(R.string.total_tax));
         double totalCost = CartAdapter.totalPrice;
-        dialogTxtTotal.setText(shopCurrency + totalCost);
-        dialogtxtDiscount.setText(shopCurrency + totalDiscount);
+        dialogTxtTotal.setText(shopCurrency + f.format(totalCost));
+        dialogtxtDiscount.setText(shopCurrency + f.format(Double.valueOf(totalDiscount)));
 
 
         dialogTxtTotalTax.setText(shopCurrency + f.format(getTax));
 
         double calculatedTotalCost = totalCost- totalDiscount + getTax ;
-        dialogTxtTotalCost.setText(shopCurrency + calculatedTotalCost);
+        dialogTxtTotalCost.setText(shopCurrency + f.format(calculatedTotalCost));
 
 
         orderTypeNames = new ArrayList<>();
@@ -1045,10 +1049,18 @@ public class ProductCart extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
+            setResult(RESULT_OK);
+            finish();
             this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        super.onBackPressed();
     }
 }
 

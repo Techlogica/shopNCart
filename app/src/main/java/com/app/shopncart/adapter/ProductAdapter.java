@@ -41,7 +41,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     Utils utils;
     SharedPreferences sp;
     String currency;
-    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
+    DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
 
 

@@ -28,7 +28,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
     public static double subTotalPrice=0;
     SharedPreferences sp;
     String currency;
-    DecimalFormat decimn = new DecimalFormat("#,###,#0.00");
+    DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
 
 

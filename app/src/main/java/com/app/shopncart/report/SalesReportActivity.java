@@ -36,13 +36,12 @@ import retrofit2.Response;
 public class SalesReportActivity extends BaseActivity {
 
 
-
     private RecyclerView recyclerView;
     ImageView imgNoProduct;
-    TextView txtNoProducts, txtTotalPrice,txtTotalTax,txtTotalDiscount,txtNetSales;
+    TextView txtNoProducts, txtTotalPrice, txtTotalTax, txtTotalDiscount, txtNetSales;
     private ShimmerFrameLayout mShimmerViewContainer;
     SharedPreferences sp;
-    String currency,shopID,ownerId;
+    String currency, shopID, ownerId;
     DecimalFormat f;
 
 
@@ -53,12 +52,12 @@ public class SalesReportActivity extends BaseActivity {
 
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
-        f = new DecimalFormat("#,###,#0.00");
+        f = new DecimalFormat("#,###,##0.00");
         txtNoProducts = findViewById(R.id.txt_no_products);
         txtTotalPrice = findViewById(R.id.txt_total_price);
-        txtTotalTax=findViewById(R.id.txt_total_tax);
-        txtTotalDiscount=findViewById(R.id.txt_total_discount);
-        txtNetSales=findViewById(R.id.txt_net_sales);
+        txtTotalTax = findViewById(R.id.txt_total_tax);
+        txtTotalDiscount = findViewById(R.id.txt_total_discount);
+        txtNetSales = findViewById(R.id.txt_net_sales);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -85,11 +84,9 @@ public class SalesReportActivity extends BaseActivity {
 
 
         //sum of all transaction
-        getSalesReport("all",shopID,ownerId);
+        getSalesReport("all", shopID, ownerId);
         //to view all sales data
-        getReport("all",shopID,ownerId);
-
-
+        getReport("all", shopID, ownerId);
 
 
     }
@@ -113,37 +110,35 @@ public class SalesReportActivity extends BaseActivity {
                 this.finish();
                 return true;
             case R.id.menu_all_sales:
-                getReport("all",shopID,ownerId);
-
+                getReport("all", shopID, ownerId);
                 return true;
 
             case R.id.menu_daily:
-                getReport("Today",shopID,ownerId);
+                getReport("Today", shopID, ownerId);
                 getSupportActionBar().setTitle(R.string.daily);
 
                 return true;
 
             case R.id.menu_weekly:
-                getReport("Last 7 Days",shopID,ownerId);
+                getReport("last_week", shopID, ownerId);
                 getSupportActionBar().setTitle(R.string.weekly);
 
                 return true;
 
 
             case R.id.menu_monthly:
-                getReport("monthly",shopID,ownerId);
+                getReport("monthly", shopID, ownerId);
                 getSupportActionBar().setTitle(R.string.monthly);
 
 
                 return true;
 
             case R.id.menu_yearly:
-                getReport("yearly",shopID,ownerId);
+                getReport("yearly", shopID, ownerId);
                 getSupportActionBar().setTitle(R.string.yearly);
 
 
                 return true;
-
 
 
             default:
@@ -152,24 +147,23 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-    public void getReport(String type,String shopId,String ownerId) {
+    public void getReport(String type, String shopId, String ownerId) {
 
-       getSalesReport(type,shopId,ownerId);
-       getReportList(type,shopId,ownerId);
+        getSalesReport(type, shopId, ownerId);
+        getReportList(type, shopId, ownerId);
         //Stopping Shimmer Effects
         mShimmerViewContainer.startShimmer();
         mShimmerViewContainer.setVisibility(View.VISIBLE);
 
 
-
     }
 
 
-    public void getSalesReport(String type,String shopId,String ownerId) {
+    public void getSalesReport(String type, String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<SalesReport>> call;
-        call = apiInterface.getSalesReport(type,shopId,ownerId);
+        call = apiInterface.getSalesReport(type, shopId, ownerId);
 
         call.enqueue(new Callback<List<SalesReport>>() {
             @Override
@@ -181,7 +175,6 @@ public class SalesReportActivity extends BaseActivity {
                     salesReport = response.body();
 
 
-
                     if (salesReport.isEmpty()) {
 
 
@@ -191,11 +184,11 @@ public class SalesReportActivity extends BaseActivity {
                     } else {
 
 
-                        String totalOrderPrice=salesReport.get(0).getTotalOrderPrice();
-                        String totalTax=salesReport.get(0).getTotalTax();
-                        String totalDiscount=salesReport.get(0).getTotalDiscount();
+                        String totalOrderPrice = salesReport.get(0).getTotalOrderPrice();
+                        String totalTax = salesReport.get(0).getTotalTax();
+                        String totalDiscount = salesReport.get(0).getTotalDiscount();
 
-                        if (totalOrderPrice!=null) {
+                        if (totalOrderPrice != null) {
 
                             txtTotalPrice.setText(getString(R.string.total_price) + "=" + currency + f.format(Double.parseDouble(totalOrderPrice)));
                             txtTotalTax.setText(getString(R.string.total_tax) + "=" + currency + f.format(Double.parseDouble(totalTax)));
@@ -204,11 +197,9 @@ public class SalesReportActivity extends BaseActivity {
                             Double orderPrice = Double.parseDouble(totalOrderPrice);
                             Double getTax = Double.parseDouble(totalTax);
                             Double getDiscount = Double.parseDouble(totalDiscount);
-                            Double netSales = orderPrice + getTax - getDiscount;
+                            Double netSales = (orderPrice - getDiscount) + getTax;
                             txtNetSales.setText(getString(R.string.net_sales) + "=" + currency + f.format(netSales));
-                        }
-                        else
-                        {
+                        } else {
                             txtTotalPrice.setVisibility(View.INVISIBLE);
                             txtTotalTax.setVisibility(View.INVISIBLE);
                             txtTotalDiscount.setVisibility(View.INVISIBLE);
@@ -232,12 +223,12 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-    public void getReportList(String type,String shopId,String ownerId) {
+    public void getReportList(String type, String shopId, String ownerId) {
 
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderDetails>> call;
-        call = apiInterface.getReportList(type,shopId,ownerId);
+        call = apiInterface.getReportList(type, shopId, ownerId);
 
         call.enqueue(new Callback<List<OrderDetails>>() {
             @Override
@@ -247,7 +238,7 @@ public class SalesReportActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     List<OrderDetails> orderDetails;
                     orderDetails = response.body();
-
+                    Log.d("reports", "" + orderDetails.toString());
 
 
                     if (orderDetails.isEmpty()) {
@@ -282,7 +273,6 @@ public class SalesReportActivity extends BaseActivity {
                         txtTotalPrice.setVisibility(View.VISIBLE);
 
 
-
                     }
 
                 }
@@ -299,7 +289,6 @@ public class SalesReportActivity extends BaseActivity {
 
 
     }
-
 
 
 }

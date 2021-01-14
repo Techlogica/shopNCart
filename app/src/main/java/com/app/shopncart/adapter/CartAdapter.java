@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -112,7 +113,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
         String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
 
         int getStock = Integer.parseInt(productStock);
-
         if (country.equals("UAE")) {
             holder.txtCgst.setText("VAT" + " " + currency + f.format(Double.parseDouble(cgst)));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
@@ -170,31 +170,31 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
         txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
 
         //setting total discount
-        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + " " + currency + " " + f.format(allDiscount));
+        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) +"(-)"+ ": " + currency + " " + f.format(allDiscount));
 
-        txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
+        txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(finalTotal));
 
 
         if (country.equals("UAE")) {
-            txtTotalCgst.setText("Total Vat :" + " " + currency + " " + f.format(allCgst));
+            txtTotalCgst.setText("Total Vat " +"(+)"+ ": " + currency + " " + f.format(allCgst));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
             txtTotalSgst.setVisibility(View.GONE);
             txtTotalCess.setVisibility(View.GONE);
         } else {
             if (Double.valueOf(allCgst) != 0) {
-                txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
+                txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) +"(+)"+ ": " + currency + " " + f.format(allCgst));
             } else {
                 txtTotalCgst.setVisibility(View.GONE);
             }
 
             if (Double.valueOf(allSgst) != 0) {
-                txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
+                txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) +"(+)"+ ": " + currency + " " + f.format(allSgst));
             } else {
                 txtTotalSgst.setVisibility(View.GONE);
             }
 
             if (Double.valueOf(cess) != 0) {
-                txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
+                txtTotalCess.setText(context.getString(R.string.total_cess_cart) +"(+)"+ ": " + currency + " " + f.format(allCess));
             } else {
                 txtTotalCess.setVisibility(View.GONE);
             }
@@ -230,7 +230,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
         holder.txtWeight.setText(weight + " " + productWeightUnit);
         holder.txtQtyNumber.setText(qty);
         if(!productDiscount.equals("0")){
-        holder.edtDisc.setText(productDiscount);}
+            holder.edtDisc.setText(productDiscount);}
 
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,31 +272,31 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
 
                     //setting total discount
-                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + " " + currency + " " + f.format(allDiscount));
+                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) +"(-)"+ ": " + currency + " " + f.format(allDiscount));
 
                     if (country.equals("UAE")) {
-                        txtTotalCgst.setText("Total Vat :" + " " + currency + " " + f.format(allCgst));
+                        txtTotalCgst.setText("Total Vat " +"(+)"+ ": " + currency + " " + f.format(allCgst));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
                         txtTotalSgst.setVisibility(View.GONE);
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
                             txtTotalCgst.setVisibility(View.VISIBLE);
-                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
+                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) +"(+)"+ ": " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
                             txtTotalSgst.setVisibility(View.VISIBLE);
-                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
+                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) +"(+)"+ ": " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
                             txtTotalCess.setVisibility(View.VISIBLE);
-                            txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
+                            txtTotalCess.setText(context.getString(R.string.total_cess_cart)+"(+)" + ": " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
                         }
@@ -304,7 +304,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     }
                     if (Double.valueOf(priceWithTax) != 0) {
                         txtFinalTotal.setVisibility(View.VISIBLE);
-                        txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(priceWithTax));
+                        txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(priceWithTax));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
                     }
@@ -357,7 +357,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     double itemCess=cost*Double.valueOf(cessPercent)/100;
 
 
-                    holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("1", String.valueOf(cost)), new InputFilter.LengthFilter(5)});
+                    holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
 
 
                     holder.txtPrice.setText(currency + f.format(cost));
@@ -388,7 +388,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     databaseAccess.open();
                     allDiscount = databaseAccess.getTotalProductDiscount();
                     //setting total discount
-                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + " " + currency + " " + f.format(allDiscount));
+                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) +"(-)"+ " " + currency + ": " + f.format(allDiscount));
 
                     txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
 
@@ -441,28 +441,28 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     allCess = databaseAccess.getTotalCESS();
 
                     if (country.equals("UAE")) {
-                        txtTotalCgst.setText("Total Vat :" + " " + currency + " " + f.format(allCgst));
+                        txtTotalCgst.setText("Total Vat "+"(+)" + ": " + currency + " " + f.format(allCgst));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
                         txtTotalSgst.setVisibility(View.GONE);
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
                             txtTotalCgst.setVisibility(View.VISIBLE);
-                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
+                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) +"(+)"+ ": " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
                             txtTotalSgst.setVisibility(View.VISIBLE);
-                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
+                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) +"(+)"+ ": " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
                             txtTotalCess.setVisibility(View.VISIBLE);
-                            txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
+                            txtTotalCess.setText(context.getString(R.string.total_cess_cart)+"(+)" + ": " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
                         }
@@ -475,7 +475,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                     if (Double.valueOf(finalTotal) != 0) {
                         txtFinalTotal.setVisibility(View.VISIBLE);
-                        txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
+                        txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(finalTotal));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
                     }
@@ -502,7 +502,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     double itemSgst=cost*Double.valueOf(sgstPercent)/100;
                     double itemCess=cost*Double.valueOf(cessPercent)/100;
 
-                    holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("1", String.valueOf(cost)), new InputFilter.LengthFilter(5)});
+                    holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
 
                     holder.txtPrice.setText(currency + f.format(cost));
                     holder.txtQtyNumber.setText(String.valueOf(getQty));
@@ -526,7 +526,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     databaseAccess.open();
                     allDiscount = databaseAccess.getTotalProductDiscount();
                     //setting total discount
-                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + " " + currency + " " + f.format(allDiscount));
+                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) +"(-)"+ " " + currency + ": " + f.format(allDiscount));
 
                     txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
 
@@ -578,28 +578,28 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                     databaseAccess.open();
                     allCess = databaseAccess.getTotalCESS();
                     if (country.equals("UAE")) {
-                        txtTotalCgst.setText("Total Vat :" + " " + currency + " " + f.format(allCgst));
+                        txtTotalCgst.setText("Total Vat" +"(+)"+": " + currency + " " + f.format(allCgst));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
                         txtTotalSgst.setVisibility(View.GONE);
                         txtTotalCess.setVisibility(View.GONE);
                     } else {
                         if (Double.valueOf(allCgst) != 0) {
                             txtTotalCgst.setVisibility(View.VISIBLE);
-                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allCgst));
+                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) +"(+)"+ ": " + currency + " " + f.format(allCgst));
                         } else {
                             txtTotalCgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(allSgst) != 0) {
                             txtTotalSgst.setVisibility(View.VISIBLE);
-                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allSgst));
+                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) +"(+)"+ ": " + currency + " " + f.format(allSgst));
                         } else {
                             txtTotalSgst.setVisibility(View.GONE);
                         }
 
                         if (Double.valueOf(cess) != 0) {
                             txtTotalCess.setVisibility(View.VISIBLE);
-                            txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allCess));
+                            txtTotalCess.setText(context.getString(R.string.total_cess_cart) +"(+)"+ ": " + currency + " " + f.format(allCess));
                         } else {
                             txtTotalCess.setVisibility(View.GONE);
                         }
@@ -616,7 +616,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                     if (finalTotal != 0) {
                         txtFinalTotal.setVisibility(View.VISIBLE);
-                        txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
+                        txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + ": " + f.format(finalTotal));
                     } else {
                         txtFinalTotal.setVisibility(View.GONE);
                     }
@@ -646,7 +646,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                 double cost = Double.parseDouble(price) * Integer.parseInt(qty);
 
-                holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("1", String.valueOf(cost)), new InputFilter.LengthFilter(5)});
+                holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
 
 
 //              calculating tax to the discounted amount for each item
@@ -725,7 +725,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
                 allDiscount = databaseAccess.getTotalProductDiscount();
 
                 //setting total discount
-                txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + " " + currency + " " + f.format(allDiscount));
+                txtTotalDiscount.setText(context.getString(R.string.total_product_discount) +"(-)"+ ": " + currency + " " + f.format(allDiscount));
 
                 //getting total tax from db
                 databaseAccess.open();
@@ -739,28 +739,28 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                 //setting total tax amount
                 if (country.equals("UAE")) {
-                    txtTotalCgst.setText("Total Vat :" + " " + currency + " " + f.format(allDiscountedCgst));
+                    txtTotalCgst.setText("Total Vat "+"(+)" + ": " + currency + " " + f.format(allDiscountedCgst));
 //            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
                     txtTotalSgst.setVisibility(View.GONE);
                     txtTotalCess.setVisibility(View.GONE);
                 } else {
                     if (Double.valueOf(allDiscountedCgst) != 0) {
                         txtTotalCgst.setVisibility(View.VISIBLE);
-                        txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + " " + currency + " " + f.format(allDiscountedCgst));
+                        txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) +"(+)"+ ": " + currency + " " + f.format(allDiscountedCgst));
                     } else {
                         txtTotalCgst.setVisibility(View.GONE);
                     }
 
                     if (Double.valueOf(allDiscountedSgst) != 0) {
                         txtTotalSgst.setVisibility(View.VISIBLE);
-                        txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + " " + currency + " " + f.format(allDiscountedSgst));
+                        txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) +"(+)"+ ": " + currency + " " + f.format(allDiscountedSgst));
                     } else {
                         txtTotalSgst.setVisibility(View.GONE);
                     }
 
                     if (Double.valueOf(allDiscountedCess) != 0) {
                         txtTotalCess.setVisibility(View.VISIBLE);
-                        txtTotalCess.setText(context.getString(R.string.total_cess_cart) + " " + currency + " " + f.format(allDiscountedCess));
+                        txtTotalCess.setText(context.getString(R.string.total_cess_cart) +"(+)"+ ": " + currency + " " + f.format(allDiscountedCess));
                     } else {
                         txtTotalCess.setVisibility(View.GONE);
                     }
@@ -781,7 +781,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
                 if (finalTotal != 0) {
                     txtFinalTotal.setVisibility(View.VISIBLE);
-                    txtFinalTotal.setText(context.getString(R.string.price_with_tax) + currency + " " + f.format(finalTotal));
+                    txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(finalTotal));
                 } else {
                     txtFinalTotal.setVisibility(View.GONE);
                 }
@@ -800,6 +800,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
     @Override
     public int getItemCount() {
         return cartProduct.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

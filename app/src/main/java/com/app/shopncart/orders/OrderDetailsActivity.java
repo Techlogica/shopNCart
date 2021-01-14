@@ -88,7 +88,7 @@ public class OrderDetailsActivity extends BaseActivity {
         shopAddress = sp.getString(Constant.SP_SHOP_ADDRESS, "N/A");
         userName = sp.getString(Constant.SP_STAFF_NAME, "N/A");
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "N/A");
-        f = new DecimalFormat("#,###,#0.00");
+        f = new DecimalFormat("#,###,##0.00");
 
 
         orderPrice = getIntent().getExtras().getString(Constant.ORDER_PRICE);
@@ -101,9 +101,9 @@ public class OrderDetailsActivity extends BaseActivity {
 
         getProductsData(invoiceId);
 
-        calculatedTotalPrice=Double.parseDouble(orderPrice)+Double.parseDouble(tax)-Double.parseDouble(discount);
+        calculatedTotalPrice=(Double.parseDouble(orderPrice)-Double.parseDouble(discount))+Double.parseDouble(tax);
 
-        double totalPrice=Double.parseDouble(orderPrice)+Double.parseDouble(tax)-Double.parseDouble(discount);
+        double totalPrice=(Double.parseDouble(orderPrice)-Double.parseDouble(discount))+Double.parseDouble(tax);
 
         txtTotalCost.setText(getString(R.string.total_price)+": "+currency+f.format(totalPrice));
 

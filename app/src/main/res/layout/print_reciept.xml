@@ -131,7 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             tools:listitem="@layout/cart_print_item"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             />
 
     </LinearLayout>
@@ -167,7 +167,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="130dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:fontFamily="@font/candal"
@@ -197,7 +197,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="130dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textStyle="bold"
@@ -228,7 +228,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
             android:gravity="center"
@@ -260,7 +260,7 @@
 
         <TextView
             android:id="@+id/hint_cgst"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
             android:gravity="center"
@@ -292,7 +292,7 @@
 
         <TextView
             android:id="@+id/hint_sgst"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
             android:gravity="center"
@@ -324,7 +324,7 @@
 
         <TextView
             android:id="@+id/hint_cess"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
             android:gravity="center"
@@ -358,26 +358,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="130dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:fontFamily="@font/candal"
             android:text="Total Price"
             android:textStyle="bold"
-            android:textSize="14sp"
+            android:textSize="12sp"
             />
+
 
         <TextView
             android:id="@+id/total_price"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
+            android:layout_marginLeft="5dp"
             android:gravity="right"
             android:textStyle="bold"
-            android:textSize="14sp"
+            android:textSize="12sp"
             />
 
     </LinearLayout>

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
@@ -46,7 +47,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().hide();
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
@@ -149,9 +150,11 @@ public class LoginActivity extends BaseActivity {
                     String shopCountry = response.body().getShopCountry();
                     String shopContact = response.body().getShopContact();
                     String shopEmail = response.body().getShopEmail();
+                    String taxId = response.body().getTax_id();
                     String tax = response.body().getTax();
                     String currencySymbol = response.body().getCurrencySymbol();
                     String shopStatus = response.body().getShopStatus();
+                    String todaySales = response.body().getTotal_order_price();
 
                     String shopId = response.body().getShopId();
                     String ownerId = response.body().getOwnerID();
@@ -186,7 +189,9 @@ public class LoginActivity extends BaseActivity {
                             editor.putString(Constant.SP_SHOP_STATUS, shopStatus);
                             editor.putString(Constant.SP_CURRENCY_SYMBOL, currencySymbol);
                             editor.putString(Constant.SP_SHOP_ID, shopId);
+                            editor.putString(Constant.SP_TODAY_SALES, todaySales);
                             editor.putString(Constant.SP_OWNER_ID, ownerId);
+                            editor.putString(Constant.SP_SHOP_TAX_ID, taxId);
 
 
                             //Saving values to Share preference
