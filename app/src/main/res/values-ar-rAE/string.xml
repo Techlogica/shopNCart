@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+        <string name="app_name" translatable="false">ShopNCart</string>
+        <string name="text_french" translatable="false">French</string>
+        <string name="text_english" translatable="false">English</string>
+        <string name="text_bangla" translatable="false">Bangala</string>
+        <string name="text_spanish" translatable="false">Spanish</string>
+        <string name="text_hindi" translatable="false"> हिंदी</string>
+        <string name="text_malayalam" translatable="false">മലയാളം </string>
+        <string name="text_arabic" translatable="false"> ARABIC </string>
+
+
+
+        <!--Replace your adMob application ID here -->
+        <string name="admob_application_id" translatable="false">ca-app-pub-5657501787263234~9247968350</string>
+
+        <!--Replace your adMob Banner Ads ID here -->
+        <!--    <string name="admob_banner_ads_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>-->
+        <string name="admob_banner_ads_id" translatable="false">ca-app-pub-5657501787263234/6681277084</string>
+
+        <!--Replace your admob Interstitial Ads ID here -->
+        <string name="admob_interstitial_ads_id" translatable="false">"ca-app-pub-5657501787263234/9770195613"</string>
+
+
+        <string name="action_settings">إعدادات</string>
+        <string name="suppliers">الموردين</string>
+        <string name="customers">العملاء</string>
+        <string name="pos">ص ا س</string>
+        <string name="expense">مصروف</string>
+        <string name="report">التقارير</string>
+        <string name="all_orders">جميع الطلبات</string>
+        <string name="all_sales">مبيعات</string>
+
+        <string name="daily">اليوم</string>
+        <string name="monthly">شهريا</string>
+        <string name="yearly">سنوي</string>
+        <string name="customer_name">اسم الزبون</string>
+        <string name="customer_cell">رقم هاتف العميل</string>
+        <string name="customer_email">البريد الإلكتروني للعميل</string>
+        <string name="customer_address">عنوان العميل</string>
+        <string name="add_customer">أضف العميل</string>
+        <string name="enter_customer_name">أدخل اسم العميل</string>
+        <string name="enter_customer_cell">أدخل رقم هاتف العميل</string>
+        <string name="enter_customer_address">أدخل عنوان العميل</string>
+        <string name="customer_successfully_added">تمت إضافة العميل بنجاح</string>
+
+        <string name="all_customer">كل العملاء</string>
+        <string name="all_suppliers">جميع الموردين</string>
+
+        <string name="add_suppliers">إضافة الموردين</string>
+        <string name="enter_suppliers_name">أدخل اسم المورد</string>
+        <string name="enter_suppliers_contact_person_name">أدخل اسم جهة الاتصال الخاصة بالمورد</string>
+        <string name="enter_suppliers_cell">أدخل رقم هاتف المورد</string>
+        <string name="enter_valid_email">أدخل بريد إلكتروني صالح</string>
+        <string name="enter_suppliers_address">أدخل عنوان المورد</string>
+        <string name="suppliers_successfully_added">تمت إضافة الموردين بنجاح</string>
+        <string name="failed">فشل</string>
+
+        <string name="product_name_cannot_be_empty">لا يمكن أن يكون اسم المنتج فارغًا</string>
+        <string name="product_code_cannot_be_empty">لا يمكن أن يكون رمز المنتج فارغًا</string>
+        <string name="product_category_cannot_be_empty">لا يمكن ترك فئة المنتج فارغة</string>
+        <string name="product_sell_price_cannot_be_empty">لا يمكن أن يكون سعر بيع المنتج فارغًا</string>
+        <string name="product_cost_price_cannot_be_empty">لا يمكن أن يكون سعر تكلفة المنتج فارغًا</string>
+        <string name="product_supplier_cannot_be_empty">لا يمكن أن يكون مورد المنتج فارغًا</string>
+        <string name="product_weight_cannot_be_empty">لا يمكن أن يكون وزن المنتج فارغًا</string>
+        <string name="product_successfully_added">تمت إضافة المنتج بنجاح</string>
+        <string name="something_went_wrong">هناك خطأ ما</string>
+
+
+        <string name="add_product">أضف منتج</string>
+        <string name="product_details">تفاصيل المنتج</string>
+        <string name="product_code">كود المنتج</string>
+        <string name="product_description">وصف المنتج</string>
+        <string name="unit_product_sell_price">سعر بيع الوحدة للمنتج</string>
+        <string name="product_sell_price">سعر بيع المنتج</string>
+        <string name="product_weight">وزن المنتج</string>
+        <string name="select_product_weight_unit">حدد وزن المنتج لوحدة واحدة</string>
+        <string name="product_weight_unit">وحدة وزن المنتج</string>
+        <string name="select_supplier">حدد المورد</string>
+        <string name="product_supplier">مورد المنتج</string>
+        <string name="choose_product_image">اختر صورة المنتج</string>
+
+
+        <string name="year_2020">عام 2020</string>
+        <string name="total_sales">إجمالي المبيعات </string>
+        <string name="search_here">ابحث هنا</string>
+        <string name="no_order_found">لم يتم العثور على طلب</string>
+        <string name="no_product_found">لم يتم العثور على منتج</string>
+        <string name="submit_order">أكد الطلب</string>
+        <string name="all_sales_report">تقرير المبيعات</string>
+        <string name="all_expense_report">تقرير المصاريف</string>
+        <string name="monthly_sales_graph">الرسم البياني للمبيعات الشهرية</string>
+        <string name="monthly_expense_graph">الرسم البياني للمصروفات الشهرية</string>
+        <string name="no_data_found">لاتوجد بيانات</string>
+
+        <string name="shop_information">معلومات المتجر</string>
+        <string name="shop_name">اسم المحل</string>
+        <string name="shop_contact_number">رقم الاتصال بالمتجر</string>
+        <string name="shop_email">عنوان البريد الإلكتروني للمتجر</string>
+        <string name="shop_address">عنوان المحل</string>
+        <string name="edit">تعديل</string>
+        <string name="update_information">تحديث المعلومات</string>
+        <string name="product_category">فئة المنتج</string>
+        <string name="cancel">إلغاء</string>
+        <string name="payment">دفع</string>
+        <string name="submit">إرسال</string>
+        <string name="add_to_cart">أضف إلى السلة</string>
+        <string name="product_name">اسم المنتج</string>
+        <string name="weight">وزن</string>
+        <string name="price">السعر</string>
+
+        <string name="supplier_name">اسم المورد</string>
+        <string name="supplier_contact_person">شخص الاتصال في المورد</string>
+
+        <string name="supplier_cell">رقم هاتف المورد</string>
+
+        <string name="supplier_email">البريد الإلكتروني للمورد</string>
+
+        <string name="supplier_address">عنوان المورد</string>
+
+        <string name="add_supplier">إضافة مورد</string>
+        <string name="monthly_expense_in_graph">المصاريف الشهرية في الرسم البياني</string>
+        <string name="year">اذكر العام</string>
+        <string name="monthly_expense_report">تقرير المصاريف الشهري</string>
+        <string name="total_expense">المصاريف الكلية</string>
+        <string name="monthly_sales_report">تقرير المبيعات الشهرية</string>
+        <string name="all_expense">نفقات</string>
+        <string name="yes">نعم</string>
+        <string name="all_product">جميع المنتجات</string>
+        <string name="product_cart">عربة المنتج</string>
+        <string name="no_product_in_cart">لا يوجد منتج في سلة التسوق</string>
+        <string name="select_payment_method">اختار طريقة الدفع</string>
+        <string name="select_order_type">حدد نوع الطلب</string>
+        <string name="select_customer">اختر الزبون</string>
+        <string name="order_history">تاريخ الطلبات</string>
+        <string name="order_details">تفاصيل الطلب</string>
+        <string name="total_price">السعر الكلي </string>
+        <string name="add_expense">أضف المصاريف</string>
+        <string name="product_removed_from_cart">تمت إزالة المنتج من سلة التسوق</string>
+        <string name="backup_completed_successfully">اكتمل النسخ الاحتياطي بنجاح</string>
+        <string name="unable_to_backup_database_retry">تعذر إجراء نسخ احتياطي لقاعدة البيانات. أعد المحاولة</string>
+        <string name="database_Import_completed">اكتمل استيراد قاعدة البيانات</string>
+        <string name="unable_to_import_database_retry">تعذر استيراد قاعدة البيانات. أعد المحاولة</string>
+        <string name="want_to_delete_customer">تريد حذف العميل؟</string>
+        <string name="customer_deleted">تم حذف العميل</string>
+        <string name="note">ملاحظات</string>
+        <string name="want_to_delete_expense">تريد حذف المصاريف؟</string>
+        <string name="expense_deleted">المصاريف المحذوفة</string>
+        <string name="payment_method">طريقة الدفع او السداد</string>
+        <string name="want_to_delete_supplier">تريد حذف المورد؟</string>
+        <string name="supplier_deleted">تم حذف المورد</string>
+        <string name="quantity">كمية</string>
+        <string name="sell_price">سعر البيع</string>
+        <string name="want_to_delete_product">تريد حذف المنتج؟</string>
+        <string name="product_deleted">المنتج محذوف</string>
+        <string name="product_added_to_cart">تمت إضافة المنتج إلى سلة التسوق</string>
+        <string name="product_already_added_to_cart">تمت إضافة المنتج بالفعل إلى سلة التسوق</string>
+        <string name="product_added_to_cart_failed_try_again">فشل المنتج المضاف إلى عربة التسوق! حاول مرة أخري</string>
+        <string name="press_once_again_to_exit">اضغط مرة أخرى للخروج!</string>
+        <string name="order_deleted">تم حذف الطلب</string>
+        <string name="want_to_delete_order">تريد حذف الطلب؟</string>
+        <string name="type_something_to_search">اكتب شيئًا للبحث</string>
+        <string name="expense_name_cannot_be_empty">لا يمكن أن يكون اسم المصاريف فارغًا</string>
+        <string name="expense_amount_cannot_be_empty">لا يمكن أن يكون مبلغ المصاريف فارغًا</string>
+        <string name="expense_successfully_added">تمت إضافة المصاريف بنجاح</string>
+
+
+        <string name="qr_barcode_scanner">QR أو ماسح الباركود</string>
+        <string name="camera_permission">مطلوب إذن الكاميرا</string>
+        <string name="error">خطأ</string>
+        <string name="order_receipt">إيصال الطلب</string>
+        <string name="print">طباعة</string>
+        <string name="share">شارك</string>
+        <string name="open_pdf">افتح ملف PDF</string>
+        <string name="open_with_external_pdf_reader">افتح بقارئ pdf خارجي</string>
+        <string name="generate_pdf_receipt">إيصال PDF</string>
+        <string name="edit_customer">تحرير العميل</string>
+        <string name="edit_suppliers">تحرير الموردين</string>
+        <string name="expense_name">اسم المصاريف</string>
+        <string name="expense_note_if_any">ملاحظة المصاريف (إن وجدت)</string>
+        <string name="expense_note">ملاحظة المصاريف</string>
+        <string name="expense_amount">مبلغ المصاريف</string>
+        <string name="expense_date">تاريخ المصاريف</string>
+        <string name="expense_time">وقت المصاريف</string>
+        <string name="edit_expense">تعديل المصاريف</string>
+        <string name="update_successfully">تم التحديث بنجاح</string>
+        <string name="categories">التصنيفات</string>
+        <string name="category_name">اسم التصنيف</string>
+        <string name="payment_method_deleted">طريقة الدفع محذوفة</string>
+        <string name="want_to_delete">تريد حذف؟</string>
+        <string name="all_payment_method">جميع طرق الدفع</string>
+        <string name="payment_method_name">اسم طريقة الدفع</string>
+        <string name="add_payment_method">إضافة طريقة دفع</string>
+        <string name="enter_payment_method_name">أدخل اسم طريقة الدفع</string>
+        <string name="successfully_added">أضيف بنجاح</string>
+        <string name="update_payment_method">تحديث طريقة الدفع</string>
+        <string name="successfully_updated">تم التحديث بنجاح</string>
+        <string name="payment_methods">طرق الدفع</string>
+        <string name="password">كلمه السر</string>
+        <string name="login">تسجيل الدخول</string>
+        <string name="please_enter_password">الرجاء إدخال كلمة المرور</string>
+        <string name="logout">تسجيل خروج</string>
+        <string name="you_dont_have_permission_to_access_this_page">ليس لديك إذن للوصول إلى هذه الصفحة</string>
+        <string name="about_us">معلومات عنا</string>
+        <string name="want_to_logout_from_app">تريد الخروج من التطبيق؟</string>
+        <string name="delete">حذف</string>
+        <string name="tax">ضريبة</string>
+        <string name="tax_in_percentage">الضريبة بالنسبة المئوية (٪)</string>
+        <string name="total_tax">مجموع الضريبة</string>
+        <string name="sub_total">المجموع الفرعي</string>
+        <string name="discount">إجمالي الخصم</string>
+        <string name="discount_cant_be_greater_than_total_price">لا يمكن أن يكون الخصم أكبر من السعر الإجمالي</string>
+        <string name="net_sales">صافي المبيعات</string>
+        <string name="total_discount">إجمالي الخصم</string>
+        <string name="table_number">رقم الطاولة</string>
+        <string name="order_success">طلب النجاح</string>
+        <string name="order_successfully_done">تم الطلب بنجاح</string>
+        <string name="email">البريد الإلكتروني</string>
+        <string name="please_wait">أرجو الإنتظار</string>
+        <string name="no_network_connection">لا يوجد اتصال شبكة</string>
+        <string name="products">منتجات</string>
+        <string name="stock">مخزون</string>
+        <string name="out_of_stock">إنتهى من المخزن</string>
+        <string name="stock_not_available_please_update_stock">المخزون غير متوفر. الرجاء تحديث المخزون</string>
+        <string name="low_stock">الأسهم منخفضة</string>
+        <string name="not_available">غير متوفر</string>
+        <string name="in_stock">في المخزن</string>
+        <string name="product_stock">مخزون المنتج</string>
+        <string name="please_input_product_stcok">الرجاء إدخال مخزون المنتج</string>
+        <string name="invalid_email_or_password">البريد الإلكتروني أو كلمة السر خاطئة</string>
+        <string name="view_all_orders">عرض كل الطلبات</string>
+        <string name="order_note">مذكرة النظام</string>
+        <string name="weekly">اخر 7 ايام</string>
+        <string name="all">الكل</string>
+        <string name="shop_closed_now">المتجر مغلق الآن</string>
+        <string name="reset">إعادة تعيين</string>
+        <string name="cess">CESS</string>
+        <string name="sgst">SGST</string>
+        <string name="cgst">CGST</string>
+
+        <string name="toast_3">جهاز البلوتوث غير متوفر</string>
+        <string name="toast_4">لم يتم اكتشاف جهاز بلوتوث. الرجاء فتح بلوتوث!</string>
+        <string name="toast_5">الطابعة غير موجودة</string>
+        <string name="toast_6">فشل اتصال البلوتوث</string>
+        <string name="unit_product_cost_price">سعر تكلفة منتج الوحدة</string>
+        <string name="product_cost_price">سعر تكلفة المنتج</string>
+        <string name="price_with_tax">السعر مع الضريبة</string>
+        <string name="total_cess_cart">إجمالي CESS</string>
+        <string name="total_sgst_cart">إجمالي SGST</string>
+        <string name="total_cgst_cart">إجمالي CGST</string>
+        <string name="total_product_discount">إجمالي الخصم</string>
+        <string name="line_discount">أدخل الخصم</string>
+        <string name="grand_total">المجموع الكلي:</string>
+
+</resources>

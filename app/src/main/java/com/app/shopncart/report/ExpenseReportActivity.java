@@ -69,7 +69,7 @@ public class ExpenseReportActivity extends BaseActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_expense);
+        getSupportActionBar().setTitle(R.string.daily);
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopId = sp.getString(Constant.SP_SHOP_ID, "");
@@ -84,9 +84,9 @@ public class ExpenseReportActivity extends BaseActivity {
 
 
         //sum of all transaction
-        getExpenseData("all",shopId,ownerId);
+        getExpenseData("Today",shopId,ownerId);
         //to view all sales data
-        getExpenseReport("all",shopId,ownerId);
+        getExpenseReport("Today",shopId,ownerId);
 
 
     }

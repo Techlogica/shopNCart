@@ -229,6 +229,8 @@
     <string name="total_product_discount">कुल छूट:</string>
     <string name="line_discount">दर्ज छूट</string>
     <string name="grand_total">अंतिम रकम:</string>
+    <string name="text_arabic" translatable="false"> ARABIC </string>
+
 
 
 

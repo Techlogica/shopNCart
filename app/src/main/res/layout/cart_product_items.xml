@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:layout_marginLeft="3dp"
+                        android:layout_marginStart="3dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -76,7 +76,7 @@
 
                         <TextView
                             android:id="@+id/txt_weight"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/sailec_regular"
                             android:padding="2dp"
@@ -97,21 +97,21 @@
 
                         <TextView
                             android:id="@+id/txt_cgst"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/cgst"
                             android:textSize="11dp"/>
 
                         <TextView
                             android:id="@+id/txt_sgst"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/sgst"
                             android:textSize="11dp"/>
 
                         <TextView
                             android:id="@+id/txt_cess"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/cess"
                             android:textSize="11dp"/>
@@ -185,12 +185,16 @@
             android:baselineAligned="false"
             android:src="@drawable/cart_cardshape_icon"/>
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <LinearLayout
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="9dp"
             android:background="@drawable/round_shapecart"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -235,11 +239,12 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="11dp"
             >
             <ImageView
                 android:id="@+id/img_delete"
@@ -252,9 +257,7 @@
             </ImageView>
         </LinearLayout>
 
-
-
-
+        </LinearLayout>
 
     </RelativeLayout>
 

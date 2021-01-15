@@ -42,6 +42,11 @@
                 android:icon="@drawable/india"
                 android:visible="false"
                 android:title="@string/text_malayalam" />
+            <item
+                android:id="@+id/local_arabic"
+                android:icon="@drawable/india"
+                android:visible="true"
+                android:title="@string/text_arabic" />
         </menu>
     </item>
 </menu>

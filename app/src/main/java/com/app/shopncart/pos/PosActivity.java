@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.shopncart.Constant;
+import com.app.shopncart.HomeActivity;
 import com.app.shopncart.R;
 import com.app.shopncart.adapter.ProductCategoryAdapter;
 import com.app.shopncart.database.DatabaseAccess;
@@ -53,10 +55,12 @@ public class PosActivity extends BaseActivity {
 
     private RecyclerView recyclerView, categoryRecyclerView;
     PosProductAdapter productAdapter;
-    TextView txtNoProducts,txtReset;
+    TextView txtNoProducts;
+    TextView txtReset;
+    static TextView txtCounterText;
     ProductCategoryAdapter categoryAdapter;
 
-    ImageView imgNoProduct,imgScanner;
+    ImageView imgNoProduct,imgScanner,imgBack;
     public static EditText etxtSearch;
     DatabaseAccess databaseAccess;
     List<HashMap<String, String>> cartProductList;
@@ -68,16 +72,12 @@ public class PosActivity extends BaseActivity {
 
     private ShimmerFrameLayout mShimmerViewContainer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pos);
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_product);
+
         databaseAccess = DatabaseAccess.getInstance(this);
 
         etxtSearch = findViewById(R.id.etxt_search);
@@ -85,6 +85,8 @@ public class PosActivity extends BaseActivity {
         imgNoProduct = findViewById(R.id.image_no_product);
         txtNoProducts = findViewById(R.id.txt_no_products);
         imgScanner=findViewById(R.id.img_scanner);
+        txtCounterText = findViewById(R.id.home_cart_counter);
+        imgBack = findViewById(R.id.menu_back);
         categoryRecyclerView = findViewById(R.id.category_recyclerview);
         txtReset=findViewById(R.id.txt_reset);
 
@@ -93,6 +95,24 @@ public class PosActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
          shopID = sp.getString(Constant.SP_SHOP_ID, "");
          ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+
+
+        counterSetiings();
+        imgBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        });
+
+        findViewById(R.id.home_cart).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PosActivity.this, ProductCart.class);
+                startActivityForResult(intent, 1);
+            }
+        });
 
 
 
@@ -163,43 +183,6 @@ public class PosActivity extends BaseActivity {
 
 
 
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu_cart, menu);
-        MenuItem item = menu.findItem(R.id.menu_cart_button);
-        item.setActionView(R.layout.layout_cart_badge);//  notification badge refer:==> https://stackoverflow.com/q/17696486
-        View view = item.getActionView();
-        cartBadge = view.findViewById(R.id.notif_count);
-        counterSetiings();
-        try {
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivityForResult(new Intent(PosActivity.this, ProductCart.class), 1);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case android.R.id.home:
-                setResult(RESULT_OK);
-                this.finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -325,10 +308,10 @@ public class PosActivity extends BaseActivity {
         }
 
         if (cartCount == 0) {
-            cartBadge.setVisibility(View.INVISIBLE);
+            txtCounterText.setVisibility(View.INVISIBLE);
         } else {
-            cartBadge.setVisibility(View.VISIBLE);
-            cartBadge.setText(String.valueOf(cartCount));
+            txtCounterText.setVisibility(View.VISIBLE);
+            txtCounterText.setText(String.valueOf(cartCount));
         }
     }
 
@@ -452,8 +435,8 @@ public class PosActivity extends BaseActivity {
                     holder.txtHintCGST.setText("VAT");
                     holder.txtCGST.setText(currency+" "+decimn.format(cgstAmount)+ " (" +cgst+"%)");
                 } else {
-                    holder.txtCGST.setVisibility(View.GONE);
-                    holder.txtHintCGST.setVisibility(View.GONE);
+                    holder.txtCGST.setVisibility(View.INVISIBLE);
+                    holder.txtHintCGST.setVisibility(View.INVISIBLE);
                 }
         /*    if (sgstAmount != 0) {
                 holder.txtSGST.setVisibility(View.VISIBLE);
@@ -496,6 +479,15 @@ public class PosActivity extends BaseActivity {
                     holder.txtLabelCESS.setVisibility(View.VISIBLE);
                     holder.txtCESS.setVisibility(View.VISIBLE);
                     holder.txtCESS.setText(currency +" "+ decimn.format(cessAmount) + " (" + cess + "%)");
+                }if(cgstAmount == 0&&sgstAmount == 0&&cessAmount == 0){
+                    holder.txtSGST.setVisibility(View.INVISIBLE);
+                    holder.txtHintSGST.setVisibility(View.INVISIBLE);
+
+                    holder.txtLabelCESS.setVisibility(View.INVISIBLE);
+                    holder.txtCESS.setVisibility(View.INVISIBLE);
+
+                    holder.txtHintCGST.setVisibility(View.INVISIBLE);
+                    holder.txtCGST.setVisibility(View.INVISIBLE);
                 }
 
             }
@@ -504,25 +496,24 @@ public class PosActivity extends BaseActivity {
             if (getStock>5) {
                 holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
                 holder.txtStockStatus.setVisibility(View.GONE);
+                holder.txtStock.getResources().getDrawable(R.drawable.stock_tag_icon);
 
                 holder.txtStockStatus.setBackgroundColor(Color.parseColor("#43a047"));
                 holder.txtStockStatus.setText(context.getString(R.string.in_stock));
             }
             else if (getStock==0) {
-                holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
-
-                holder.txtStock.setTextColor(Color.RED);
-
-                holder.txtStockStatus.setVisibility(View.GONE);
+                holder.txtStock.setVisibility(View.GONE);
+                holder.txtStockStatus.setVisibility(View.VISIBLE);
                 holder.txtStockStatus.setText(context.getString(R.string.not_available));
+
 
             }
             else
             {
-                holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
-                holder.txtStock.setTextColor(Color.RED);
-                holder.txtStockStatus.setVisibility(View.GONE);
-                holder.txtStockStatus.setText(context.getString(R.string.low_stock));
+                holder.txtStock.setVisibility(View.GONE);
+                holder.txtStockStatus.setVisibility(View.VISIBLE);
+                holder.txtStockStatus.setText(context.getString(R.string.stock) + " : " + productStock);
+                holder.txtStock.getResources().getDrawable(R.drawable.stock_tag_icon_orange);
 
 
             }
@@ -553,10 +544,10 @@ public class PosActivity extends BaseActivity {
                             player.start();
                             cartCount=cartCount+1;
                             if (cartCount == 0) {
-                                cartBadge.setVisibility(View.INVISIBLE);
+                                txtCounterText.setVisibility(View.INVISIBLE);
                             } else {
-                                cartBadge.setVisibility(View.VISIBLE);
-                                cartBadge.setText(String.valueOf(cartCount));
+                                txtCounterText.setVisibility(View.VISIBLE);
+                                txtCounterText.setText(String.valueOf(cartCount));
                             }
                         } else if (check == 2) {
 

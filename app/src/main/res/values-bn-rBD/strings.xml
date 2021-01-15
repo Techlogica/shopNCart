@@ -251,6 +251,8 @@
     <string name="total_product_discount">Total Discount:</string>
     <string name="line_discount">Enter Discount</string>
     <string name="grand_total">Grand Total:</string>
+    <string name="text_arabic" translatable="false"> ARABIC </string>
+
 
 
 

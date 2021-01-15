@@ -48,7 +48,8 @@
         <activity android:name="com.app.shopncart.orders.OrderDetailsActivity" />
         <activity android:name="com.app.shopncart.orders.OrdersActivity" />
         <activity android:name="com.app.shopncart.pos.ProductCart" />
-        <activity android:name="com.app.shopncart.pos.PosActivity" />
+        <activity android:name="com.app.shopncart.pos.PosActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name="com.app.shopncart.product.AddProductActivity" />
         <activity android:name="com.app.shopncart.product.ProductActivity" />
         <activity android:name="com.app.shopncart.suppliers.AddSuppliersActivity" />

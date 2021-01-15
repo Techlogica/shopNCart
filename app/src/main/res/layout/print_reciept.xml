@@ -145,16 +145,16 @@
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@color/textColorPrimaryDark"/>
 
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:background="@color/textColorPrimaryDark"/>
 
     </LinearLayout>
@@ -163,7 +163,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -181,7 +181,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -193,7 +193,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -211,7 +211,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -223,7 +223,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:visibility="gone"
         android:orientation="horizontal">
 
@@ -242,7 +242,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -255,7 +255,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -274,7 +274,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -287,7 +287,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -306,7 +306,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -319,7 +319,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="1dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -338,7 +338,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />
@@ -350,15 +350,15 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:background="@color/textColorPrimaryDark"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -376,8 +376,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/candal"
-            android:layout_marginLeft="5dp"
-            android:gravity="right"
+            android:layout_marginStart="5dp"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="12sp"
             />

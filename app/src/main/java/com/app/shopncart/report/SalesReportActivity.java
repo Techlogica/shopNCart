@@ -73,7 +73,7 @@ public class SalesReportActivity extends BaseActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_sales);
+        getSupportActionBar().setTitle(R.string.daily);
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -84,9 +84,9 @@ public class SalesReportActivity extends BaseActivity {
 
 
         //sum of all transaction
-        getSalesReport("all", shopID, ownerId);
+        getSalesReport("Today", shopID, ownerId);
         //to view all sales data
-        getReport("all", shopID, ownerId);
+        getReport("Today", shopID, ownerId);
 
 
     }

@@ -16,7 +16,7 @@
             android:padding="3dp"
             android:fontFamily="@font/candal"
             android:maxLines="2"
-            android:gravity="left"
+            android:gravity="start"
             android:textStyle="bold"
             android:textSize="10sp"
             />
@@ -28,7 +28,7 @@
             android:fontFamily="@font/candal"
             android:layout_height="wrap_content"
             android:padding="3dp"
-            android:gravity="right"
+            android:gravity="end"
             android:textStyle="bold"
             android:textSize="10sp"
             />

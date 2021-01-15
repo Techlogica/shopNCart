@@ -3,10 +3,11 @@
 
     <string name="text_french" translatable="false">French</string>
     <string name="text_english" translatable="false">English</string>
-    <string name="text_bangla" translatable="false">à¦¬à¦¾à¦‚à¦²à¦¾</string>
+    <string name="text_bangla" translatable="false">Bangala</string>
     <string name="text_spanish" translatable="false">Spanish</string>
     <string name="text_hindi" translatable="false">हिंदी</string>
     <string name="text_malayalam" translatable="false"> മലയാളം </string>
+    <string name="text_arabic" translatable="false"> ARABIC </string>
 
 
     <!--Replace your adMob application ID here -->

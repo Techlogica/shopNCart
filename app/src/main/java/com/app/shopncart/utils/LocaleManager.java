@@ -23,11 +23,12 @@ public class LocaleManager {
     static public final String SPANISH = "es";
     static public final String HINDI = "hi";
     static public final String MALAYALAM = "ml";
+    static public final String ARABIC = "ar";
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({ FRENCH,ENGLISH, BANGLA,SPANISH,HINDI,MALAYALAM})
+    @StringDef({ FRENCH,ENGLISH, BANGLA,SPANISH,HINDI,MALAYALAM,ARABIC})
     public @interface LocaleDef {
-        String[] SUPPORTED_LOCALES = {FRENCH, ENGLISH, BANGLA,SPANISH,HINDI,MALAYALAM};
+        String[] SUPPORTED_LOCALES = {FRENCH, ENGLISH, BANGLA,SPANISH,HINDI,MALAYALAM,ARABIC};
     }
 
     /**

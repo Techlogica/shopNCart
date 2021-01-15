@@ -116,6 +116,9 @@ public class SettingsActivity extends BaseActivity {
             case R.id.local_malayalam:
                 setNewLocale(this, LocaleManager.MALAYALAM);
                 return true;
+                case R.id.local_arabic:
+                setNewLocale(this, LocaleManager.ARABIC);
+                return true;
             default:
                 Log.d("Default", "default");
 
