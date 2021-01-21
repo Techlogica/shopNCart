@@ -23,6 +23,8 @@ public class Customer {
     private String value;
     @SerializedName("message")
     private String massage;
+    @SerializedName("C_taxid")
+    private String taxid;
 
     public String getCustomerId() {
         return customerId;
@@ -51,5 +53,9 @@ public class Customer {
 
     public String getMassage() {
         return massage;
+    }
+
+    public String getTaxid() {
+        return taxid;
     }
 }

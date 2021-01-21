@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,18 +57,18 @@ public class PosActivity extends BaseActivity {
     private RecyclerView recyclerView, categoryRecyclerView;
     PosProductAdapter productAdapter;
     TextView txtNoProducts;
-    TextView txtReset;
+    ImageView txtReset;
     static TextView txtCounterText;
     ProductCategoryAdapter categoryAdapter;
 
-    ImageView imgNoProduct,imgScanner,imgBack;
+    ImageView imgNoProduct, imgScanner, imgBack;
     public static EditText etxtSearch;
     DatabaseAccess databaseAccess;
     List<HashMap<String, String>> cartProductList;
     static TextView cartBadge;
     static int cartCount = 0;
-    String shopID ="";
-    String ownerId ="";
+    String shopID = "";
+    String ownerId = "";
 
 
     private ShimmerFrameLayout mShimmerViewContainer;
@@ -84,17 +85,17 @@ public class PosActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
         txtNoProducts = findViewById(R.id.txt_no_products);
-        imgScanner=findViewById(R.id.img_scanner);
+        imgScanner = findViewById(R.id.img_scanner);
         txtCounterText = findViewById(R.id.home_cart_counter);
         imgBack = findViewById(R.id.menu_back);
         categoryRecyclerView = findViewById(R.id.category_recyclerview);
-        txtReset=findViewById(R.id.txt_reset);
+        txtReset = findViewById(R.id.txt_reset);
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-         shopID = sp.getString(Constant.SP_SHOP_ID, "");
-         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        shopID = sp.getString(Constant.SP_SHOP_ID, "");
+        ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
 
         counterSetiings();
@@ -115,16 +116,15 @@ public class PosActivity extends BaseActivity {
         });
 
 
-
         imgScanner.setOnClickListener(v -> {
-            Intent intent=new Intent(PosActivity.this,ScannerActivity.class);
+            Intent intent = new Intent(PosActivity.this, ScannerActivity.class);
             startActivity(intent);
         });
 
         imgNoProduct.setVisibility(View.GONE);
         txtNoProducts.setVisibility(View.GONE);
 
-        getProductCategory(shopID,ownerId);
+        getProductCategory(shopID, ownerId);
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
@@ -132,18 +132,18 @@ public class PosActivity extends BaseActivity {
         recyclerView.setHasFixedSize(true);
 
         //Load data from server
-        getProductsData("",shopID,ownerId);
+        getProductsData("", shopID, ownerId);
 
         txtReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getProductsData("",shopID,ownerId);
+                getProductsData("", shopID, ownerId);
             }
         });
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
-        LinearLayoutManager linerLayoutManager = new LinearLayoutManager(PosActivity.this,LinearLayoutManager.HORIZONTAL,false);
+        LinearLayoutManager linerLayoutManager = new LinearLayoutManager(PosActivity.this, LinearLayoutManager.HORIZONTAL, false);
         categoryRecyclerView.setLayoutManager(linerLayoutManager); // set LayoutManager to RecyclerView
 
 
@@ -155,7 +155,7 @@ public class PosActivity extends BaseActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                Log.d("data",s.toString());
+                Log.d("data", s.toString());
             }
 
             @Override
@@ -164,23 +164,21 @@ public class PosActivity extends BaseActivity {
                 if (s.length() > 1) {
 
                     //search data from server
-                    getProductsData(s.toString(),shopID,ownerId);
+                    getProductsData(s.toString(), shopID, ownerId);
                 } else {
-                    getProductsData("",shopID,ownerId);
+                    getProductsData("", shopID, ownerId);
                 }
-
 
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                Log.d("data",s.toString());
+                Log.d("data", s.toString());
             }
 
 
         });
-
 
 
     }
@@ -191,14 +189,14 @@ public class PosActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    public void getProductCategory(String shopId,String ownerId) {
+    public void getProductCategory(String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId,ownerId);
+        call = apiInterface.getCategory(shopId, ownerId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -208,26 +206,21 @@ public class PosActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
 
 
-
                     List<Category> productCategory;
                     productCategory = response.body();
 
-                    if (productCategory.isEmpty())
-                    {
+                    if (productCategory.isEmpty()) {
                         Toasty.info(PosActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
                         imgNoProduct.setImageResource(R.drawable.no_data);
 
 
-                    }
+                    } else {
 
-                    else {
-
-                        categoryAdapter = new ProductCategoryAdapter(PosActivity.this,productCategory, recyclerView,imgNoProduct,txtNoProducts,mShimmerViewContainer);
+                        categoryAdapter = new ProductCategoryAdapter(PosActivity.this, productCategory, recyclerView, imgNoProduct, txtNoProducts, mShimmerViewContainer);
 
                         categoryRecyclerView.setAdapter(categoryAdapter);
 
                     }
-
 
 
                 }
@@ -244,11 +237,11 @@ public class PosActivity extends BaseActivity {
 
     }
 
-    public void getProductsData(String searchText,String shopId,String ownerId) {
+    public void getProductsData(String searchText, String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProducts(searchText,shopId,ownerId);
+        call = apiInterface.getProducts(searchText, shopId, ownerId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
@@ -301,10 +294,10 @@ public class PosActivity extends BaseActivity {
         //get data from local database
         List<HashMap<String, String>> cartProductList;
         cartProductList = databaseAccess.getCartProduct();
-        if(cartProductList!=null&&cartProductList.size()!=0){
-            cartCount=cartProductList.size();
-        }else{
-            cartCount=0;
+        if (cartProductList != null && cartProductList.size() != 0) {
+            cartCount = cartProductList.size();
+        } else {
+            cartCount = 0;
         }
 
         if (cartCount == 0) {
@@ -322,12 +315,9 @@ public class PosActivity extends BaseActivity {
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    //Load data from server
-                    finish();
-                    Intent intent = new Intent(this, PosActivity.class);
-                    startActivity(intent);
-                    counterSetiings();
 
+                    counterSetiings();
+                    setResult(RESULT_OK);
 
 
                 }
@@ -347,9 +337,8 @@ public class PosActivity extends BaseActivity {
         DatabaseAccess databaseAccess;
         SharedPreferences sp;
         String currency;
-        String country="";
+        String country = "";
         DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
-
 
 
         public PosProductAdapter(Context context, List<Product> productData) {
@@ -360,8 +349,6 @@ public class PosActivity extends BaseActivity {
             sp = context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
             currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
             country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
-
-
 
 
         }
@@ -379,9 +366,6 @@ public class PosActivity extends BaseActivity {
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
 
-
-
-
             String productId = productData.get(position).getProductId();
             String productName = productData.get(position).getProductName();
             String productWeight = productData.get(position).getProductWeight();
@@ -393,47 +377,54 @@ public class PosActivity extends BaseActivity {
 
             String cgst = productData.get(position).getCgst();
             String sgst = productData.get(position).getSgst();
-            String cess= productData.get(position).getCess();
-            String todaySales= productData.get(position).getTotal_order_price();
+            String cess = productData.get(position).getCess();
+            String todaySales = productData.get(position).getTotal_order_price();
+            String todayDiscount = productData.get(position).getTotal_today_discount();
+            String todayTax = productData.get(position).getTotal_today_tax();
+//            double amnt=Double.parseDouble(todaySales)-Double.parseDouble(todayDiscount)+Double.parseDouble(todayTax);
+//            String todaySalesTotal = String.valueOf(amnt);
 
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString(Constant.SP_TODAY_SALES, todaySales);
-            editor.apply();
+//            SharedPreferences.Editor editor = sp.edit();
+//            editor.putString(Constant.SP_TODAY_SALES, todaySalesTotal);
+//            editor.apply();
 
-            String imageUrl= Constant.PRODUCT_IMAGE_URL+productImage;
+            String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
 
 
             holder.txtProductName.setText(productName);
             holder.txtWeight.setText(productWeight + " " + weightUnit);
-            holder.txtPrice.setText(currency +" "+decimn.format(Double.parseDouble(productPrice)));
+            holder.txtPrice.setText(currency + " " + decimn.format(Double.parseDouble(productPrice)));
 
 
-            double itemPrice=Double.parseDouble(productPrice);
+            double itemPrice = Double.parseDouble(productPrice);
 
-            double getCgst=0;
-            double getSgst=0;
-            double getCess=0;
+            double getCgst = 0;
+            double getSgst = 0;
+            double getCess = 0;
 
-            if(cgst!=null&&!cgst.equals("")){
-                getCgst=Double.parseDouble(cgst);}
-            if(sgst!=null&&!sgst.equals("")){
-                getSgst=Double.parseDouble(sgst);}
-            if(cess!=null&&!cess.equals("")){
-                getCess=Double.parseDouble(cess);}
+            if (cgst != null && !cgst.equals("")) {
+                getCgst = Double.parseDouble(cgst);
+            }
+            if (sgst != null && !sgst.equals("")) {
+                getSgst = Double.parseDouble(sgst);
+            }
+            if (cess != null && !cess.equals("")) {
+                getCess = Double.parseDouble(cess);
+            }
 
 
-            double cgstAmount=(itemPrice*getCgst)/100;
-            double sgstAmount=(itemPrice*getSgst)/100;
-            double cessAmount=(itemPrice*getCess)/100;
+            double cgstAmount = (itemPrice * getCgst) / 100;
+            double sgstAmount = (itemPrice * getSgst) / 100;
+            double cessAmount = (itemPrice * getCess) / 100;
 
-            if(country.equals("UAE")){
+            if (country.equals("UAE")) {
                 holder.txtHintCGST.setText("VAT");
 //            holder.txtHintSGST.setText("VAT 2");
                 if (cgstAmount != 0) {
                     holder.txtCGST.setVisibility(View.VISIBLE);
                     holder.txtHintCGST.setVisibility(View.VISIBLE);
                     holder.txtHintCGST.setText("VAT");
-                    holder.txtCGST.setText(currency+" "+decimn.format(cgstAmount)+ " (" +cgst+"%)");
+                    holder.txtCGST.setText(currency + " " + decimn.format(cgstAmount) + " (" + cgst + "%)");
                 } else {
                     holder.txtCGST.setVisibility(View.INVISIBLE);
                     holder.txtHintCGST.setVisibility(View.INVISIBLE);
@@ -452,11 +443,11 @@ public class PosActivity extends BaseActivity {
                 holder.txtCESS.setVisibility(View.GONE);
                 holder.txtLabelCESS.setVisibility(View.GONE);
 
-            }else {
+            } else {
                 if (cgstAmount != 0) {
                     holder.txtCGST.setVisibility(View.VISIBLE);
                     holder.txtHintCGST.setVisibility(View.VISIBLE);
-                    holder.txtCGST.setText(currency+" "+decimn.format(cgstAmount)+ " (" +cgst+"%)");
+                    holder.txtCGST.setText(currency + " " + decimn.format(cgstAmount) + " (" + cgst + "%)");
                 } else {
                     holder.txtCGST.setVisibility(View.GONE);
                     holder.txtHintCGST.setVisibility(View.GONE);
@@ -465,7 +456,7 @@ public class PosActivity extends BaseActivity {
                 if (sgstAmount != 0) {
                     holder.txtSGST.setVisibility(View.VISIBLE);
                     holder.txtHintSGST.setVisibility(View.VISIBLE);
-                    holder.txtSGST.setText(currency +" "+decimn.format(sgstAmount)+" ("+sgst+"%)");
+                    holder.txtSGST.setText(currency + " " + decimn.format(sgstAmount) + " (" + sgst + "%)");
                 } else {
                     holder.txtSGST.setVisibility(View.GONE);
                     holder.txtHintSGST.setVisibility(View.GONE);
@@ -478,8 +469,9 @@ public class PosActivity extends BaseActivity {
                 } else {
                     holder.txtLabelCESS.setVisibility(View.VISIBLE);
                     holder.txtCESS.setVisibility(View.VISIBLE);
-                    holder.txtCESS.setText(currency +" "+ decimn.format(cessAmount) + " (" + cess + "%)");
-                }if(cgstAmount == 0&&sgstAmount == 0&&cessAmount == 0){
+                    holder.txtCESS.setText(currency + " " + decimn.format(cessAmount) + " (" + cess + "%)");
+                }
+                if (cgstAmount == 0 && sgstAmount == 0 && cessAmount == 0) {
                     holder.txtSGST.setVisibility(View.INVISIBLE);
                     holder.txtHintSGST.setVisibility(View.INVISIBLE);
 
@@ -492,24 +484,21 @@ public class PosActivity extends BaseActivity {
 
             }
             //Low stock marked as RED color
-            int getStock=Integer.parseInt(productStock);
-            if (getStock>5) {
+            int getStock = Integer.parseInt(productStock);
+            if (getStock > 5) {
                 holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
                 holder.txtStockStatus.setVisibility(View.GONE);
                 holder.txtStock.getResources().getDrawable(R.drawable.stock_tag_icon);
 
                 holder.txtStockStatus.setBackgroundColor(Color.parseColor("#43a047"));
                 holder.txtStockStatus.setText(context.getString(R.string.in_stock));
-            }
-            else if (getStock==0) {
+            } else if (getStock == 0) {
                 holder.txtStock.setVisibility(View.GONE);
                 holder.txtStockStatus.setVisibility(View.VISIBLE);
                 holder.txtStockStatus.setText(context.getString(R.string.not_available));
 
 
-            }
-            else
-            {
+            } else {
                 holder.txtStock.setVisibility(View.GONE);
                 holder.txtStockStatus.setVisibility(View.VISIBLE);
                 holder.txtStockStatus.setText(context.getString(R.string.stock) + " : " + productStock);
@@ -527,22 +516,19 @@ public class PosActivity extends BaseActivity {
 //                intent.putExtra("product_id",productId);
 //                context.startActivity(intent);
 
-                    if (getStock<=0)
-                    {
+                    if (getStock <= 0) {
 
                         Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
-                    }
-
-                    else {
+                    } else {
 
                         databaseAccess.open();
 
-                        int check = databaseAccess.addToCart(productId,productName, productWeight, weightUnit, productPrice, 1,productImage,productStock,cgstAmount,sgstAmount,cessAmount,0,cgst,sgst,cess,0,0);
+                        int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0);
 
                         if (check == 1) {
                             Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
                             player.start();
-                            cartCount=cartCount+1;
+                            cartCount = cartCount + 1;
                             if (cartCount == 0) {
                                 txtCounterText.setVisibility(View.INVISIBLE);
                             } else {
@@ -563,6 +549,7 @@ public class PosActivity extends BaseActivity {
             });
 
 
+
             if (productImage != null) {
                 if (productImage.length() < 3) {
 
@@ -580,8 +567,6 @@ public class PosActivity extends BaseActivity {
             }
 
 
-
-
         }
 
         @Override
@@ -594,11 +579,10 @@ public class PosActivity extends BaseActivity {
             return position;
         }
 
-        public  class MyViewHolder extends RecyclerView.ViewHolder {
+        public class MyViewHolder extends RecyclerView.ViewHolder {
 
             CardView cardProduct;
-            TextView txtProductName, txtWeight, txtPrice,txtStock,txtStockStatus,txtCGST,txtSGST,txtCESS,txtLabelCESS,txtHintCGST,txtHintSGST;
-
+            TextView txtProductName, txtWeight, txtPrice, txtStock, txtStockStatus, txtCGST, txtSGST, txtCESS, txtLabelCESS, txtHintCGST, txtHintSGST;
             ImageView productImage;
 
             public MyViewHolder(@NonNull View itemView) {
@@ -609,16 +593,16 @@ public class PosActivity extends BaseActivity {
                 txtStock = itemView.findViewById(R.id.txt_stock);
                 txtPrice = itemView.findViewById(R.id.txt_price);
                 productImage = itemView.findViewById(R.id.img_product);
-                cardProduct=itemView.findViewById(R.id.card_product);
-                txtStockStatus=itemView.findViewById(R.id.txt_stock_status);
-                txtCGST=itemView.findViewById(R.id.txt_cgst);
-                txtSGST=itemView.findViewById(R.id.txt_sgst);
-                txtCESS=itemView.findViewById(R.id.txt_cess);
+                cardProduct = itemView.findViewById(R.id.card_product);
+                txtStockStatus = itemView.findViewById(R.id.txt_stock_status);
+                txtCGST = itemView.findViewById(R.id.txt_cgst);
+                txtSGST = itemView.findViewById(R.id.txt_sgst);
+                txtCESS = itemView.findViewById(R.id.txt_cess);
 
-                txtHintCGST=itemView.findViewById(R.id.hint_cgst);
-                txtHintSGST=itemView.findViewById(R.id.hint_sgst);
+                txtHintCGST = itemView.findViewById(R.id.hint_cgst);
+                txtHintSGST = itemView.findViewById(R.id.hint_sgst);
 
-                txtLabelCESS=itemView.findViewById(R.id.txt_label_cess);
+                txtLabelCESS = itemView.findViewById(R.id.txt_label_cess);
 
 
             }

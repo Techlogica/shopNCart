@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +39,7 @@ public class SalesReportActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
     ImageView imgNoProduct;
+    LinearLayout layoutSummary;
     TextView txtNoProducts, txtTotalPrice, txtTotalTax, txtTotalDiscount, txtNetSales;
     private ShimmerFrameLayout mShimmerViewContainer;
     SharedPreferences sp;
@@ -58,6 +60,7 @@ public class SalesReportActivity extends BaseActivity {
         txtTotalTax = findViewById(R.id.txt_total_tax);
         txtTotalDiscount = findViewById(R.id.txt_total_discount);
         txtNetSales = findViewById(R.id.txt_net_sales);
+        layoutSummary = findViewById(R.id.layout_summary);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -188,21 +191,38 @@ public class SalesReportActivity extends BaseActivity {
                         String totalTax = salesReport.get(0).getTotalTax();
                         String totalDiscount = salesReport.get(0).getTotalDiscount();
 
-                        if (totalOrderPrice != null) {
-
-                            txtTotalPrice.setText(getString(R.string.total_price) + "=" + currency + f.format(Double.parseDouble(totalOrderPrice)));
-                            txtTotalTax.setText(getString(R.string.total_tax) + "=" + currency + f.format(Double.parseDouble(totalTax)));
-                            txtTotalDiscount.setText(getString(R.string.total_discount) + "=" + currency + f.format(Double.parseDouble(totalDiscount)));
-
-                            Double orderPrice = Double.parseDouble(totalOrderPrice);
-                            Double getTax = Double.parseDouble(totalTax);
-                            Double getDiscount = Double.parseDouble(totalDiscount);
-                            Double netSales = (orderPrice - getDiscount) + getTax;
-                            txtNetSales.setText(getString(R.string.net_sales) + "=" + currency + f.format(netSales));
+                        Double orderPrice = 0.0;
+                        Double getTax = 0.0;
+                        Double getDiscount = 0.0;
+                        if(totalOrderPrice!=null){
+                        orderPrice = Double.parseDouble(totalOrderPrice);}
+                        if (orderPrice!=0) {
+                            txtTotalPrice.setVisibility(View.VISIBLE);
+                            layoutSummary.setVisibility(View.VISIBLE);
+                            txtTotalPrice.setText(getString(R.string.total_price) + currency + " " + f.format(Double.parseDouble(totalOrderPrice)));
                         } else {
                             txtTotalPrice.setVisibility(View.INVISIBLE);
+                            layoutSummary.setVisibility(View.INVISIBLE);
+                        }
+                        if (totalTax != null) {
+                            txtTotalTax.setVisibility(View.VISIBLE);
+                            getTax = Double.parseDouble(totalTax);
+                            txtTotalTax.setText(getString(R.string.total_tax) + ":" + currency + " " + f.format(Double.parseDouble(totalTax)));
+                        } else {
                             txtTotalTax.setVisibility(View.INVISIBLE);
+                        }
+                        if (totalDiscount != null) {
+                            txtTotalDiscount.setVisibility(View.VISIBLE);
+                            getDiscount = Double.parseDouble(totalDiscount);
+                            txtTotalDiscount.setText(getString(R.string.total_discount) + ":" + currency + " " + f.format(Double.parseDouble(totalDiscount)));
+                        } else {
                             txtTotalDiscount.setVisibility(View.INVISIBLE);
+                        }
+                        Double netSales = (orderPrice - getDiscount) + getTax;
+                        if (netSales != null && netSales != 0.0) {
+                            txtNetSales.setVisibility(View.VISIBLE);
+                            txtNetSales.setText(getString(R.string.net_sales) + ":" + currency + " " + f.format(netSales));
+                        } else {
                             txtNetSales.setVisibility(View.INVISIBLE);
                         }
 
@@ -247,7 +267,6 @@ public class SalesReportActivity extends BaseActivity {
                         mShimmerViewContainer.stopShimmer();
                         mShimmerViewContainer.setVisibility(View.GONE);
 
-
                         recyclerView.setVisibility(View.GONE);
                         imgNoProduct.setVisibility(View.VISIBLE);
                         imgNoProduct.setImageResource(R.drawable.not_found);
@@ -255,9 +274,7 @@ public class SalesReportActivity extends BaseActivity {
                         txtTotalPrice.setVisibility(View.GONE);
                         Toasty.warning(SalesReportActivity.this, R.string.no_product_found, Toast.LENGTH_SHORT).show();
 
-
                     } else {
-
 
                         //Stopping Shimmer Effects
                         mShimmerViewContainer.stopShimmer();

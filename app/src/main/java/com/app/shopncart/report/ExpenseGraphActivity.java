@@ -184,7 +184,7 @@ public class ExpenseGraphActivity extends BaseActivity {
                         txtTotalExpense.setVisibility(View.VISIBLE);
 
                         float totalExpense=jan+feb+mar+apr+may+jun+jul+aug+sep+oct+nov+dec;
-                        txtTotalExpense.setText(getString(R.string.total_expense)+currency+f.format(totalExpense));
+                        txtTotalExpense.setText(getString(R.string.total_expense)+currency+" " +f.format(totalExpense));
 
                     }
 

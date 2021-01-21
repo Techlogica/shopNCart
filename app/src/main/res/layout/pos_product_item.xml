@@ -14,22 +14,20 @@
         android:layout_height="wrap_content"
         >
 
-            <TextView
-                android:id="@+id/txt_product_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sourcesanspro_semibold"
-                android:layout_gravity="center"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="1dp"
-                android:background="@drawable/prodect_cardshape_icon"
-                android:paddingStart="15dp"
-                android:paddingEnd="12dp"
-                android:textColor="#FFF"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-
+        <TextView
+            android:id="@+id/txt_product_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sourcesanspro_semibold"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/prodect_cardshape_icon"
+            android:paddingStart="15dp"
+            android:paddingEnd="12dp"
+            android:textColor="#FFF"
+            android:textSize="10sp"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:id="@+id/layout_two"
@@ -66,7 +64,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:orientation="vertical">
 
                     <TextView
@@ -77,7 +75,7 @@
                         android:layout_gravity="right"
                         android:background="@drawable/weight_tag_icon"
                         android:fontFamily="@font/sourcesanspro_semibold"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:padding="2dp"
                         android:paddingLeft="2dp"
                         android:paddingRight="2dp"
@@ -117,6 +115,39 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_alignParentBottom="true"
+                            android:layout_gravity="right"
+                            android:background="@drawable/add_cart"
+                            android:fontFamily="@font/sourcesanspro_semibold"
+                            android:gravity="end"
+                            android:layout_marginLeft="5dp"
+                            android:padding="2dp"
+                            android:paddingLeft="2dp"
+                            android:paddingRight="2dp"
+                            android:textSize="11sp" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="30dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
@@ -128,10 +159,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="10dp"
                     android:gravity="center"
                     android:background="@drawable/price_tag_icon"
                     android:fontFamily="@font/sourcesanspro_semibold"
-                    android:text="300000000"
                     android:textColor="#fff"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -237,28 +269,6 @@
                 android:textColor="#212121"
                 android:textSize="8sp" />
 
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_fourth"
-            android:layout_centerHorizontal="true"
-           >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="@drawable/add_cart_button"
-                android:elevation="50dp"
-                android:fontFamily="@font/sourcesanspro_semibold"
-                android:gravity="center"
-                android:text="Add Cart"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
 
         </LinearLayout>
 

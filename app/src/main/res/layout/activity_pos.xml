@@ -16,13 +16,19 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/menu_back"
+        <com.balysv.materialripple.MaterialRippleLayout
+            style="@style/RippleStyleWhite"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_baseline_arrow_back_24"/>
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/menu_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:src="@drawable/ic_baseline_arrow_back_24"/>
+        </com.balysv.materialripple.MaterialRippleLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,20 +51,25 @@
             android:orientation="horizontal"
             >
 
+            <com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyleWhite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/home_cart"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:background="@drawable/image_cart_button"
-                android:clickable="true"
-                android:src="@drawable/ic_cart"/>
+                <ImageView
+                    android:id="@+id/home_cart"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/image_cart_button"
+                    android:clickable="true"
+                    android:src="@drawable/ic_cart"/>
+            </com.balysv.materialripple.MaterialRippleLayout>
 
             <TextView
                 android:id="@+id/home_cart_counter"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="25dp"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="20dp"
                 android:fontFamily="@font/sourcesanspro_semibold"
                 android:background="@drawable/cart_counter"
                 android:textColor="@color/black"
@@ -67,9 +78,23 @@
                 android:visibility="gone"
                 android:src="@drawable/cart_counter"/>
 
+
         </RelativeLayout>
+        <com.balysv.materialripple.MaterialRippleLayout
+            style="@style/RippleStyleWhite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="3dp">
 
-
+            <ImageView
+                android:id="@+id/txt_reset"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/round_shape"
+                android:clickable="true"
+                android:src="@drawable/ic_reset"/>
+        </com.balysv.materialripple.MaterialRippleLayout>
 
 
     </LinearLayout>
@@ -79,27 +104,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_marginTop="3dp"
+        android:padding="2dp"
         android:orientation="horizontal"
         android:weightSum="2">
 
         <EditText
             android:id="@+id/etxt_search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_height="30dp"
+            android:layout_margin="3dp"
             android:layout_weight="1"
-            android:background="@drawable/round_border"
-            android:drawableLeft="@drawable/ic_search"
+            android:background="@drawable/round_shape"
+            android:drawableLeft="@drawable/ic_search_all_prodect"
             android:ems="10"
             android:fontFamily="@font/sailec_regular"
             android:hint="@string/search_here"
             android:inputType="textPersonName"
-            android:padding="10dp" />
+            android:padding="2dp" />
 
         <ImageView
             android:id="@+id/img_scanner"
             android:layout_width="100dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/barcode" />
@@ -111,9 +138,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
         android:orientation="vertical"
-        app:shimmer_duration="800">
+        app:shimmer_duration="800"
+        android:visibility="visible">
 
         <!-- Adding 7 rows of placeholders -->
         <LinearLayout
@@ -150,69 +177,71 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:orientation="horizontal">
 
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height=".5dp"
+                    android:background="@color/grey"
+                    android:layout_gravity="center"/>
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:layout_weight="1"
-                    android:background="@color/colorPrimary"
                     android:fontFamily="@font/sailec_regular"
-                    android:padding="5dp"
+                    android:padding="1dp"
                     android:text="@string/product_category"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <com.balysv.materialripple.MaterialRippleLayout
-                    style="@style/RippleStyleWhite"
+                    android:textColor="@color/grey"
+                    android:textSize="15sp" />
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_height=".5dp"
+                    android:background="@color/grey"
+                    android:layout_gravity="center"/>
 
-                    <TextView
-                        android:id="@+id/txt_reset"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:background="@color/colorPrimary"
-                        android:fontFamily="@font/sailec_regular"
-                        android:gravity="center"
-                        android:padding="5dp"
-                        android:text="@string/reset"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-                </com.balysv.materialripple.MaterialRippleLayout>
+
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/category_recyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="5dp">
+                android:layout_margin="2dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@color/colorPrimary"
-                android:fontFamily="@font/sailec_regular"
-                android:padding="5dp"
-                android:text="@string/all_product"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height=".5dp"
+                    android:background="@color/grey"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/sailec_regular"
+                    android:padding="1dp"
+                    android:text="@string/all_product"
+                    android:textColor="@color/grey"
+                    android:textSize="15sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:background="@color/grey"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
 
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="3dp"
                 android:background="?android:attr/selectableItemBackground">
 
             </androidx.recyclerview.widget.RecyclerView>

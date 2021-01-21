@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_category"
         android:layout_width="wrap_content"
@@ -16,9 +17,10 @@
         android:layout_marginBottom="2dp"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="5dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="10dp"
         app:cardPreventCornerOverlap="false">
+
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -26,7 +28,7 @@
             android:baselineAligned="false"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="3dp">
+            android:padding="2dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -39,15 +41,16 @@
                     android:id="@+id/txt_category_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/sailec_regular"
-                    android:paddingLeft="2dp"
+                    android:fontFamily="@font/sourcesanspro_semibold"
                     android:maxLines="1"
-                    android:paddingRight="2dp"
                     android:text="@string/category_name"
                     android:textColor="#fff"
-                    android:textSize="16sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
+
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>
+
+

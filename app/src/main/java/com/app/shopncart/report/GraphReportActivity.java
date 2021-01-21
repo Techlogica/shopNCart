@@ -186,13 +186,13 @@ public class GraphReportActivity extends BaseActivity {
                         txtTotalSales.setVisibility(View.VISIBLE);
 
 
-                        txtTotalSales.setText(getString(R.string.total_sales) + currency + f.format(totalOrderPrice));
+                        txtTotalSales.setText(getString(R.string.total_sales) + currency+" "  + f.format(totalOrderPrice));
 
-                        txtTotalTax.setText(getString(R.string.total_tax) + ":" + currency + f.format(totalTax));
-                        txtTotalDiscount.setText(getString(R.string.total_discount) + ":" + currency + f.format(totalDiscount));
+                        txtTotalTax.setText(getString(R.string.total_tax) + ":" + currency +" " + f.format(totalTax));
+                        txtTotalDiscount.setText(getString(R.string.total_discount) + ":" + currency+" " + f.format(totalDiscount));
                         float netSales = (totalOrderPrice- totalDiscount) + totalTax ;
 
-                        txtNetSales.setText(getString(R.string.total_sales) + currency + f.format(netSales));
+                        txtNetSales.setText(getString(R.string.total_sales) + currency+" "  + f.format(netSales));
 
                     }
 

@@ -4,12 +4,14 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.app.shopncart.login.LoginActivity;
 
@@ -17,6 +19,8 @@ public class SplashActivity extends AppCompatActivity {
     ImageView logo,appName,cart,shade;
     Animation side,fade,bottamAnim,sideAnim;
     View text;
+    TextView txtVersion;
+    String version ="";
 
     public static int splashTimeOut = 1000;
 
@@ -35,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
         cart = findViewById(R.id.cart);
         shade = findViewById(R.id.shade);
 
-
+        txtVersion=findViewById(R.id.txt_version);
 
         side = AnimationUtils.loadAnimation(this,R.anim.side);
         sideAnim = AnimationUtils.loadAnimation(this,R.anim.side_animation);
@@ -43,6 +47,17 @@ public class SplashActivity extends AppCompatActivity {
         bottamAnim = AnimationUtils.loadAnimation(this,R.anim.bottom);
 
 
+        try {
+            version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(!version.equals("")){
+            txtVersion.setText("v "+version);}else{
+            txtVersion.setVisibility(View.GONE);
+        }
 
         logo.setAnimation(fade);
         appName.setAnimation(fade);

@@ -80,7 +80,7 @@
                 android:autoLink="email"
                 android:fontFamily="@font/sailec_regular"
                 android:gravity="center"
-                android:text="shopncart@gmail.com" />
+                android:text="info@shopncart.co" />
 
 
         </LinearLayout>

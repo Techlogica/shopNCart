@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_5">
+
+    <LinearLayout
+        android:id="@+id/datelayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="center"
+        android:weightSum="3.8"
+        android:background="@drawable/bgcolor"
+        android:orientation="horizontal"
+        app:layout_anchorGravity="center_horizontal|center|center_vertical">
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/hint_from_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start date"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txt_date_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_edittext_light"
+                android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
+                android:gravity="center_vertical"
+                android:minWidth="100dp"
+                android:minHeight="30dp"
+                android:padding="4dp"
+                android:textColor="@color/textColorPrimaryDark"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/hint_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Time"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txt_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_edittext_light"
+                android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
+                android:gravity="center_vertical"
+                android:minWidth="100dp"
+                android:minHeight="30dp"
+                android:padding="4dp"
+                android:textColor="@color/textColorPrimaryDark"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".2"/>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/hint_to_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Date"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txt_date_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_edittext_light"
+                android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
+                android:gravity="center_vertical"
+                android:minWidth="100dp"
+                android:minHeight="30dp"
+                android:padding="4dp"
+                android:textColor="@color/textColorPrimaryDark"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:layout_marginLeft="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/hint_to_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Time"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/txt_to_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners_edittext_light"
+                android:drawableRight="@drawable/ic_baseline_arrow_drop_down_24"
+                android:gravity="center_vertical"
+                android:minWidth="100dp"
+                android:minHeight="30dp"
+                android:padding="4dp"
+                android:textColor="@color/textColorPrimaryDark"
+                android:textSize="8sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_summary"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/datelayout"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="right"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_total_sale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bgcolor"
+            android:gravity="right"
+            android:padding="3dp"
+            android:text="@string/total_sales"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            app:fontFamily="@font/sailec_regular" />
+
+        <TextView
+            android:id="@+id/txt_total_expense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bgcolor"
+            android:text="@string/total_expense"
+            android:gravity="right"
+            android:padding="3dp"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            app:fontFamily="@font/sailec_regular" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/paymethod_row"
+            android:layout_margin="2dp"/>
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_list"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/datelayout"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/loading_rl_id"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:clickable="true"
+            android:visibility="gone">
+
+            <include
+                layout="@layout/inclue_loading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/nodata_rl_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <include
+                layout="@layout/inclue_nodata"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+
+
+    </RelativeLayout>
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        style="@style/RippleStyleWhite"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content">
+
+
+        <Button
+            android:id="@+id/btn_print1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:visibility="gone"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/sailec_regular"
+            android:text="@string/print"
+            android:textColor="#fff"
+            android:textStyle="bold" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+
+
+</RelativeLayout>

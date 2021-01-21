@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.app.shopncart.R;
+import com.app.shopncart.report.SummaryReportActivity;
 import com.app.shopncart.settings.categories.CategoriesActivity;
 import com.app.shopncart.settings.payment_method.PaymentMethodActivity;
 import com.app.shopncart.settings.shop.ShopInformationActivity;
@@ -20,7 +21,8 @@ import com.app.shopncart.utils.LocaleManager;
 public class SettingsActivity extends BaseActivity {
 
 
-    CardView cardShopInfo,cardCategory,cardPaymentMethod;
+    CardView cardShopInfo, cardCategory, cardPaymentMethod, cardSummaryReport;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,9 +34,9 @@ public class SettingsActivity extends BaseActivity {
 
 
         cardShopInfo = findViewById(R.id.card_shop_info);
-        cardCategory=findViewById(R.id.card_category);
-        cardPaymentMethod=findViewById(R.id.card_payment_method);
-
+        cardCategory = findViewById(R.id.card_category);
+        cardPaymentMethod = findViewById(R.id.card_payment_method);
+        cardSummaryReport = findViewById(R.id.card_summary_report);
 
 
         cardShopInfo.setOnClickListener(new View.OnClickListener() {
@@ -50,7 +52,7 @@ public class SettingsActivity extends BaseActivity {
         cardCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(SettingsActivity.this, CategoriesActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, CategoriesActivity.class);
                 startActivity(intent);
             }
         });
@@ -65,11 +67,17 @@ public class SettingsActivity extends BaseActivity {
             }
         });
 
+        cardSummaryReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(SettingsActivity.this, SummaryReportActivity.class);
+                startActivity(intent);
+            }
+        });
 
 
     }
-
-
 
 
     @Override
@@ -116,7 +124,7 @@ public class SettingsActivity extends BaseActivity {
             case R.id.local_malayalam:
                 setNewLocale(this, LocaleManager.MALAYALAM);
                 return true;
-                case R.id.local_arabic:
+            case R.id.local_arabic:
                 setNewLocale(this, LocaleManager.ARABIC);
                 return true;
             default:

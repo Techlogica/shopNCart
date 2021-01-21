@@ -81,10 +81,10 @@
                     android:fontFamily="@font/sailec_regular"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
-                    android:textSize="14sp"
                     android:text="Walk In Customer"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:textColor="@color/grey_60" />
+                    android:textColor="@color/grey_60"
+                    android:textSize="14sp" />
 
                 <ImageButton
                     android:id="@+id/img_select_customer"
@@ -117,10 +117,10 @@
                     android:fontFamily="@font/sailec_regular"
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
-                    android:textSize="14sp"
                     android:text="PICK UP"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:textColor="@color/grey_60" />
+                    android:textColor="@color/grey_60"
+                    android:textSize="14sp" />
 
                 <ImageButton
                     android:id="@+id/img_order_type"
@@ -154,9 +154,9 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:text="CASH"
-                    android:textSize="14sp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                    android:textColor="@color/grey_60" />
+                    android:textColor="@color/grey_60"
+                    android:textSize="14sp" />
 
                 <ImageButton
                     android:id="@+id/img_order_payment_method"
@@ -173,6 +173,104 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/grey_10" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/add_paymethod_row"
+                android:visibility="gone"
+                android:layout_marginBottom="10dp"/>
+
+            <LinearLayout
+                android:id="@+id/layout_pay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:padding="15dp"
+                        android:text="@string/cash"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/dialog_txt_total_cash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:gravity="end"
+                        android:padding="15dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:padding="15dp"
+                        android:text="@string/credit"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/dialog_txt_total_credit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:gravity="end"
+                        android:padding="15dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:padding="15dp"
+                        android:text="@string/paypal"
+                        android:textSize="14sp" />
+
+                    <EditText
+                        android:id="@+id/dialog_txt_total_paypal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/sailec_regular"
+                        android:gravity="end"
+                        android:inputType="numberDecimal"
+                        android:padding="15dp"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -194,8 +292,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end"
                     android:fontFamily="@font/sailec_regular"
+                    android:gravity="end"
                     android:padding="15dp"
                     android:text="00"
                     android:textSize="14sp" />
@@ -226,8 +324,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:gravity="end"
                     android:fontFamily="@font/sailec_regular"
+                    android:gravity="end"
                     android:padding="15dp"
                     android:text="00"
                     android:textSize="14sp" />
@@ -255,9 +353,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/sailec_regular"
                     android:gravity="end"
                     android:padding="15dp"
-                    android:fontFamily="@font/sailec_regular"
                     android:text="00"
                     android:textSize="14sp" />
             </LinearLayout>

@@ -210,7 +210,7 @@
     <string name="discount">Total Discount:</string>
     <string name="discount_cant_be_greater_than_total_price">Discount can\'t be greater than total price</string>
     <string name="net_sales">Net Sales</string>
-    <string name="total_discount">Totat Discount</string>
+    <string name="total_discount">Total Discount</string>
     <string name="table_number">Table Number</string>
     <string name="order_success">Order Success</string>
     <string name="order_successfully_done">Order Successfully Done</string>
@@ -244,13 +244,16 @@
     <string name="unit_product_cost_price">Unit Product Cost Price</string>
     <string name="product_cost_price">Product Cost Price</string>
     <string name="price_with_tax">Price with Tax:</string>
-    <string name="total_cess_cart">Total Cess:</string>
-    <string name="total_sgst_cart">Total Sgst:</string>
-    <string name="total_cgst_cart">Total Cgst:</string>
+    <string name="total_cess_cart">Total Cess</string>
+    <string name="total_sgst_cart">Total Sgst</string>
+    <string name="total_cgst_cart">Total Cgst</string>
     <string name="total_product_discount">Total Discount:</string>
     <string name="line_discount">Enter Discount</string>
     <string name="grand_total">Grand Total:</string>
-
-
+    <string name="cash">Cash</string>
+    <string name="credit">Credit</string>
+    <string name="paypal">Paypal</string>
+    <string name="summary_report">Summary Report</string>
+    <string name="amount_mismatch">Amount mismatch</string>
 
 </resources>

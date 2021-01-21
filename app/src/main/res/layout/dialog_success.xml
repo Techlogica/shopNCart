@@ -145,6 +145,15 @@
                     android:fontFamily="@font/sailec_regular"
                     android:gravity="center"
                     android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/tax_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/candal"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/order_date"
@@ -172,6 +181,17 @@
                     android:gravity="center"
                     android:textSize="12sp"
                      />
+
+                <TextView
+                    android:id="@+id/customer_tax_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/candal"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:textSize="12sp"
+                    />
 
                 <View
                     android:layout_width="match_parent"

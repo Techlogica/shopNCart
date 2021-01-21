@@ -67,14 +67,16 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     //for double back press to exit
     private static final int TIME_DELAY = 2000;
     private static long backPressed;
-TextView txtNetSales;
+    TextView txtNetSales;
 
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     String userType;
-    TextView txtShopName,txtSubText,txtCounterText;
+    TextView txtShopName, txtSubText, txtCounterText;
     DatabaseAccess databaseAccess;
-    String currency="";
+    String currency = "";
+    String shopID = "";
+    String ownerId = "";
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
     private AdView adView;
@@ -109,16 +111,15 @@ TextView txtNetSales;
         String shopName = sp.getString(Constant.SP_SHOP_NAME, "");
         String staffName = sp.getString(Constant.SP_STAFF_NAME, "");
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
-        String shopID = sp.getString(Constant.SP_SHOP_ID, "");
-        String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        shopID = sp.getString(Constant.SP_SHOP_ID, "");
+        ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
         txtShopName.setText(shopName);
-        txtSubText.setText("Hi "+staffName);
+        txtSubText.setText("Hi " + staffName);
 
-        String netSales=sp.getString(Constant.SP_TODAY_SALES, "");
-        double todaySales=Double.parseDouble(netSales);
-        txtNetSales.setText(getString(R.string.daily) + "=" + currency + decimn.format(todaySales));
-
+        String netSales = sp.getString(Constant.SP_TODAY_SALES, "");
+        double todaySales = Double.parseDouble(netSales);
+        txtNetSales.setText(getString(R.string.daily) + ":" + currency + " " + decimn.format(todaySales));
 
 
         counterSetiings();
@@ -135,13 +136,11 @@ TextView txtNetSales;
         });
 
 
-
         if (Build.VERSION.SDK_INT >= 23) //Android MarshMellow Version or above
         {
             requestPermission();
 
         }
-
 
 
         //        Admob initialization
@@ -153,8 +152,6 @@ TextView txtNetSales;
         adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
-
-
 
 
         cardCustomers.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +190,7 @@ TextView txtNetSales;
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, PosActivity.class);
-                startActivityForResult(intent,1);
+                startActivityForResult(intent, 1);
 
 
             }
@@ -428,10 +425,8 @@ TextView txtNetSales;
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                  counterSetiings();
-                  String netSales=sp.getString(Constant.SP_TODAY_SALES, "");
-                  double todaySales=Double.parseDouble(netSales);
-                    txtNetSales.setText(getString(R.string.daily) + "=" + currency + decimn.format(todaySales));
+                    counterSetiings();
+                    getSalesReport("Today",shopID,ownerId);
                 }
             }
         } catch (Exception ex) {
@@ -446,13 +441,76 @@ TextView txtNetSales;
         //get data from local database
         List<HashMap<String, String>> cartProductList;
         cartProductList = databaseAccess.getCartProduct();
-        if(cartProductList!=null&&cartProductList.size()!=0){
+        if (cartProductList != null && cartProductList.size() != 0) {
             txtCounterText.setVisibility(View.VISIBLE);
             txtCounterText.setText(String.valueOf(cartProductList.size()));
-        }else{
+        } else {
             txtCounterText.setVisibility(View.GONE);
 
         }
+    }
+
+    public void getSalesReport(String type, String shopId, String ownerId) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        Call<List<SalesReport>> call;
+        call = apiInterface.getSalesReport(type, shopId, ownerId);
+
+        call.enqueue(new Callback<List<SalesReport>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<SalesReport>> call, @NonNull Response<List<SalesReport>> response) {
+
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<SalesReport> salesReport;
+                    salesReport = response.body();
+
+
+                    if (salesReport.isEmpty()) {
+
+
+                        Log.d("Data", "Empty");
+
+
+                    } else {
+
+
+                        String totalOrderPrice = salesReport.get(0).getTotalOrderPrice();
+                        String totalTax = salesReport.get(0).getTotalTax();
+                        String totalDiscount = salesReport.get(0).getTotalDiscount();
+
+                        Double orderPrice = 0.0;
+                        Double getTax = 0.0;
+                        Double getDiscount = 0.0;
+                        if (totalOrderPrice != null && !totalOrderPrice.equals("")) {
+                            orderPrice = Double.parseDouble(totalOrderPrice);
+                        }
+                        if (totalTax != null && !totalTax.equals("")) {
+                            getTax = Double.parseDouble(totalTax);
+                        }
+
+                        if (totalDiscount != null && !totalDiscount.equals("")) {
+                            getDiscount = Double.parseDouble(totalDiscount);
+                        }
+
+                        Double netSales = (orderPrice - getDiscount) + getTax;
+                        txtNetSales.setText(getString(R.string.daily) + ":" + currency + " " + decimn.format(netSales));
+                        editor.putString(Constant.SP_TODAY_SALES, String.valueOf(netSales));
+                        editor.apply();
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<SalesReport>> call, @NonNull Throwable t) {
+
+                Toast.makeText(HomeActivity.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+                Log.d("Error : ", t.toString());
+            }
+        });
+
+
     }
 
 

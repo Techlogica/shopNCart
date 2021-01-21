@@ -11,8 +11,9 @@ public class Constant {
 //    public static final String BASE_URL = "https://demo.onlinesoftsell.com/shopncart";
 //    public static final String BASE_URL = "http://techorbit.dyndns.org:7777/shopncart";
 //    public static final String BASE_URL = "https://techorbit.dyndns.org/shopncart";
-//    public static final String BASE_URL = "https://shopncart.co/app";
-    public static final String BASE_URL = "https://shopncart.co/SHOPNCART/app";
+
+//    public static final String BASE_URL = "https://shopncart.co/app";  // live url
+    public static final String BASE_URL = "https://shopncart.co/shopncart/app";  // url given by soniya
 
     //For retrofit base url must end with /
     public static final String PRODUCT_IMAGE_URL = BASE_URL+"/product_images/";
@@ -57,6 +58,11 @@ public class Constant {
 
     public static final String SP_SHOP_ID="shop_id";
     public static final String SP_OWNER_ID="owner_id";
+
+    public static final String SP_F_DATE="f_date";
+    public static final String SP_T_DATE="t_date";
+    public static final String TIME1="time1";
+    public static final String TIME2="time2";
 
     public static final String KEY_CGST="cgst";
     public static final String KEY_SGST="sgst";

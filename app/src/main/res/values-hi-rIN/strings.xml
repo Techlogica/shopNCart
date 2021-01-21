@@ -230,8 +230,11 @@
     <string name="line_discount">दर्ज छूट</string>
     <string name="grand_total">अंतिम रकम:</string>
     <string name="text_arabic" translatable="false"> ARABIC </string>
-
-
+    <string name="cash">Cash</string>
+    <string name="credit">Credit</string>
+    <string name="paypal">Paypal</string>
+    <string name="summary_report">Summary Report</string>
+    <string name="amount_mismatch">Amount mismatch</string>
 
 
 </resources>

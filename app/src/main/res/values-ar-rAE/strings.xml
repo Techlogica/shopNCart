@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cash">Cash</string>
+    <string name="credit">Credit</string>
+    <string name="paypal">Paypal</string>
+    <string name="summary_report">Summary Report</string>
+    <string name="amount_mismatch">Amount mismatch</string>
+</resources>

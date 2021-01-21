@@ -37,6 +37,7 @@ public class LoginActivity extends BaseActivity {
     TextView txtLogin, login;
     ImageView logo, title;
     View line;
+    double amnt = 0;
     Animation topAnim, bottomAnim, sideAnim, fadeAnim;
     SharedPreferences sp;
     ProgressDialog loading;
@@ -126,7 +127,7 @@ public class LoginActivity extends BaseActivity {
         loading.setCancelable(false);
         loading.setMessage(getString(R.string.please_wait));
         loading.show();
-        Log.e("","test");
+        Log.e("", "test");
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<Login> call = apiInterface.login(email, password);
@@ -155,6 +156,19 @@ public class LoginActivity extends BaseActivity {
                     String currencySymbol = response.body().getCurrencySymbol();
                     String shopStatus = response.body().getShopStatus();
                     String todaySales = response.body().getTotal_order_price();
+                    String todayDiscount = response.body().getTotal_today_discount();
+                    String todayTax = response.body().getTotal_today_tax();
+                    double todaySalesData = 0, todayTax1 = 0, todayDic = 0;
+
+                    if (todaySales != null)
+                        todaySalesData = Double.parseDouble(todaySales);
+                    if (todayTax != null)
+                        todayTax1 = Double.parseDouble(todayTax);
+                    if (todayDiscount != null)
+                        todayDic = Double.parseDouble(todayDiscount);
+
+                    amnt=(todaySalesData-todayDic)+todayTax1;
+
 
                     String shopId = response.body().getShopId();
                     String ownerId = response.body().getOwnerID();
@@ -180,7 +194,6 @@ public class LoginActivity extends BaseActivity {
                             editor.putString(Constant.SP_STAFF_NAME, staffName);
                             editor.putString(Constant.SP_USER_TYPE, userType);
 
-
                             editor.putString(Constant.SP_SHOP_NAME, shopName);
                             editor.putString(Constant.SP_SHOP_COUNTRY, shopCountry);
                             editor.putString(Constant.SP_SHOP_ADDRESS, shopAddress);
@@ -189,7 +202,7 @@ public class LoginActivity extends BaseActivity {
                             editor.putString(Constant.SP_SHOP_STATUS, shopStatus);
                             editor.putString(Constant.SP_CURRENCY_SYMBOL, currencySymbol);
                             editor.putString(Constant.SP_SHOP_ID, shopId);
-                            editor.putString(Constant.SP_TODAY_SALES, todaySales);
+                            editor.putString(Constant.SP_TODAY_SALES, String.valueOf(amnt));
                             editor.putString(Constant.SP_OWNER_ID, ownerId);
                             editor.putString(Constant.SP_SHOP_TAX_ID, taxId);
 
@@ -217,8 +230,8 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(@NonNull Call<Login> call, @NonNull Throwable t) {
 
                 loading.dismiss();
-                Log.e("error","------"+t.getMessage());
-                Toasty.error(LoginActivity.this,t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("error", "------" + t.getMessage());
+                Toasty.error(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -10,6 +10,7 @@ import com.app.shopncart.model.Login;
 import com.app.shopncart.model.MonthData;
 import com.app.shopncart.model.OrderDetails;
 import com.app.shopncart.model.OrderList;
+import com.app.shopncart.model.PayMethod;
 import com.app.shopncart.model.Product;
 import com.app.shopncart.model.SalesReport;
 import com.app.shopncart.model.ShopInformation;
@@ -57,6 +58,18 @@ public interface ApiInterface {
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId
+
+    );
+
+    //get customers data
+    @GET("sales_summary.php")
+    Call<List<PayMethod>> getPaymethod(
+            @Query(Constant.SP_SHOP_ID) String shopId,
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_F_DATE) String fromDate,
+            @Query(Constant.SP_T_DATE) String toDate,
+            @Query(Constant.TIME1) String fromTime,
+            @Query(Constant.TIME2) String toTime
 
     );
 

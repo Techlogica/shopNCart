@@ -35,6 +35,7 @@ import com.app.shopncart.adapter.CartAdapter;
 import com.app.shopncart.database.DatabaseAccess;
 import com.app.shopncart.model.Customer;
 import com.app.shopncart.model.OrderDetails;
+import com.app.shopncart.model.PayMethod;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
 import com.app.shopncart.utils.BaseActivity;
@@ -64,7 +65,7 @@ public class ProductCart extends BaseActivity {
     CartAdapter productCartAdapter;
     ImageView imgNoProduct;
     Button btnSubmitOrder;
-    TextView txtNoProduct, txtTotalPrice, txtTotalCgst,txtTotalSgst, txtTotalCess, txtFinalTotal,txtTotalDiscount;
+    TextView txtNoProduct, txtTotalPrice, txtTotalCgst, txtTotalSgst, txtTotalCess, txtFinalTotal, txtTotalDiscount;
     LinearLayout linearLayout;
     DatabaseAccess databaseAccess;
     ProgressDialog loading;
@@ -79,13 +80,18 @@ public class ProductCart extends BaseActivity {
     String dateTime = "";
     double orderPrice = 0;
     String customerName = "";
+    String custId = "";
+    String custTaxId = "";
     double calculatedTotalCostPrint = 0;
     List<OrderDetails> orderDetails = new ArrayList<>();
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
     private PrintMe printMe;
+    String cash = "";
+    String credit = "";
+    String paypal = "";
 
-
-    List<String> customerNames, orderTypeNames, paymentMethodNames;
+    List<String> customerNames, customerIds, customerTaxtId, orderTypeNames, paymentMethodNames;
+    List<String> paymentMethodNamesMulti, paymentMethodNamesMultiValues;
     List<Customer> customerData;
     ArrayAdapter<String> customerAdapter, orderTypeAdapter, paymentMethodAdapter;
     SharedPreferences sp;
@@ -185,7 +191,7 @@ public class ProductCart extends BaseActivity {
 
 
             imgNoProduct.setVisibility(View.GONE);
-            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct,txtTotalCgst,txtTotalSgst, txtTotalCess, txtFinalTotal,txtTotalDiscount);
+            productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct, txtTotalCgst, txtTotalSgst, txtTotalCess, txtFinalTotal, txtTotalDiscount);
 
             recyclerView.setAdapter(productCartAdapter);
 
@@ -197,7 +203,7 @@ public class ProductCart extends BaseActivity {
 
     }
 
-    public void proceedOrder(String type, String paymentMethod, String customerName, double tax, String discount, double price) {
+    public void proceedOrder(String type, String paymentMethod, String customerName, String custId, double tax, String discount, double price, String cash, String credit, String paypal) {
 
         databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
         databaseAccess.open();
@@ -214,6 +220,7 @@ public class ProductCart extends BaseActivity {
             //get data from local database
             final List<HashMap<String, String>> lines;
             lines = databaseAccess.getCartProduct();
+            Double total = 0.0;
 
             if (lines.isEmpty()) {
                 Toasty.error(ProductCart.this, R.string.no_product_found, Toast.LENGTH_SHORT).show();
@@ -232,18 +239,31 @@ public class ProductCart extends BaseActivity {
                 Log.d("Time", timeStamp);
                 //Invoice number=INV+StaffID+CurrentYear+timestamp
                 invoiceNumber = "INV" + staffId + currentYear + timeStamp;
-
+                JSONArray payMethods = new JSONArray();
                 final JSONObject obj = new JSONObject();
                 try {
-
-
                     obj.put("invoice_id", invoiceNumber);
                     obj.put("order_date", currentDate);
                     obj.put("order_time", currentTime);
                     obj.put("order_type", type);
                     obj.put("order_payment_method", paymentMethod);
-                    obj.put("customer_name", customerName);
+                    if (paymentMethod.toLowerCase().equals("multi")) {
+                        if (paymentMethodNamesMulti.size() == paymentMethodNamesMultiValues.size()) {
+                            for (int i = 0; i < paymentMethodNamesMulti.size(); i++) {
+                                JSONObject payMethodObject = new JSONObject();
+                                payMethodObject.put("name", paymentMethodNamesMulti.get(i));
+                                payMethodObject.put("value", paymentMethodNamesMultiValues.get(i));
+                                payMethods.put(payMethodObject);
+                            }
+                            obj.put("pay_methods", payMethods);
+                        }
+                    }
 
+                    obj.put("cash", cash);
+                    obj.put("credit", credit);
+                    obj.put("paypal", paypal);
+                    obj.put("customer_name", customerName);
+                    obj.put("customer_id", custId);
                     obj.put("order_price", String.valueOf(orderPrice));
                     obj.put("tax", String.valueOf(tax));
                     obj.put("discount", discount);
@@ -291,13 +311,35 @@ public class ProductCart extends BaseActivity {
                     e.printStackTrace();
                 }
 
+                calculatedTotalCostPrint = (Double.valueOf(orderPrice) - Double.valueOf(discount1)) + Double.valueOf(getTax);
+
+                for (int i = 0; i < paymentMethodNamesMultiValues.size(); i++) {
+                    if (!paymentMethodNamesMultiValues.get(i).equals("")) {
+                        Double value = Double.parseDouble(paymentMethodNamesMultiValues.get(i));
+                        total = total + value;
+                    }
+                }
 
                 Utils utils = new Utils();
 
-                if (utils.isNetworkAvailable(ProductCart.this)) {
-                    orderSubmit(obj);
+                if (paymentMethod.toLowerCase().equals("multi")) {
+                    if (total == calculatedTotalCostPrint) {
+
+                        if (utils.isNetworkAvailable(ProductCart.this)) {
+                            orderSubmit(obj);
+                        } else {
+                            Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toasty.error(ProductCart.this, R.string.amount_mismatch, Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+
+                    if (utils.isNetworkAvailable(ProductCart.this)) {
+                        orderSubmit(obj);
+                    } else {
+                        Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                    }
                 }
 
 
@@ -329,6 +371,7 @@ public class ProductCart extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
 
+
                 if (response.isSuccessful()) {
 
                     progressDialog.dismiss();
@@ -337,6 +380,7 @@ public class ProductCart extends BaseActivity {
                     databaseAccess.open();
                     databaseAccess.emptyCart();
                     dialogSuccess();
+
 
                 } else {
 
@@ -378,9 +422,12 @@ public class ProductCart extends BaseActivity {
         TextView txtShopEmail = dialogView.findViewById(R.id.email);
         TextView txtShopContact = dialogView.findViewById(R.id.contact);
         TextView txtInvoiceId = dialogView.findViewById(R.id.invoice_id);
+        TextView txtTaxId = dialogView.findViewById(R.id.tax_id);
         TextView txtOrderDate = dialogView.findViewById(R.id.order_date);
         TextView txtServedBy = dialogView.findViewById(R.id.served_by);
         TextView txtCustomerName = dialogView.findViewById(R.id.customer_name);
+        TextView txtCustomerTaxId = dialogView.findViewById(R.id.customer_tax_id);
+
         TextView txtSubTotal = dialogView.findViewById(R.id.sub_total);
         TextView txtSTotalTax = dialogView.findViewById(R.id.total_tax);
         TextView txtSSgst = dialogView.findViewById(R.id.txt_sgst);
@@ -413,19 +460,32 @@ public class ProductCart extends BaseActivity {
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
         email = sp.getString(Constant.SP_EMAIL, "");
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
-        calculatedTotalCostPrint = (Double.valueOf(orderPrice)- Double.valueOf(discount1)) + Double.valueOf(getTax) ;
+        calculatedTotalCostPrint = (Double.valueOf(orderPrice) - Double.valueOf(discount1)) + Double.valueOf(getTax);
 
         txtShopName.setText(shopName);
         txtShopAddress.setText(address);
         txtShopEmail.setText("Email: " + email);
         txtShopContact.setText("Contact: " + contact);
         txtInvoiceId.setText("Invoice iD: " + invoiceNumber);
+        if (taxId != null && !taxId.equals("")) {
+            txtTaxId.setVisibility(View.VISIBLE);
+            txtTaxId.setText("Tax iD: " + taxId);
+        } else {
+            txtTaxId.setVisibility(View.GONE);
+        }
         txtOrderDate.setText("Order Date: " + dateTime);
         txtServedBy.setText("Served By: " + servedBy);
         txtCustomerName.setText("Customer Name: " + customerName);
+        if (custTaxId != null && !taxId.equals("")) {
+            txtCustomerTaxId.setVisibility(View.VISIBLE);
+            txtCustomerTaxId.setText("Customer Tax iD: " + custTaxId);
+        } else {
+            txtCustomerTaxId.setVisibility(View.GONE);
+        }
+
         txtSubTotal.setText(String.valueOf(decimn.format(orderPrice)));
 
-        if(country.equals("UAE")){
+        if (country.equals("UAE")) {
             layoutCess.setVisibility(View.GONE);
             layoutSgst.setVisibility(View.GONE);
 
@@ -434,7 +494,8 @@ public class ProductCart extends BaseActivity {
                 layoutCgst.setVisibility(View.VISIBLE);
                 txtSCgst.setText(decimn.format(Double.valueOf(getCgst)));
             } else {
-                layoutCgst.setVisibility(View.GONE); }
+                layoutCgst.setVisibility(View.GONE);
+            }
 
             /*if (getSgst != 0) {
                 txtHintSgst.setText("VAT 2");
@@ -445,7 +506,7 @@ public class ProductCart extends BaseActivity {
             }*/
 
 
-        }else {
+        } else {
 
             if (getSgst != 0) {
                 layoutCgst.setVisibility(View.VISIBLE);
@@ -470,9 +531,10 @@ public class ProductCart extends BaseActivity {
 
         }
 
-        if(Double.valueOf(discount1)!=0){
+        if (Double.valueOf(discount1) != 0) {
             layoutDisc.setVisibility(View.VISIBLE);
-            discount.setText(decimn.format(Double.valueOf(discount1)));}else{
+            discount.setText(decimn.format(Double.valueOf(discount1)));
+        } else {
             layoutDisc.setVisibility(View.GONE);
         }
 
@@ -518,8 +580,10 @@ public class ProductCart extends BaseActivity {
         TextView txtShopContact = dialogView.findViewById(R.id.contact);
         TextView txtInvoiceId = dialogView.findViewById(R.id.invoice_id);
         TextView txtOrderDate = dialogView.findViewById(R.id.order_date);
+        TextView txtTaxId = dialogView.findViewById(R.id.tax_id);
         TextView txtServedBy = dialogView.findViewById(R.id.served_by);
         TextView txtCustomerName = dialogView.findViewById(R.id.customer_name);
+        TextView txtCustomerTaxId = dialogView.findViewById(R.id.customer_tax_id);
         TextView txtSubTotal = dialogView.findViewById(R.id.sub_total);
         TextView txtSTotalTax = dialogView.findViewById(R.id.total_tax);
         TextView txtSSgst = dialogView.findViewById(R.id.txt_sgst);
@@ -547,14 +611,26 @@ public class ProductCart extends BaseActivity {
         txtShopEmail.setText("Email: " + email);
         txtShopContact.setText("Contact: " + contact);
         txtInvoiceId.setText("Invoice iD: " + invoiceNumber);
+        if (taxId != null && !taxId.equals("")) {
+            txtTaxId.setVisibility(View.VISIBLE);
+            txtTaxId.setText("Tax iD: " + taxId);
+        } else {
+            txtTaxId.setVisibility(View.GONE);
+        }
         txtOrderDate.setText("Order Date: " + dateTime);
         txtServedBy.setText("Served By: " + servedBy);
         txtCustomerName.setText("Customer Name: " + customerName);
+        if (custTaxId != null && !taxId.equals("")) {
+            txtCustomerTaxId.setVisibility(View.VISIBLE);
+            txtCustomerTaxId.setText("Customer Tax iD: " + custTaxId);
+        } else {
+            txtCustomerTaxId.setVisibility(View.GONE);
+        }
 
         txtSubTotal.setText(String.valueOf(decimn.format(orderPrice)));
 //        txtSTotalTax.setText(String.valueOf(decimn.format(getTax)));
 
-        if(country.equals("UAE")){
+        if (country.equals("UAE")) {
             layoutCess.setVisibility(View.GONE);
             layoutSgst.setVisibility(View.GONE);
 
@@ -575,7 +651,7 @@ public class ProductCart extends BaseActivity {
                 layoutSgst.setVisibility(View.GONE);
             }*/
 
-        }else {
+        } else {
             if (getSgst != 0) {
                 layoutCgst.setVisibility(View.VISIBLE);
                 txtSSgst.setText(decimn.format(Double.valueOf(getSgst)));
@@ -599,9 +675,10 @@ public class ProductCart extends BaseActivity {
 
         }
 
-        if(Double.valueOf(discount1)!=0){
+        if (Double.valueOf(discount1) != 0) {
             layoutDisc.setVisibility(View.VISIBLE);
-        discount.setText(decimn.format(Double.valueOf(discount1)));}else{
+            discount.setText(decimn.format(Double.valueOf(discount1)));
+        } else {
             layoutDisc.setVisibility(View.GONE);
         }
 
@@ -708,10 +785,21 @@ public class ProductCart extends BaseActivity {
         final TextView dialogTxtTotalCost = dialogView.findViewById(R.id.dialog_txt_total_cost);
         final TextView dialogtxtDiscount = dialogView.findViewById(R.id.dialog_txt_total_discount);
 
+        final LinearLayout dialogLayoutPay = dialogView.findViewById(R.id.layout_pay);
+        final RecyclerView recyclerView = dialogView.findViewById(R.id.recycler_view);
+
+        final EditText dialogtxtCash = dialogView.findViewById(R.id.dialog_txt_total_cash);
+        final EditText dialogtxtCredit = dialogView.findViewById(R.id.dialog_txt_total_credit);
+        final EditText dialogtxtPaypal = dialogView.findViewById(R.id.dialog_txt_total_paypal);
+
 
         final ImageButton dialogImgCustomer = dialogView.findViewById(R.id.img_select_customer);
         final ImageButton dialogImgOrderPaymentMethod = dialogView.findViewById(R.id.img_order_payment_method);
         final ImageButton dialogImgOrderType = dialogView.findViewById(R.id.img_order_type);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
 
 
         dialogTxtLevelTax.setText(getString(R.string.total_tax));
@@ -722,7 +810,7 @@ public class ProductCart extends BaseActivity {
 
         dialogTxtTotalTax.setText(shopCurrency + f.format(getTax));
 
-        double calculatedTotalCost = totalCost- totalDiscount + getTax ;
+        double calculatedTotalCost = totalCost - totalDiscount + getTax;
         dialogTxtTotalCost.setText(shopCurrency + f.format(calculatedTotalCost));
 
 
@@ -743,6 +831,8 @@ public class ProductCart extends BaseActivity {
 
         //payment methods
         paymentMethodNames = new ArrayList<>();
+        paymentMethodNamesMulti = new ArrayList<>();
+        paymentMethodNamesMultiValues = new ArrayList<>();
         databaseAccess.open();
 
         //get data from local database
@@ -753,6 +843,13 @@ public class ProductCart extends BaseActivity {
 
             // Get the ID of selected Country
             paymentMethodNames.add(paymentMethod.get(i).get("payment_method_name"));
+
+            if (!(paymentMethod.get(i).get("payment_method_name")).toLowerCase().equals("multi")) {
+                paymentMethodNamesMulti.add(paymentMethod.get(i).get("payment_method_name"));
+                paymentMethodNamesMultiValues.add("0");
+
+            }
+
 
         }
 
@@ -807,6 +904,27 @@ public class ProductCart extends BaseActivity {
                 alertDialog.dismiss();
                 String selectedItem = paymentMethodAdapter.getItem(position);
                 dialogOrderPaymentMethod.setText(selectedItem);
+                if (selectedItem.toLowerCase().equals("multi")) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    dialogLayoutPay.setVisibility(View.GONE);
+
+
+                    PaymentMethodListAdapter mAdapter = new PaymentMethodListAdapter(paymentMethodNamesMulti);
+                    recyclerView.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+
+
+                } else {
+                    recyclerView.setAdapter(null);
+                    recyclerView.setVisibility(View.GONE);
+                    dialogLayoutPay.setVisibility(View.GONE);
+                    dialogtxtCash.getText().clear();
+                    dialogtxtCredit.getText().clear();
+                    dialogtxtPaypal.getText().clear();
+                    cash = "";
+                    credit = "";
+                    paypal = "";
+                }
 
 
             });
@@ -919,6 +1037,9 @@ public class ProductCart extends BaseActivity {
 
                 alertDialog.dismiss();
                 String selectedItem = customerAdapter.getItem(position);
+                custId = customerIds.get(position);
+                custTaxId = customerTaxtId.get(position);
+                Log.e("cust_id", "------" + custId);
 
 
                 dialogCustomer.setText(selectedItem);
@@ -937,12 +1058,15 @@ public class ProductCart extends BaseActivity {
             String orderType1 = dialogOrderType.getText().toString().trim();
             String orderPaymentMethod = dialogOrderPaymentMethod.getText().toString().trim();
             customerName = dialogCustomer.getText().toString().trim();
-            discount1 =String.valueOf(totalDiscount);
+            cash = dialogtxtCash.getText().toString().trim();
+            credit = dialogtxtCredit.getText().toString().trim();
+            paypal = dialogtxtPaypal.getText().toString().trim();
+            discount1 = String.valueOf(totalDiscount);
             if (discount1.isEmpty()) {
                 discount1 = "0.00";
             }
 
-            proceedOrder(orderType1, orderPaymentMethod, customerName, getTax, discount1, calculatedTotalCost);
+            proceedOrder(orderType1, orderPaymentMethod, customerName, custId, getTax, discount1, calculatedTotalCost, cash, credit, paypal);
 
 
             alertDialog.dismiss();
@@ -973,10 +1097,14 @@ public class ProductCart extends BaseActivity {
                     customerData = response.body();
 
                     customerNames = new ArrayList<>();
+                    customerIds = new ArrayList<>();
+                    customerTaxtId = new ArrayList<>();
 
                     for (int i = 0; i < customerData.size(); i++) {
 
                         customerNames.add(customerData.get(i).getCustomerName());
+                        customerIds.add(customerData.get(i).getCustomerId());
+                        customerTaxtId.add(customerData.get(i).getTaxid());
 
                     }
                 }
@@ -1062,5 +1190,82 @@ public class ProductCart extends BaseActivity {
         setResult(RESULT_OK);
         super.onBackPressed();
     }
+
+    class PaymentMethodListAdapter extends RecyclerView.Adapter<PaymentMethodListAdapter.MyViewHolder> {
+
+        List<String> paymentViewArrayList;
+        String amount = "0";
+
+        PaymentMethodListAdapter(List<String> paymentViewArrayList) {
+            this.paymentViewArrayList = paymentViewArrayList;
+
+        }
+
+        @Override
+        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View itemView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.add_paymethod_row, parent, false);
+
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+
+            holder.txtItem.setText(paymentViewArrayList.get(position));
+
+
+            holder.txtPrice.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    amount = holder.txtPrice.getText().toString().trim();
+                    paymentMethodNamesMultiValues.set(position, amount);
+
+                }
+
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+
+                }
+            });
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return paymentViewArrayList.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
+        }
+
+        class MyViewHolder extends RecyclerView.ViewHolder {
+
+            TextView txtItem;
+            EditText txtPrice;
+
+
+            MyViewHolder(View view) {
+                super(view);
+                txtItem = itemView.findViewById(R.id.method_label);
+                txtPrice = itemView.findViewById(R.id.dialog_txt_total_amount);
+
+            }
+        }
+
+
+    }
+
 }
 

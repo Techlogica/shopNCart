@@ -68,6 +68,12 @@ public class Product {
     @SerializedName("total_order_price")
     private String total_order_price;
 
+    @SerializedName("total_discount")
+    private String total_today_discount;
+
+    @SerializedName("total_tax")
+    private String total_today_tax;
+
     @SerializedName("value")
     private String value;
 
@@ -155,5 +161,13 @@ public class Product {
 
     public String getTotal_order_price() {
         return total_order_price;
+    }
+
+    public String getTotal_today_discount() {
+        return total_today_discount;
+    }
+
+    public String getTotal_today_tax() {
+        return total_today_tax;
     }
 }
