@@ -50,6 +50,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -77,6 +78,8 @@ public class SummaryReportActivity extends BaseActivity {
     TextView txtDateFrom, txtDateTo;
     String shopName = "";
     String address = "";
+    String customerName = "";
+    String servedBy = "";
     String email = "";
     String contact = "";
     SharedPreferences sp;
@@ -136,6 +139,7 @@ public class SummaryReportActivity extends BaseActivity {
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
         email = sp.getString(Constant.SP_EMAIL, "");
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
+        servedBy = sp.getString(Constant.SP_STAFF_NAME, "");
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -497,28 +501,33 @@ public class SummaryReportActivity extends BaseActivity {
     //print operation text setup
     public void printLayout() {
 
-        View dialogView = ((View) findViewById(R.id.print_me_layout_summary));
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.print_summary,null);
 
-        TextView txtShopName = dialogView.findViewById(R.id.shop_name);
-        TextView txtShopAddress = dialogView.findViewById(R.id.address);
-        TextView txtShopEmail = dialogView.findViewById(R.id.email);
-        TextView txtShopContact = dialogView.findViewById(R.id.contact);
-        TextView txtSubTotal = dialogView.findViewById(R.id.sub_total);
-        TextView txtSTotalTax = dialogView.findViewById(R.id.total_tax);
+        TextView txtShopName = dialogView.findViewById(R.id.txt_shop_name);
+        TextView txtShopAddress = dialogView.findViewById(R.id.txt_address);
+        TextView txtShopEmail = dialogView.findViewById(R.id.txt_email);
+        TextView txtShopContact = dialogView.findViewById(R.id.txt_contact);
+        TextView txtTotalSales = dialogView.findViewById(R.id.txt_total_sales);
+        TextView txtTotalExpense = dialogView.findViewById(R.id.txt_total_expense);
+        TextView txtServedBy = dialogView.findViewById(R.id.txt_served_by);
+        TextView txtFrom = dialogView.findViewById(R.id.txt_from);
+        TextView txtTo = dialogView.findViewById(R.id.txt_to);
 
-        RecyclerView recyclerViewDialog = dialogView.findViewById(R.id.recycler_view);
+        RecyclerView recyclerViewDialog = dialogView.findViewById(R.id.recycler_view_summary);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerViewDialog.setLayoutManager(layoutManager);
         recyclerViewDialog.setHasFixedSize(true);
 
-
         txtShopName.setText(shopName);
         txtShopAddress.setText(address);
-        txtShopEmail.setText("Email: " + email);
+        txtShopEmail.setText(email);
         txtShopContact.setText("Contact: " + contact);
+        txtServedBy.setText("Gen.By: " + servedBy);
+        txtFrom.setText(parseAppDisplay(fromDate)+"\n"+parseSqliteTimeApp(fromTime));
+        txtTo.setText( parseAppDisplay(toDate)+"\n"+parseSqliteTimeApp(toTime));
 
-        PrintSummaryAdapter mAdapter = new PrintSummaryAdapter(this, payMethodList,txtSubTotal,txtSTotalTax);
+        PrintSummaryAdapter mAdapter = new PrintSummaryAdapter(this, payMethodList,txtTotalSales,txtTotalExpense);
         recyclerViewDialog.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
@@ -544,7 +553,6 @@ public class SummaryReportActivity extends BaseActivity {
 
         private List<PayMethod> payMethodData;
         private Context context;
-        private String currency;
         private TextView tExpense;
         private TextView tTotal;
         Utils utils;
@@ -555,7 +563,6 @@ public class SummaryReportActivity extends BaseActivity {
         public PrintSummaryAdapter(Context context, List<PayMethod> payMethodData, TextView txtTotalSales, TextView txtTotalExpense) {
             this.context = context;
             this.payMethodData = payMethodData;
-            this.currency = currency;
             this.tExpense = txtTotalExpense;
             this.tTotal = txtTotalSales;
             utils = new Utils();
@@ -573,21 +580,21 @@ public class SummaryReportActivity extends BaseActivity {
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
             String value = payMethodData.get(position).getValue();
+
             if (value != null && !value.equals("")) {
                 payValue = Double.valueOf(value);
             }
-
-            holder.txtPayMethodName.setText(payMethodData.get(position).getName());
+            holder.txtPayMethodName.setText(payMethodData.get(position).getName()+": ");
             holder.txtPayMethodValue.setText(currency + " " + String.valueOf(decimn.format(payValue)));
             String totalSales = payMethodData.get(position).getTotalSales();
             String totalExpense = payMethodData.get(position).getTotalExpense();
 
             if (totalSales != null && !totalSales.equals("")) {
-                tTotal.setText(context.getResources().getString(R.string.net_sales) + ":" + currency + " " + decimn.format(Double.valueOf(totalSales)));
+                tTotal.setText(currency + " " + decimn.format(Double.valueOf(totalSales)));
             }
 
             if (totalExpense != null && !totalExpense.equals("")) {
-                tExpense.setText(context.getResources().getString(R.string.total_expense) + ":" + currency + " " + decimn.format(Double.valueOf(totalExpense)));
+                tExpense.setText(currency + " " + decimn.format(Double.valueOf(totalExpense)));
             }
 
 
@@ -600,14 +607,13 @@ public class SummaryReportActivity extends BaseActivity {
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
-            TextView txtPayMethodName, txtPayMethodValue;
+            TextView  txtPayMethodValue,txtPayMethodName;
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
 
-                txtPayMethodName = itemView.findViewById(R.id.txt_total_method_name);
                 txtPayMethodValue = itemView.findViewById(R.id.txt_total_method_value);
-
+                txtPayMethodName = itemView.findViewById(R.id.txt_total_method_name);
 
             }
 

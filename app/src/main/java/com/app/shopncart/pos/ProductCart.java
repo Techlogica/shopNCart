@@ -572,7 +572,7 @@ public class ProductCart extends BaseActivity {
     //print operation text setup
     public void printLayout(List<OrderDetails> orderDetails) {
 
-        View dialogView = ((View) findViewById(R.id.print_me_layout));
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.print_reciept,null);
 
         TextView txtShopName = dialogView.findViewById(R.id.shop_name);
         TextView txtShopAddress = dialogView.findViewById(R.id.address);

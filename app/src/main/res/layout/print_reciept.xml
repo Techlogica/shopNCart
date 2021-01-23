@@ -1,420 +1,410 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/print_me_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
-    android:id="@+id/print_me_layout">
-
-    <TextView
-        android:id="@+id/shop_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:fontFamily="@font/candal"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/address"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:layout_marginBottom="3dp"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/contact"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/invoice_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="12sp" />
-    <TextView
-        android:id="@+id/tax_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/order_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/served_by"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="12sp"
-        />
-
-    <TextView
-        android:id="@+id/customer_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:textSize="12sp"
-        />
-    <TextView
-        android:id="@+id/customer_tax_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:textStyle="bold"
-        android:visibility="gone"
-        android:gravity="center"
-        android:textSize="12sp"
-        />
+    android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/print_recipt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="3dp"
-        android:orientation="horizontal">
-
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/shop_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
             android:fontFamily="@font/candal"
-            android:textStyle="bold"
-            android:text="Description"
-            android:textSize="12sp"
-            />
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/address"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textStyle="bold"
-            android:gravity="center"
+            android:layout_marginBottom="3dp"
             android:fontFamily="@font/candal"
-            android:text="Price"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center"
             android:textSize="12sp"
-            />
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/invoice_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tax_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/order_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/served_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/customer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/customer_tax_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/candal"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="3dp">
 
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Description"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Price"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                tools:listitem="@layout/cart_print_item" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@color/textColorPrimaryDark" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:background="@color/textColorPrimaryDark" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            tools:listitem="@layout/cart_print_item"
-            android:layout_marginBottom="10dp"
-            />
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Sub Total (+)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/sub_total"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_discount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Discount (-)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/discount"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Total Tax (+)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/total_tax"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cgst_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hint_cgst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Cgst (+)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_cgst"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sgst_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hint_sgst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Sgst (+)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_sgst"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cess_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/hint_cess"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="center"
+                android:text="Cess (+)"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txt_cess"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
         <View
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:background="@color/textColorPrimaryDark"/>
+            android:background="@color/textColorPrimaryDark" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@color/textColorPrimaryDark"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:fontFamily="@font/candal"
-            android:textStyle="bold"
-            android:text="Sub Total (+)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/sub_total"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_discount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:fontFamily="@font/candal"
-            android:text="Discount (-)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/discount"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:text="Total Tax (+)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/total_tax"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/cgst_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/hint_cgst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:text="Cgst (+)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/txt_cgst"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/sgst_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/hint_sgst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:text="Sgst (+)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/txt_sgst"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/cess_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/hint_cess"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:text="Cess (+)"
-            android:textSize="12sp"
-            />
-
-        <TextView
-            android:id="@+id/txt_cess"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-    </LinearLayout>
-
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:background="@color/textColorPrimaryDark"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
-            android:text="Total Price"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
-
-
-        <TextView
-            android:id="@+id/total_price"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/candal"
             android:layout_marginStart="5dp"
-            android:gravity="end"
-            android:textStyle="bold"
-            android:textSize="12sp"
-            />
+            android:layout_marginEnd="5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/candal"
+                android:text="Total Price"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/total_price"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:fontFamily="@font/candal"
+                android:gravity="end"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/candal"
+            android:gravity="center"
+            android:text="*****Thank you visit again*****"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/candal"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_gravity="center"
-        android:text="*****Thank you visit again*****"
-        android:textStyle="bold"
-        android:textSize="14sp"
-        />
+
 
 </LinearLayout>
 
