@@ -30,7 +30,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:gravity="right"
-                    android:text="AED 112345678.00"
                     android:fontFamily="@font/candal"
                     android:minWidth="70dp"
                     android:textSize="9sp"

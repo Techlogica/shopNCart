@@ -3,6 +3,7 @@ package com.app.shopncart.pos;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -19,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.bumptech.glide.Glide;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -57,9 +60,11 @@ public class PosActivity extends BaseActivity {
     private RecyclerView recyclerView, categoryRecyclerView;
     PosProductAdapter productAdapter;
     TextView txtNoProducts;
+    static ImageView RlCartHold;
     ImageView txtReset;
-    static TextView txtCounterText;
+    static TextView txtCounterText, txtCounterHoldText;
     ProductCategoryAdapter categoryAdapter;
+    static List<HashMap<String, String>> cartProductListCounter;
 
     ImageView imgNoProduct, imgScanner, imgBack;
     public static EditText etxtSearch;
@@ -69,6 +74,9 @@ public class PosActivity extends BaseActivity {
     static int cartCount = 0;
     String shopID = "";
     String ownerId = "";
+    public static Resources mResources;
+    List<Product> productsList= new ArrayList<>();;
+
 
 
     private ShimmerFrameLayout mShimmerViewContainer;
@@ -78,6 +86,7 @@ public class PosActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pos);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mResources = getResources();
 
         databaseAccess = DatabaseAccess.getInstance(this);
 
@@ -87,9 +96,11 @@ public class PosActivity extends BaseActivity {
         txtNoProducts = findViewById(R.id.txt_no_products);
         imgScanner = findViewById(R.id.img_scanner);
         txtCounterText = findViewById(R.id.home_cart_counter);
+        txtCounterHoldText = findViewById(R.id.home_cart_hold_counter);
         imgBack = findViewById(R.id.menu_back);
         categoryRecyclerView = findViewById(R.id.category_recyclerview);
         txtReset = findViewById(R.id.txt_reset);
+        RlCartHold = findViewById(R.id.home_cart_hold);
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
@@ -99,6 +110,7 @@ public class PosActivity extends BaseActivity {
 
 
         counterSetiings();
+        counterSetiingsHold();
         imgBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +143,8 @@ public class PosActivity extends BaseActivity {
         recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
         recyclerView.setHasFixedSize(true);
 
+
+
         //Load data from server
         getProductsData("", shopID, ownerId);
 
@@ -138,6 +152,46 @@ public class PosActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 getProductsData("", shopID, ownerId);
+            }
+        });
+
+        RlCartHold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                databaseAccess.open();
+                cartProductList = databaseAccess.getCartProduct();
+
+                if (cartProductList != null) {
+
+                    if (cartProductList.size() > 0) {
+                        Toasty.info(PosActivity.this, "cart is not empty", Toast.LENGTH_SHORT).show();
+
+                    }
+                    if (cartProductList.size() == 0) {
+                        databaseAccess.open();
+                        //get data from local database
+                        List<HashMap<String, String>> cartProductListHold;
+                        cartProductListHold = databaseAccess.getCartProductTemp();
+                        if (cartProductListHold != null && cartProductListHold.size() != 0) {
+
+                            for (int i = 0; i < cartProductListHold.size(); i++) {
+                                databaseAccess.open();
+                                databaseAccess.addToCart(cartProductListHold.get(i).get("product_id"),cartProductListHold.get(i).get("product_name") ,cartProductListHold.get(i).get("product_weight") , cartProductListHold.get(i).get("product_weight_unit"),cartProductListHold.get(i).get("product_price"), Integer.valueOf(cartProductListHold.get(i).get("product_qty")), cartProductListHold.get(i).get("product_image"), cartProductListHold.get(i).get("product_stock"), Double.valueOf(cartProductListHold.get(i).get("cgst")),Double.valueOf(cartProductListHold.get(i).get("sgst")) , Double.valueOf(cartProductListHold.get(i).get("cess")), Double.valueOf(cartProductListHold.get(i).get("product_discount")), cartProductListHold.get(i).get("product_cegst_percent"), cartProductListHold.get(i).get("product_sgst_percent"), cartProductListHold.get(i).get("product_cess_percent"), Double.valueOf(cartProductListHold.get(i).get("product_discounted_total")), Double.valueOf(cartProductListHold.get(i).get("product_line_total")));
+
+                            }
+                            databaseAccess.open();
+                            databaseAccess.emptyCartHold();
+                            counterSetiings();
+                            counterSetiingsHold();
+
+                        }
+
+                    }
+
+
+                }
+
             }
         });
 
@@ -161,14 +215,7 @@ public class PosActivity extends BaseActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (s.length() > 1) {
-
-                    //search data from server
-                    getProductsData(s.toString(), shopID, ownerId);
-                } else {
-                    getProductsData("", shopID, ownerId);
-                }
-
+                    filterList1(s.toString());
 
             }
 
@@ -249,32 +296,9 @@ public class PosActivity extends BaseActivity {
 
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Product> productsList;
                     productsList = response.body();
 
-
-                    if (productsList.isEmpty()) {
-
-                        recyclerView.setVisibility(View.GONE);
-                        imgNoProduct.setVisibility(View.VISIBLE);
-                        imgNoProduct.setImageResource(R.drawable.not_found);
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-
-                    } else {
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-                        recyclerView.setVisibility(View.VISIBLE);
-                        imgNoProduct.setVisibility(View.GONE);
-                        productAdapter = new PosProductAdapter(PosActivity.this, productsList);
-                        recyclerView.setAdapter(productAdapter);
-
-                    }
-
+                    setUpRecyclerView(productsList);
                 }
             }
 
@@ -289,11 +313,60 @@ public class PosActivity extends BaseActivity {
 
     }
 
+    private void setUpRecyclerView(List<Product> productsList) {
+
+        if (productsList.isEmpty()) {
+
+            recyclerView.setVisibility(View.GONE);
+            imgNoProduct.setVisibility(View.VISIBLE);
+            imgNoProduct.setImageResource(R.drawable.not_found);
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+
+        } else {
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+            recyclerView.setVisibility(View.VISIBLE);
+            imgNoProduct.setVisibility(View.GONE);
+            productAdapter = new PosProductAdapter(PosActivity.this, productsList);
+            recyclerView.setAdapter(productAdapter);
+
+        }
+    }
+
     private void counterSetiings() {
         databaseAccess.open();
         //get data from local database
+
+        cartProductListCounter = databaseAccess.getCartProduct();
+        if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
+            cartCount = cartProductListCounter.size();
+        } else {
+            cartCount = 0;
+        }
+
+        if (cartCount == 0) {
+            txtCounterText.setVisibility(View.INVISIBLE);
+            RlCartHold.setBackground(getResources().getDrawable(R.drawable.ic_pause_cart_order));
+            txtCounterHoldText.setBackground(getResources().getDrawable(R.drawable.cart_counter));
+        } else {
+            txtCounterText.setVisibility(View.VISIBLE);
+            RlCartHold.setBackground(getResources().getDrawable(R.drawable.ic_pause_cart_order_tint));
+            txtCounterHoldText.setBackground(getResources().getDrawable(R.drawable.cart_counter_tint));
+            txtCounterText.setText(String.valueOf(cartCount));
+        }
+    }
+
+
+    private void counterSetiingsHold() {
+        databaseAccess.open();
+        //get data from local database
         List<HashMap<String, String>> cartProductList;
-        cartProductList = databaseAccess.getCartProduct();
+        cartProductList = databaseAccess.getCartProductTemp();
         if (cartProductList != null && cartProductList.size() != 0) {
             cartCount = cartProductList.size();
         } else {
@@ -301,12 +374,49 @@ public class PosActivity extends BaseActivity {
         }
 
         if (cartCount == 0) {
-            txtCounterText.setVisibility(View.INVISIBLE);
+            txtCounterHoldText.setVisibility(View.INVISIBLE);
+            RlCartHold.setVisibility(View.GONE);
         } else {
-            txtCounterText.setVisibility(View.VISIBLE);
-            txtCounterText.setText(String.valueOf(cartCount));
+            txtCounterHoldText.setVisibility(View.VISIBLE);
+            RlCartHold.setVisibility(View.VISIBLE);
+            txtCounterHoldText.setText(String.valueOf(cartCount));
         }
     }
+
+    //filter by searchquery
+    private void filterList1(String query) {
+
+        query = query.toLowerCase();
+        List<Product> arrayList = new ArrayList<>();
+
+
+        if (query.length() == 0) {
+            arrayList = productsList;
+        } else {
+            for (int i = 0; i < productsList.size(); i++) {
+                Product obj = productsList.get(i);
+                boolean filter = false;
+                if (obj.getProductName() != null)
+                    if (obj.getProductName().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (obj.getProduct_code() != null)
+                    if (obj.getProduct_code().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (obj.getProductCategoryName() != null)
+                    if (obj.getProductCategoryName().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (filter) {
+                    arrayList.add(obj);
+                }
+            }
+
+        }
+        setUpRecyclerView(arrayList);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -317,6 +427,7 @@ public class PosActivity extends BaseActivity {
                 if (resultCode == RESULT_OK) {
 
                     counterSetiings();
+                    counterSetiingsHold();
                     setResult(RESULT_OK);
 
 
@@ -512,6 +623,23 @@ public class PosActivity extends BaseActivity {
                 public void onClick(View v) {
 
                     player.start();
+
+                    databaseAccess.open();
+                    //get data from local database
+
+                    cartProductListCounter = databaseAccess.getCartProduct();
+                    if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
+                        cartCount = cartProductListCounter.size();
+                    } else {
+                        cartCount = 0;
+                    }
+
+                    if (cartCount == 0) {
+                        txtCounterText.setVisibility(View.INVISIBLE);
+                    } else {
+                        txtCounterText.setVisibility(View.VISIBLE);
+                        txtCounterText.setText(String.valueOf(cartCount));
+                    }
 //                Intent intent=new Intent(context, EditProductActivity.class);
 //                intent.putExtra("product_id",productId);
 //                context.startActivity(intent);
@@ -520,18 +648,26 @@ public class PosActivity extends BaseActivity {
 
                         Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
                     } else {
+                        if (cartProductListCounter.size() == 0) {
+
+                        }
 
                         databaseAccess.open();
 
                         int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0);
+
 
                         if (check == 1) {
                             Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
                             player.start();
                             cartCount = cartCount + 1;
                             if (cartCount == 0) {
+                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
+                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
                                 txtCounterText.setVisibility(View.INVISIBLE);
                             } else {
+                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
+                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
                                 txtCounterText.setVisibility(View.VISIBLE);
                                 txtCounterText.setText(String.valueOf(cartCount));
                             }
@@ -547,7 +683,6 @@ public class PosActivity extends BaseActivity {
                     }
                 }
             });
-
 
 
             if (productImage != null) {

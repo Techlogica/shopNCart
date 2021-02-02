@@ -41,18 +41,20 @@ public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyVi
     private Context context;
     private String currency;
     private TextView tExpense;
+    private TextView tReturn;
     private TextView tTotal;
     Utils utils;
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
     Double payValue = 0.0;
 
 
-    public PayMethodAdapter(Context context, List<PayMethod> payMethodData, String currency, TextView txtTotalSales, TextView txtTotalExpense) {
+    public PayMethodAdapter(Context context, List<PayMethod> payMethodData, String currency, TextView txtTotalSales, TextView txtTotalExpense, TextView txtTotalReturn) {
         this.context = context;
         this.payMethodData = payMethodData;
         this.currency = currency;
         this.tExpense = txtTotalExpense;
         this.tTotal = txtTotalSales;
+        this.tReturn = txtTotalReturn;
         utils = new Utils();
 
     }
@@ -78,12 +80,18 @@ public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyVi
 
         String totalSales = payMethodData.get(position).getTotalSales();
         String totalExpense = payMethodData.get(position).getTotalExpense();
+        String totalReturn = payMethodData.get(position).getTotalReturn();
 
-        if (totalSales != null && !totalSales.equals("")){
-            tTotal.setText(context.getResources().getString(R.string.net_sales) + ":" + currency + " " + decimn.format(Double.valueOf(totalSales)));}
+        if (totalSales != null && !totalSales.equals("")) {
+            tTotal.setText(context.getResources().getString(R.string.net_sales) + ":" + currency + " " + decimn.format(Double.valueOf(totalSales)));
+        }
 
-        if (totalExpense != null && !totalExpense.equals("")){
-            tExpense.setText(context.getResources().getString(R.string.total_expense) + ":" + currency + " " + decimn.format(Double.valueOf(totalExpense)));}
+        if (totalExpense != null && !totalExpense.equals("")) {
+            tExpense.setText(context.getResources().getString(R.string.total_expense) + ":" + currency + " " + decimn.format(Double.valueOf(totalExpense)));
+        }
+        if (totalReturn != null && !totalReturn.equals("")) {
+            tReturn.setText(context.getResources().getString(R.string.total_return) + ":" + currency + " " + decimn.format(Double.valueOf(totalReturn)));
+        }
 
     }
 

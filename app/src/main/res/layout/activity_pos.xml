@@ -38,10 +38,50 @@
             android:textStyle="bold"
             android:textColor="@color/white"
             android:textSize="18sp" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal"
+            >
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyleWhite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/home_cart_hold"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/ic_pause_cart_order"
+                    android:clickable="true"
+                    />
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <TextView
+                android:id="@+id/home_cart_hold_counter"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="20dp"
+                android:fontFamily="@font/sourcesanspro_semibold"
+                android:background="@drawable/cart_counter"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textSize="10sp"
+                android:visibility="gone"
+                />
+
+
+        </RelativeLayout>
+
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -62,7 +102,7 @@
                     android:layout_height="25dp"
                     android:background="@drawable/image_cart_button"
                     android:clickable="true"
-                    android:src="@drawable/ic_cart"/>
+                    />
             </com.balysv.materialripple.MaterialRippleLayout>
 
             <TextView
@@ -76,10 +116,11 @@
                 android:gravity="center"
                 android:textSize="10sp"
                 android:visibility="gone"
-                android:src="@drawable/cart_counter"/>
+                />
 
 
         </RelativeLayout>
+
         <com.balysv.materialripple.MaterialRippleLayout
             style="@style/RippleStyleWhite"
             android:layout_width="wrap_content"

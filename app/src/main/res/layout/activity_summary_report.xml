@@ -182,6 +182,48 @@
             android:textSize="14sp"
             app:fontFamily="@font/sailec_regular" />
 
+        <TextView
+            android:id="@+id/txt_total_return"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/bgcolor"
+            android:text="@string/total_return"
+            android:gravity="right"
+            android:padding="3dp"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            app:fontFamily="@font/sailec_regular" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="3dp"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="30dp"
+                android:layout_height=".5dp"
+                android:background="@color/grey"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sailec_regular"
+                android:padding="1dp"
+                android:text="@string/payment"
+                android:textColor="@color/grey"
+                android:textSize="8sp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@color/grey"
+                android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
             android:layout_width="match_parent"

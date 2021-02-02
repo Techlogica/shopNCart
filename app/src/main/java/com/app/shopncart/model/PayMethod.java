@@ -17,6 +17,9 @@ public class PayMethod {
     @SerializedName("product_expense_amount")
     private String totalExpense;
 
+    @SerializedName("return_value")
+    private String totalReturn;
+
     @SerializedName("product_value_discount")
     private String totalDiscount;
 
@@ -57,6 +60,10 @@ public class PayMethod {
 
     public void setValue(String valueAmount) {
         this.valueAmount = valueAmount;
+    }
+
+    public String getTotalReturn() {
+        return totalReturn;
     }
 
     public String getFromDate() {

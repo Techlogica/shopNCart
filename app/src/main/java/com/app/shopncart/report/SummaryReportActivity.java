@@ -74,7 +74,7 @@ public class SummaryReportActivity extends BaseActivity {
 
 
     private RecyclerView recyclerView;
-    TextView txtTotalExpense, txtTotalSales;
+    TextView txtTotalExpense, txtTotalSales,txtTotalReturn;
     TextView txtDateFrom, txtDateTo;
     String shopName = "";
     String address = "";
@@ -118,6 +118,7 @@ public class SummaryReportActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerview);
         txtTotalSales = findViewById(R.id.txt_total_sale);
         txtTotalExpense = findViewById(R.id.txt_total_expense);
+        txtTotalReturn = findViewById(R.id.txt_total_return);
         txtDateFrom = (TextView) findViewById(R.id.txt_date_from);
         txtDateTo = (TextView) findViewById(R.id.txt_date_to);
         txt_starttime = (TextView) findViewById(R.id.txt_start_time);
@@ -211,15 +212,17 @@ public class SummaryReportActivity extends BaseActivity {
 
                         txtTotalSales.setVisibility(View.VISIBLE);
                         txtTotalExpense.setVisibility(View.VISIBLE);
+                        txtTotalReturn.setVisibility(View.VISIBLE);
                         nodata.setVisibility(View.GONE);
 
-                        payMethodAdapter = new PayMethodAdapter(SummaryReportActivity.this, payMethodList, currency, txtTotalSales, txtTotalExpense);
+                        payMethodAdapter = new PayMethodAdapter(SummaryReportActivity.this, payMethodList, currency, txtTotalSales, txtTotalExpense,txtTotalReturn);
                         recyclerView.setAdapter(payMethodAdapter);
                         payMethodAdapter.notifyDataSetChanged();
 
                     } else {
                         txtTotalSales.setVisibility(View.GONE);
                         txtTotalExpense.setVisibility(View.GONE);
+                        txtTotalReturn.setVisibility(View.GONE);
                         nodata.setVisibility(View.VISIBLE);
                     }
 
@@ -509,6 +512,7 @@ public class SummaryReportActivity extends BaseActivity {
         TextView txtShopContact = dialogView.findViewById(R.id.txt_contact);
         TextView txtTotalSales = dialogView.findViewById(R.id.txt_total_sales);
         TextView txtTotalExpense = dialogView.findViewById(R.id.txt_total_expense);
+        TextView txtTotalReturn= dialogView.findViewById(R.id.txt_total_return);
         TextView txtServedBy = dialogView.findViewById(R.id.txt_served_by);
         TextView txtFrom = dialogView.findViewById(R.id.txt_from);
         TextView txtTo = dialogView.findViewById(R.id.txt_to);
@@ -527,7 +531,7 @@ public class SummaryReportActivity extends BaseActivity {
         txtFrom.setText(parseAppDisplay(fromDate)+"\n"+parseSqliteTimeApp(fromTime));
         txtTo.setText( parseAppDisplay(toDate)+"\n"+parseSqliteTimeApp(toTime));
 
-        PrintSummaryAdapter mAdapter = new PrintSummaryAdapter(this, payMethodList,txtTotalSales,txtTotalExpense);
+        PrintSummaryAdapter mAdapter = new PrintSummaryAdapter(this, payMethodList,txtTotalSales,txtTotalExpense,txtTotalReturn);
         recyclerViewDialog.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
@@ -554,17 +558,19 @@ public class SummaryReportActivity extends BaseActivity {
         private List<PayMethod> payMethodData;
         private Context context;
         private TextView tExpense;
+        private TextView tReturn;
         private TextView tTotal;
         Utils utils;
         DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
         Double payValue = 0.0;
 
 
-        public PrintSummaryAdapter(Context context, List<PayMethod> payMethodData, TextView txtTotalSales, TextView txtTotalExpense) {
+        public PrintSummaryAdapter(Context context, List<PayMethod> payMethodData, TextView txtTotalSales, TextView txtTotalExpense, TextView txtTotalReturn) {
             this.context = context;
             this.payMethodData = payMethodData;
             this.tExpense = txtTotalExpense;
             this.tTotal = txtTotalSales;
+            this.tReturn = txtTotalReturn;
             utils = new Utils();
         }
 
@@ -588,6 +594,7 @@ public class SummaryReportActivity extends BaseActivity {
             holder.txtPayMethodValue.setText(currency + " " + String.valueOf(decimn.format(payValue)));
             String totalSales = payMethodData.get(position).getTotalSales();
             String totalExpense = payMethodData.get(position).getTotalExpense();
+            String totalReturn = payMethodData.get(position).getTotalReturn();
 
             if (totalSales != null && !totalSales.equals("")) {
                 tTotal.setText(currency + " " + decimn.format(Double.valueOf(totalSales)));
@@ -595,6 +602,10 @@ public class SummaryReportActivity extends BaseActivity {
 
             if (totalExpense != null && !totalExpense.equals("")) {
                 tExpense.setText(currency + " " + decimn.format(Double.valueOf(totalExpense)));
+            }
+
+            if (totalReturn != null && !totalReturn.equals("")) {
+                tReturn.setText(currency + " " + decimn.format(Double.valueOf(totalReturn)));
             }
 
 

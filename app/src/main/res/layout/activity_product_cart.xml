@@ -52,35 +52,36 @@
             </LinearLayout>
 
 
-
         </LinearLayout>
 
     </ScrollView>
+
     <LinearLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="50dp"
             android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardBackgroundColor="@color/hash"
             app:cardCornerRadius="10dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardPreventCornerOverlap="false"
-            app:cardElevation="10dp">
+            app:cardElevation="10dp"
+            app:cardPreventCornerOverlap="false">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:baselineAligned="false"
                 android:orientation="vertical"
                 android:padding="5dp">
+
                 <TextView
                     android:id="@+id/txt_total_price"
                     android:layout_width="match_parent"
@@ -90,6 +91,7 @@
                     android:textColor="@color/darkBlue"
                     android:textSize="11sp"
                     app:fontFamily="@font/sourcesanspro_semibold" />
+
                 <TextView
                     android:id="@+id/txt_total_discount"
                     android:layout_width="match_parent"
@@ -98,7 +100,8 @@
                     android:text="@string/total_product_discount"
                     android:textColor="@color/greenish"
                     android:textSize="12sp"
-                    app:fontFamily="@font/sourcesanspro_semibold"  />
+                    app:fontFamily="@font/sourcesanspro_semibold" />
+
                 <TextView
                     android:id="@+id/txt_total_cgst"
                     android:layout_width="match_parent"
@@ -107,7 +110,8 @@
                     android:text="@string/total_cgst_cart"
                     android:textColor="@color/darkBlue"
                     android:textSize="11sp"
-                    app:fontFamily="@font/sourcesanspro_semibold"  />
+                    app:fontFamily="@font/sourcesanspro_semibold" />
+
                 <TextView
                     android:id="@+id/txt_total_sgst"
                     android:layout_width="match_parent"
@@ -116,7 +120,8 @@
                     android:text="@string/total_sgst_cart"
                     android:textColor="@color/darkBlue"
                     android:textSize="11sp"
-                    app:fontFamily="@font/sourcesanspro_semibold"  />
+                    app:fontFamily="@font/sourcesanspro_semibold" />
+
                 <TextView
                     android:id="@+id/txt_total_cess"
                     android:layout_width="match_parent"
@@ -125,7 +130,8 @@
                     android:text="@string/total_cess_cart"
                     android:textColor="@color/darkBlue"
                     android:textSize="11sp"
-                    app:fontFamily="@font/sourcesanspro_semibold"  />
+                    app:fontFamily="@font/sourcesanspro_semibold" />
+
                 <TextView
                     android:id="@+id/txt_price_with_tax"
                     android:layout_width="match_parent"
@@ -134,7 +140,7 @@
                     android:text="@string/grand_total"
                     android:textColor="@color/darkBlue"
                     android:textSize="15sp"
-                    app:fontFamily="@font/sourcesanspro_semibold"  />
+                    app:fontFamily="@font/sourcesanspro_semibold" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -142,27 +148,27 @@
         <com.balysv.materialripple.MaterialRippleLayout
             style="@style/RippleStyleWhite"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <Button
                 android:id="@+id/btn_submit_order"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
                 android:background="@color/colorPrimary"
                 android:fontFamily="@font/sailec_regular"
                 android:text="@string/submit_order"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"/>
+                android:textStyle="bold" />
 
 
         </com.balysv.materialripple.MaterialRippleLayout>
 
 
-        <include layout="@layout/print_reciept"
-            android:visibility="gone"
-            />
+        <include
+            layout="@layout/print_reciept"
+            android:visibility="gone" />
     </LinearLayout>
+
 </RelativeLayout>

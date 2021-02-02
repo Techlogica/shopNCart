@@ -155,6 +155,7 @@ public class Constant {
     public static String paymentMethod="payment_method";
     public static String expense="expense";
     public static String productCart="product_cart";
+    public static String productCartHold="product_cart_hold";
     public static String orderList="order_list";
     public static String orderDetails="order_details";
 

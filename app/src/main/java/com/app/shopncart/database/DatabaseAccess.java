@@ -155,6 +155,54 @@ public class DatabaseAccess {
     }
 
 
+    //Add product into cart
+    public int addToHold(String productId, String productName, String weight, String weightUnit, String price, int qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount,String cgstPercent,String sgstPercent,String cessPercent,double discountedTotal,double lineTotal) {
+
+
+        Cursor result = database.rawQuery("SELECT * FROM product_cart_hold WHERE product_id='" + productId + "'", null);
+        if (result.getCount() >= 1) {
+
+            return 2;
+
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Constant.PRODUCT_ID, productId);
+            values.put(Constant.PRODUCT_NAME, productName);
+            values.put(Constant.PRODUCT_WEIGHT, weight);
+            values.put(Constant.PRODUCT_WEIGHT_UNIT, weightUnit);
+            values.put(Constant.PRODUCT_PRICE, price);
+            values.put(Constant.PRODUCT_QTY, qty);
+            values.put(Constant.PRODUCT_IMAGE, productImage);
+            values.put(Constant.PRODUCT_STOCK, productStock);
+
+            values.put(Constant.KEY_CGST, cgst);
+            values.put(Constant.KEY_SGST, sgst);
+            values.put(Constant.KEY_CESS, cess);
+            values.put(Constant.PRODUCT_DISC, discount);
+            values.put(Constant.PRODUCT_CGST_PERCENT, cgstPercent);
+            values.put(Constant.PRODUCT_SGST_PERCENT, sgstPercent);
+            values.put(Constant.PRODUCT_CESS_PERCENT, cessPercent);
+            values.put(Constant.PRODUCT_DISCOUNTED_TOTAL, discountedTotal);
+            values.put(Constant.PRODUCT_LINE_TOTAL, lineTotal);
+
+            long check = database.insert(Constant.productCartHold, null, values);
+
+
+            result.close();
+            database.close();
+
+
+            //if data insert success, its return 1, if failed return -1
+            if (check == -1) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+    }
+
+
     //get cart product
     public ArrayList<HashMap<String, String>> getCartProduct() {
         ArrayList<HashMap<String, String>> product = new ArrayList<>();
@@ -195,6 +243,44 @@ public class DatabaseAccess {
         return product;
     }
 
+    public ArrayList<HashMap<String, String>> getCartProductTemp() {
+        ArrayList<HashMap<String, String>> product = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM product_cart_hold ORDER BY cart_id DESC", null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<>();
+
+                map.put(Constant.CART_ID, cursor.getString(cursor.getColumnIndex("cart_id")));
+                map.put(Constant.PRODUCT_ID, cursor.getString(cursor.getColumnIndex("product_id")));
+                map.put(Constant.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex("product_name")));
+                map.put(Constant.PRODUCT_WEIGHT, cursor.getString(cursor.getColumnIndex("product_weight")));
+                map.put(Constant.PRODUCT_WEIGHT_UNIT, cursor.getString(cursor.getColumnIndex("product_weight_unit")));
+                map.put(Constant.PRODUCT_PRICE, cursor.getString(cursor.getColumnIndex("product_price")));
+                map.put(Constant.PRODUCT_QTY, cursor.getString(cursor.getColumnIndex("product_qty")));
+                map.put(Constant.PRODUCT_IMAGE, cursor.getString(cursor.getColumnIndex("product_image")));
+                map.put(Constant.PRODUCT_STOCK, cursor.getString(cursor.getColumnIndex("product_stock")));
+
+                map.put(Constant.KEY_CGST, cursor.getString(cursor.getColumnIndex("cgst")));
+
+                map.put(Constant.KEY_SGST, cursor.getString(cursor.getColumnIndex("sgst")));
+
+                map.put(Constant.KEY_CESS, cursor.getString(cursor.getColumnIndex("cess")));
+
+                map.put(Constant.PRODUCT_DISC, cursor.getString(cursor.getColumnIndex("product_discount")));
+                map.put(Constant.PRODUCT_CGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_cegst_percent")));
+                map.put(Constant.PRODUCT_SGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_sgst_percent")));
+                map.put(Constant.PRODUCT_CESS_PERCENT, cursor.getString(cursor.getColumnIndex("product_cess_percent")));
+                map.put(Constant.PRODUCT_DISCOUNTED_TOTAL, cursor.getString(cursor.getColumnIndex("product_discounted_total")));
+                map.put(Constant.PRODUCT_LINE_TOTAL, cursor.getString(cursor.getColumnIndex("product_line_total")));
+
+                product.add(map);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        database.close();
+        return product;
+    }
 
     //empty cart
     public void emptyCart() {
@@ -203,9 +289,12 @@ public class DatabaseAccess {
         database.close();
     }
 
+    //empty cart
+    public void emptyCartHold() {
 
-
-
+        database.delete(Constant.productCartHold, null, null);
+        database.close();
+    }
 
 
     //delete product from cart

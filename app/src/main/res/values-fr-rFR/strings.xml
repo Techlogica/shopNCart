@@ -237,6 +237,8 @@
     <string name="summary_report">Summary Report</string>
     <string name="amount_mismatch">Amount mismatch</string>
     <string name="summary_report_print">Summary Report</string>
+    <string name="hold">Hold</string>
+    <string name="total_return">Total Return :</string>
 
 
 </resources>

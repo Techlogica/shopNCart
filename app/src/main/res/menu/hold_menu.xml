@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/id_hold"
+        android:icon="@drawable/ic_pause_cart_order"
+        android:orderInCategory="100"
+        android:tooltipText="@string/hold"
+        android:title="@string/hold"
+        app:showAsAction="always">
+    </item>
+</menu>

@@ -135,4 +135,8 @@ public class Utils {
         }
         return output;
     }
+
+    public static double roundOff2Decimal(double a) {
+        return (double) Math.round((a * 100d) / 100d);
+    }
 }

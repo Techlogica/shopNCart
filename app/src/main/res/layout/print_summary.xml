@@ -212,9 +212,38 @@
                 android:minWidth="70dp"
                 android:textSize="9sp"
                 android:textStyle="bold" />
-
-
         </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:gravity="left"
+            android:fontFamily="@font/candal"
+            android:minWidth="30dp"
+            android:text="Return: "
+            android:textSize="8sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/txt_total_return"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:gravity="right"
+            android:fontFamily="@font/candal"
+            android:minWidth="70dp"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView

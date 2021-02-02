@@ -3,13 +3,16 @@ package com.app.shopncart.pos;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +34,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ahmedelsayed.sunmiprinterutill.PrintMe;
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
-import com.app.shopncart.adapter.CartAdapter;
 import com.app.shopncart.database.DatabaseAccess;
 import com.app.shopncart.model.Customer;
 import com.app.shopncart.model.OrderDetails;
-import com.app.shopncart.model.PayMethod;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
 import com.app.shopncart.utils.BaseActivity;
+import com.app.shopncart.utils.InputFilterMinMax;
 import com.app.shopncart.utils.Utils;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +63,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.app.shopncart.utils.Utils.roundOff2Decimal;
+
 public class ProductCart extends BaseActivity {
 
     CartAdapter productCartAdapter;
@@ -69,8 +74,14 @@ public class ProductCart extends BaseActivity {
     LinearLayout linearLayout;
     DatabaseAccess databaseAccess;
     ProgressDialog loading;
+    RecyclerView recyclerView;
+    MenuItem holdItem;
     double getTax = 0;
     List<HashMap<String, String>> cartProductList;
+    List<HashMap<String, String>> cartProductListHold;
+
+    public  Double totalPrice, allTax, allCgst, allSgst, allCess, allDiscount = 0.0, finalTotal = 0.0;
+    public  Double allDiscountedCgst = 0.0, allDiscountedSgst = 0.0, allDiscountedCess = 0.0, allDiscountedTax = 0.0;
 
     double getSgst = 0;
     double getCgst = 0;
@@ -140,7 +151,7 @@ public class ProductCart extends BaseActivity {
 
         getCustomers(shopID, ownerId);
 
-        RecyclerView recyclerView = findViewById(R.id.cart_recyclerview);
+        recyclerView = findViewById(R.id.cart_recyclerview);
         imgNoProduct = findViewById(R.id.image_no_product);
         btnSubmitOrder = findViewById(R.id.btn_submit_order);
         txtNoProduct = findViewById(R.id.txt_no_product);
@@ -164,13 +175,21 @@ public class ProductCart extends BaseActivity {
         recyclerView.setHasFixedSize(true);
 
 
-        databaseAccess.open();
 
 
         //get data from local database
-
+        databaseAccess.open();
         cartProductList = databaseAccess.getCartProduct();
 
+        populateCartList(cartProductList);
+
+
+        btnSubmitOrder.setOnClickListener(v -> dialog());
+
+
+    }
+
+    public  void populateCartList(List<HashMap<String, String>> cartProductList) {
         Log.d("CartSize", "" + cartProductList.size());
 
         if (cartProductList.isEmpty()) {
@@ -192,15 +211,10 @@ public class ProductCart extends BaseActivity {
 
             imgNoProduct.setVisibility(View.GONE);
             productCartAdapter = new CartAdapter(ProductCart.this, cartProductList, txtTotalPrice, btnSubmitOrder, imgNoProduct, txtNoProduct, txtTotalCgst, txtTotalSgst, txtTotalCess, txtFinalTotal, txtTotalDiscount);
-
             recyclerView.setAdapter(productCartAdapter);
 
 
         }
-
-
-        btnSubmitOrder.setOnClickListener(v -> dialog());
-
     }
 
     public void proceedOrder(String type, String paymentMethod, String customerName, String custId, double tax, String discount, double price, String cash, String credit, String paypal) {
@@ -539,7 +553,7 @@ public class ProductCart extends BaseActivity {
         }
 
         txtSTotalTax.setText(String.valueOf(decimn.format(getTax)));
-        totalPrice.setText(currency + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
+        totalPrice.setText(currency + " " + String.valueOf(decimn.format(roundOff2Decimal(calculatedTotalCostPrint))));
 
         getProductsData(invoiceNumber, recyclerViewDialog);
 
@@ -572,7 +586,7 @@ public class ProductCart extends BaseActivity {
     //print operation text setup
     public void printLayout(List<OrderDetails> orderDetails) {
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.print_reciept,null);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.print_reciept, null);
 
         TextView txtShopName = dialogView.findViewById(R.id.shop_name);
         TextView txtShopAddress = dialogView.findViewById(R.id.address);
@@ -682,7 +696,7 @@ public class ProductCart extends BaseActivity {
             layoutDisc.setVisibility(View.GONE);
         }
 
-        totalPrice.setText(currency + " " + String.valueOf(decimn.format(calculatedTotalCostPrint)));
+        totalPrice.setText(currency + " " + String.valueOf(decimn.format(roundOff2Decimal(calculatedTotalCostPrint))));
 
 
         CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderDetails);
@@ -803,7 +817,7 @@ public class ProductCart extends BaseActivity {
 
 
         dialogTxtLevelTax.setText(getString(R.string.total_tax));
-        double totalCost = CartAdapter.totalPrice;
+        double totalCost = totalPrice;
         dialogTxtTotal.setText(shopCurrency + f.format(totalCost));
         dialogtxtDiscount.setText(shopCurrency + f.format(Double.valueOf(totalDiscount)));
 
@@ -811,7 +825,7 @@ public class ProductCart extends BaseActivity {
         dialogTxtTotalTax.setText(shopCurrency + f.format(getTax));
 
         double calculatedTotalCost = totalCost - totalDiscount + getTax;
-        dialogTxtTotalCost.setText(shopCurrency + f.format(calculatedTotalCost));
+        dialogTxtTotalCost.setText(shopCurrency + f.format(roundOff2Decimal(calculatedTotalCost)));
 
 
         orderTypeNames = new ArrayList<>();
@@ -1173,16 +1187,66 @@ public class ProductCart extends BaseActivity {
 
     }
 
-    //for back button
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.hold_menu, menu);
+        holdItem = menu.findItem(R.id.id_hold);
+        databaseAccess.open();
+        cartProductListHold = databaseAccess.getCartProductTemp();
+        if (cartProductListHold.size() > 0) {
+            holdItem.setVisible(false);
+        }
+//        ImageView searchView = (ImageView) holdItem.getActionView();
+        holdItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                databaseAccess.open();
+                cartProductList = databaseAccess.getCartProduct();
+
+                for (int i = 0; i < cartProductList.size(); i++) {
+                    databaseAccess.open();
+                    databaseAccess.addToHold(cartProductList.get(i).get("product_id"), cartProductList.get(i).get("product_name"), cartProductList.get(i).get("product_weight"), cartProductList.get(i).get("product_weight_unit"), cartProductList.get(i).get("product_price"), Integer.valueOf(cartProductList.get(i).get("product_qty")), cartProductList.get(i).get("product_image"), cartProductList.get(i).get("product_stock"), Double.valueOf(cartProductList.get(i).get("cgst")), Double.valueOf(cartProductList.get(i).get("sgst")), Double.valueOf(cartProductList.get(i).get("cess")), Double.valueOf(cartProductList.get(i).get("product_discount")), cartProductList.get(i).get("product_cegst_percent"), cartProductList.get(i).get("product_sgst_percent"), cartProductList.get(i).get("product_cess_percent"), Double.valueOf(cartProductList.get(i).get("product_discounted_total")), Double.valueOf(cartProductList.get(i).get("product_line_total")));
+                }
+                databaseAccess.open();
+                databaseAccess.emptyCart();
+                imgNoProduct.setImageResource(R.drawable.empty_cart);
+                imgNoProduct.setVisibility(View.VISIBLE);
+                txtNoProduct.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.GONE);
+                txtTotalPrice.setVisibility(View.GONE);
+                txtTotalSgst.setVisibility(View.GONE);
+                txtTotalCgst.setVisibility(View.GONE);
+                txtTotalCess.setVisibility(View.GONE);
+                txtFinalTotal.setVisibility(View.GONE);
+                btnSubmitOrder.setVisibility(View.GONE);
+                txtTotalDiscount.setVisibility(View.GONE);
+                holdItem.setVisible(false);
+                Toasty.info(ProductCart.this, "Items holded", Toast.LENGTH_SHORT).show();
+                setResult(RESULT_OK);
+                finish();
+                return false;
+            }
+        });
+        return true;
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            setResult(RESULT_OK);
-            finish();
-            this.finish();
-            return true;
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                setResult(RESULT_OK);
+                finish();
+                this.finish();
+                break;
+
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -1266,6 +1330,823 @@ public class ProductCart extends BaseActivity {
 
 
     }
+
+
+    public  class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> {
+
+
+        private List<HashMap<String, String>> cartProduct;
+        private Context context;
+        MediaPlayer player;
+        TextView txtNoProduct;
+        double discount = 0;
+        double priceWithDisc = 0;
+
+        TextView txtTotalPrice, txtTotalCgst, txtTotalSgst, txtTotalCess, txtFinalTotal, txtTotalDiscount;
+
+
+        Button btnSubmitOrder;
+        ImageView imgNoProduct;
+
+        SharedPreferences sp;
+        String currency;
+        String country = "";
+        DecimalFormat f;
+
+        public CartAdapter(Context context, List<HashMap<String, String>> cartProduct, TextView txtTotalPrice, Button btnSubmitOrder, ImageView imgNoProduct, TextView txtNoProduct, TextView txtTotalCgst, TextView txtTotalSgst, TextView txtTotalCess, TextView txtFinalTotal, TextView txtTotalDiscount) {
+            this.context = context;
+            this.cartProduct = cartProduct;
+            player = MediaPlayer.create(context, R.raw.delete_sound);
+            this.txtTotalPrice = txtTotalPrice;
+            this.txtTotalCgst = txtTotalCgst;
+            this.txtTotalSgst = txtTotalSgst;
+            this.txtTotalCess = txtTotalCess;
+            this.txtFinalTotal = txtFinalTotal;
+            this.btnSubmitOrder = btnSubmitOrder;
+            this.imgNoProduct = imgNoProduct;
+            this.txtNoProduct = txtNoProduct;
+            this.txtTotalDiscount = txtTotalDiscount;
+
+            sp = context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
+            currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
+            country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
+
+            f = new DecimalFormat("#,###,##0.00");
+        }
+
+
+        @NonNull
+        @Override
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_product_items, parent, false);
+            return new MyViewHolder(view);
+
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+
+            final DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+
+            databaseAccess.open();
+            final String cart_id = cartProduct.get(position).get("cart_id");
+
+            String productName = cartProduct.get(position).get("product_name");
+            final String price = cartProduct.get(position).get("product_price");
+            final String productWeightUnit = cartProduct.get(position).get("product_weight_unit");
+            final String weight = cartProduct.get(position).get("product_weight");
+            final String qty = cartProduct.get(position).get("product_qty");
+            final String productImage = cartProduct.get(position).get("product_image");
+            final String productStock = cartProduct.get(position).get("product_stock");
+            final String productDiscount = cartProduct.get(position).get("product_discount");
+
+            final String cgstPercent = cartProduct.get(position).get("product_cegst_percent");
+            final String sgstPercent = cartProduct.get(position).get("product_sgst_percent");
+            final String cessPercent = cartProduct.get(position).get("product_cess_percent");
+
+            final String cgst = cartProduct.get(position).get("cgst");
+            final String sgst = cartProduct.get(position).get("sgst");
+            final String cess = cartProduct.get(position).get("cess");
+
+            String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
+
+            int getStock = Integer.parseInt(productStock);
+            if (productImage != null) {
+                if (productImage.isEmpty()) {
+                    holder.imgProduct.setImageResource(R.drawable.image_placeholder);
+                    holder.imgProduct.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                } else {
+
+
+                    Glide.with(context)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.loading)
+                            .error(R.drawable.image_placeholder)
+                            .into(holder.imgProduct);
+
+                }
+            }
+
+
+            final double getPrice = Double.parseDouble(price) * Integer.parseInt(qty);
+
+
+            holder.txtItemName.setText(productName);
+            holder.txtPrice.setText(currency + f.format(getPrice));
+            holder.txtWeight.setText(weight + " " + productWeightUnit);
+            holder.txtQtyNumber.setText(qty);
+            holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(getPrice)), new InputFilter.LengthFilter(15)});
+
+            if (!productDiscount.equals("0")) {
+                holder.edtDisc.setText(productDiscount);
+            }
+
+
+            if (country.equals("UAE")) {
+                holder.txtCgst.setText("VAT" + " " + currency + " " + f.format(Double.parseDouble(cgst)));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                holder.txtSgst.setVisibility(View.GONE);
+                holder.txtCess.setVisibility(View.GONE);
+            } else {
+
+                if (Double.valueOf(cgst) != 0) {
+                    holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + " " + f.format(Double.parseDouble(cgst)));
+                } else {
+                    holder.txtCgst.setVisibility(View.GONE);
+                }
+
+                if (Double.valueOf(sgst) != 0) {
+                    holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + " " + f.format(Double.parseDouble(sgst)));
+                } else {
+                    holder.txtSgst.setVisibility(View.GONE);
+                }
+
+                if (Double.valueOf(cess) != 0) {
+                    holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + " " + f.format(Double.parseDouble(cess)));
+                } else {
+                    holder.txtCess.setVisibility(View.GONE);
+                }
+
+            }
+
+            databaseAccess.open();
+            totalPrice = databaseAccess.getTotalPrice();
+
+            databaseAccess.open();
+            allTax = databaseAccess.getTotalTax();
+            databaseAccess.open();
+            allCgst = databaseAccess.getTotalCGST();
+            databaseAccess.open();
+            allSgst = databaseAccess.getTotalSGST();
+            databaseAccess.open();
+            allCess = databaseAccess.getTotalCESS();
+
+            allDiscount = 0.0;
+            //getting total discount from db
+            databaseAccess.open();
+            allDiscount = databaseAccess.getTotalProductDiscount();
+
+       /* databaseAccess.open();
+        finalTotal= databaseAccess.getFinalTotalPrice();*/
+
+            finalTotal = (totalPrice - allDiscount) + allTax;
+            Log.e("Price-dscnt+tax=ft", "---" + totalPrice + "-" + allDiscount + "+" + allTax + "=" + finalTotal);
+
+
+            txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+
+            //setting total discount
+            txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + ": " + currency + " " + f.format(allDiscount));
+
+            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(roundOff2Decimal(finalTotal)));
+
+
+            if (country.equals("UAE")) {
+                txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                txtTotalSgst.setVisibility(View.GONE);
+                txtTotalCess.setVisibility(View.GONE);
+            } else {
+                if (Double.valueOf(allCgst) != 0) {
+                    txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + "(+)" + ": " + currency + " " + f.format(allCgst));
+                } else {
+                    txtTotalCgst.setVisibility(View.GONE);
+                }
+
+                if (Double.valueOf(allSgst) != 0) {
+                    txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + "(+)" + ": " + currency + " " + f.format(allSgst));
+                } else {
+                    txtTotalSgst.setVisibility(View.GONE);
+                }
+
+                if (Double.valueOf(cess) != 0) {
+                    txtTotalCess.setText(context.getString(R.string.total_cess_cart) + "(+)" + ": " + currency + " " + f.format(allCess));
+                } else {
+                    txtTotalCess.setVisibility(View.GONE);
+                }
+
+            }
+
+
+
+
+            holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+                    databaseAccess.open();
+                    boolean deleteProduct = databaseAccess.deleteProductFromCart(cart_id);
+                    if (deleteProduct) {
+                        Toasty.success(context, context.getString(R.string.product_removed_from_cart), Toast.LENGTH_SHORT).show();
+
+                        // Calculate Cart's Total Price Again
+                        player.start();
+
+                        removeAt(cartProduct, holder.getAdapterPosition());
+                        cartProduct.clear();
+                        databaseAccess.open();
+                        cartProduct=databaseAccess.getCartProduct();
+                        populateCartList(cartProduct);
+
+                        databaseAccess.open();
+                        totalPrice = databaseAccess.getTotalPrice();
+
+                        databaseAccess.open();
+                        allTax = databaseAccess.getTotalTax();
+                        databaseAccess.open();
+                        allCgst = databaseAccess.getTotalCGST();
+                        databaseAccess.open();
+                        allSgst = databaseAccess.getTotalSGST();
+                        databaseAccess.open();
+                        allCess = databaseAccess.getTotalCESS();
+
+                        allDiscount = 0.0;
+
+                        //getting total discount from db
+                        databaseAccess.open();
+                        allDiscount = databaseAccess.getTotalProductDiscount();
+
+                        double priceWithTax = (totalPrice - allDiscount) + allTax;
+                        txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+
+                        //setting total discount
+                        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + " " + currency + " " + f.format(allDiscount));
+
+                        if (country.equals("UAE")) {
+                            txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                            txtTotalSgst.setVisibility(View.GONE);
+                            txtTotalCess.setVisibility(View.GONE);
+                        } else {
+                            if (Double.valueOf(allCgst) != 0) {
+                                txtTotalCgst.setVisibility(View.VISIBLE);
+                                txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + "(+)" + ": " + currency + " " + f.format(allCgst));
+                            } else {
+                                txtTotalCgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(allSgst) != 0) {
+                                txtTotalSgst.setVisibility(View.VISIBLE);
+                                txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + "(+)" + ": " + currency + " " + f.format(allSgst));
+                            } else {
+                                txtTotalSgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(cess) != 0) {
+                                txtTotalCess.setVisibility(View.VISIBLE);
+                                txtTotalCess.setText(context.getString(R.string.total_cess_cart) + "(+)" + ": " + currency + " " + f.format(allCess));
+                            } else {
+                                txtTotalCess.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        if (Double.valueOf(priceWithTax) != 0) {
+                            txtFinalTotal.setVisibility(View.VISIBLE);
+                            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(roundOff2Decimal(priceWithTax)));
+                        } else {
+                            txtFinalTotal.setVisibility(View.GONE);
+                        }
+
+                    } else {
+                        Toasty.error(context, context.getString(R.string.failed), Toast.LENGTH_SHORT).show();
+                    }
+
+
+                    databaseAccess.open();
+                    int itemCount = databaseAccess.getCartItemCount();
+                    Log.d("itemCount", "" + itemCount);
+                    if (itemCount <= 0) {
+                        txtTotalPrice.setVisibility(View.GONE);
+                        txtTotalDiscount.setVisibility(View.GONE);
+                        txtTotalCgst.setVisibility(View.GONE);
+                        txtTotalSgst.setVisibility(View.GONE);
+                        txtTotalCess.setVisibility(View.GONE);
+                        txtFinalTotal.setVisibility(View.GONE);
+
+                        btnSubmitOrder.setVisibility(View.GONE);
+
+                        imgNoProduct.setVisibility(View.VISIBLE);
+                        txtNoProduct.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            });
+
+
+            holder.txtPlus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+                    String qty1 = holder.txtQtyNumber.getText().toString();
+                    int getQty = Integer.parseInt(qty1);
+
+                    if (getQty >= getStock) {
+                        Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
+                    } else {
+
+                        getQty++;
+
+                        double cost = Double.parseDouble(price) * getQty;
+                        Log.e("cost", "----" + cost);
+
+
+                        double itemCgst = cost * Double.valueOf(cgstPercent) / 100;
+                        double itemSgst = cost * Double.valueOf(sgstPercent) / 100;
+                        double itemCess = cost * Double.valueOf(cessPercent) / 100;
+                        Log.e("itemCgst", "----" + itemCgst);
+
+                        holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
+
+
+                        holder.txtPrice.setText(currency + f.format(cost));
+                        holder.txtQtyNumber.setText(String.valueOf(getQty));
+
+
+                        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+                        databaseAccess.open();
+                        databaseAccess.updateProductQty(cart_id, "" + getQty);
+
+                        totalPrice = totalPrice + Double.valueOf(price);
+
+                        double lineTotalTax = itemCgst + itemSgst + itemCess;
+                        double lineTotal = Double.valueOf(cost) + lineTotalTax;
+
+                        databaseAccess.open();
+                        databaseAccess.updateLineTotal(cart_id, "" + lineTotal);
+
+
+                        holder.edtDisc.getText().clear();
+                        discount = 0;
+                        databaseAccess.open();
+                        databaseAccess.updateProductDiscount(cart_id, "" + discount);
+
+                        holder.edtDisc.requestFocus();
+
+                        allDiscount = 0.0;
+                        databaseAccess.open();
+                        allDiscount = databaseAccess.getTotalProductDiscount();
+                        //setting total discount
+                        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + " " + currency + ": " + f.format(allDiscount));
+
+                        txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+
+                        if (country.equals("UAE")) {
+                            holder.txtCgst.setText("VAT" + " " + currency + " " + f.format(itemCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                            holder.txtSgst.setVisibility(View.GONE);
+                            holder.txtCess.setVisibility(View.GONE);
+                        } else {
+
+                            if (Double.valueOf(itemCgst) != 0) {
+                                holder.txtCgst.setVisibility(View.VISIBLE);
+                                holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + " " + f.format(itemCgst));
+                            } else {
+                                holder.txtCgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(itemSgst) != 0) {
+                                holder.txtSgst.setVisibility(View.VISIBLE);
+                                holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + " " + f.format(itemSgst));
+                            } else {
+                                holder.txtSgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(itemCess) != 0) {
+                                holder.txtCess.setVisibility(View.VISIBLE);
+                                holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + " " + f.format(itemCess));
+                            } else {
+                                holder.txtCess.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        //updates discounted tax to db
+                        databaseAccess.open();
+                        databaseAccess.updatecgst(cart_id, "" + itemCgst);
+                        databaseAccess.open();
+                        databaseAccess.updatesgst(cart_id, "" + itemSgst);
+                        databaseAccess.open();
+                        databaseAccess.updatecess(cart_id, "" + itemCess);
+
+
+                        databaseAccess.open();
+                        allTax = databaseAccess.getTotalTax();
+                        databaseAccess.open();
+                        allCgst = databaseAccess.getTotalCGST();
+                        databaseAccess.open();
+                        allSgst = databaseAccess.getTotalSGST();
+                        databaseAccess.open();
+                        allCess = databaseAccess.getTotalCESS();
+
+                        if (country.equals("UAE")) {
+                            txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                            txtTotalSgst.setVisibility(View.GONE);
+                            txtTotalCess.setVisibility(View.GONE);
+                        } else {
+                            if (Double.valueOf(allCgst) != 0) {
+                                txtTotalCgst.setVisibility(View.VISIBLE);
+                                txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + "(+)" + ": " + currency + " " + f.format(allCgst));
+                            } else {
+                                txtTotalCgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(allSgst) != 0) {
+                                txtTotalSgst.setVisibility(View.VISIBLE);
+                                txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + "(+)" + ": " + currency + " " + f.format(allSgst));
+                            } else {
+                                txtTotalSgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(cess) != 0) {
+                                txtTotalCess.setVisibility(View.VISIBLE);
+                                txtTotalCess.setText(context.getString(R.string.total_cess_cart) + "(+)" + ": " + currency + " " + f.format(allCess));
+                            } else {
+                                txtTotalCess.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        databaseAccess.open();
+                        allDiscountedTax = databaseAccess.getTotalTax();
+                        finalTotal = (totalPrice - allDiscount) + allDiscountedTax;
+
+                        if (Double.valueOf(finalTotal) != 0) {
+                            txtFinalTotal.setVisibility(View.VISIBLE);
+                            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(roundOff2Decimal(finalTotal)));
+                        } else {
+                            txtFinalTotal.setVisibility(View.GONE);
+                        }
+
+                    }
+                }
+            });
+
+
+            holder.txtMinus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    String qty = holder.txtQtyNumber.getText().toString();
+                    int getQty = Integer.parseInt(qty);
+
+
+                    if (getQty >= 2) {
+                        getQty--;
+
+                        double cost = Double.parseDouble(price) * getQty;
+
+                        double itemCgst = cost * Double.valueOf(cgstPercent) / 100;
+                        double itemSgst = cost * Double.valueOf(sgstPercent) / 100;
+                        double itemCess = cost * Double.valueOf(cessPercent) / 100;
+
+                        holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
+
+                        holder.txtPrice.setText(currency + f.format(cost));
+                        holder.txtQtyNumber.setText(String.valueOf(getQty));
+
+
+                        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+                        databaseAccess.open();
+                        databaseAccess.updateProductQty(cart_id, "" + getQty);
+
+                        totalPrice = totalPrice - Double.valueOf(price);
+
+
+                        holder.edtDisc.getText().clear();
+                        discount = 0;
+                        databaseAccess.open();
+                        databaseAccess.updateProductDiscount(cart_id, "" + discount);
+
+                        holder.edtDisc.requestFocus();
+
+                        allDiscount = 0.0;
+                        databaseAccess.open();
+                        allDiscount = databaseAccess.getTotalProductDiscount();
+                        //setting total discount
+                        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + " " + currency + " " + f.format(allDiscount));
+
+                        txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+
+                        if (country.equals("UAE")) {
+                            holder.txtCgst.setText("VAT" + " " + currency + " " + f.format(itemCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                            holder.txtSgst.setVisibility(View.GONE);
+                            holder.txtCess.setVisibility(View.GONE);
+                        } else {
+
+                            if (Double.valueOf(itemCgst) != 0) {
+                                holder.txtCgst.setVisibility(View.VISIBLE);
+                                holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + " " + f.format(itemCgst));
+                            } else {
+                                holder.txtCgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(itemSgst) != 0) {
+                                holder.txtSgst.setVisibility(View.VISIBLE);
+                                holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + " " + f.format(itemSgst));
+                            } else {
+                                holder.txtSgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(itemCess) != 0) {
+                                holder.txtCess.setVisibility(View.VISIBLE);
+                                holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + " " + f.format(itemCess));
+                            } else {
+                                holder.txtCess.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        //updates discounted tax to db
+                        databaseAccess.open();
+                        databaseAccess.updatecgst(cart_id, "" + itemCgst);
+                        databaseAccess.open();
+                        databaseAccess.updatesgst(cart_id, "" + itemSgst);
+                        databaseAccess.open();
+                        databaseAccess.updatecess(cart_id, "" + itemCess);
+
+
+                        databaseAccess.open();
+                        allTax = databaseAccess.getTotalTax();
+                        databaseAccess.open();
+                        allCgst = databaseAccess.getTotalCGST();
+                        databaseAccess.open();
+                        allSgst = databaseAccess.getTotalSGST();
+                        databaseAccess.open();
+                        allCess = databaseAccess.getTotalCESS();
+                        if (country.equals("UAE")) {
+                            txtTotalCgst.setText("Total Vat" + "(+)" + ": " + currency + " " + f.format(allCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                            txtTotalSgst.setVisibility(View.GONE);
+                            txtTotalCess.setVisibility(View.GONE);
+                        } else {
+                            if (Double.valueOf(allCgst) != 0) {
+                                txtTotalCgst.setVisibility(View.VISIBLE);
+                                txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + "(+)" + ": " + currency + " " + f.format(allCgst));
+                            } else {
+                                txtTotalCgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(allSgst) != 0) {
+                                txtTotalSgst.setVisibility(View.VISIBLE);
+                                txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + "(+)" + ": " + currency + " " + f.format(allSgst));
+                            } else {
+                                txtTotalSgst.setVisibility(View.GONE);
+                            }
+
+                            if (Double.valueOf(cess) != 0) {
+                                txtTotalCess.setVisibility(View.VISIBLE);
+                                txtTotalCess.setText(context.getString(R.string.total_cess_cart) + "(+)" + ": " + currency + " " + f.format(allCess));
+                            } else {
+                                txtTotalCess.setVisibility(View.GONE);
+                            }
+
+                        }
+
+                        double lineTotalTax = itemCgst + itemSgst + itemCess;
+                        double lineTotal = Double.valueOf(cost) + lineTotalTax;
+                        databaseAccess.open();
+                        databaseAccess.updateLineTotal(cart_id, "" + lineTotal);
+                        databaseAccess.open();
+                        allDiscountedTax = databaseAccess.getTotalTax();
+                        finalTotal = (totalPrice - allDiscount) + allDiscountedTax;
+
+                        if (finalTotal != 0) {
+                            txtFinalTotal.setVisibility(View.VISIBLE);
+                            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(roundOff2Decimal(finalTotal)));
+                        } else {
+                            txtFinalTotal.setVisibility(View.GONE);
+                        }
+
+
+                    }
+
+
+                }
+
+            });
+
+
+            holder.edtDisc.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    final String dis = holder.edtDisc.getText().toString().trim();
+                    final String qty = holder.txtQtyNumber.getText().toString().trim();
+
+                    double cost = Double.parseDouble(price) * Integer.parseInt(qty);
+                    Log.e("cost", "------" + cost + "-");
+
+                    holder.edtDisc.setFilters(new InputFilter[]{new InputFilterMinMax("0", String.valueOf(cost)), new InputFilter.LengthFilter(15)});
+
+
+//              calculating tax to the discounted amount for each item
+                    if (!dis.equals("")) {
+                        discount = Double.parseDouble(dis);
+                    } else {
+                        discount = 0.0;
+                    }
+                    priceWithDisc = cost - discount;
+                    Log.e("price", "------" + price + "-");
+                    Log.e("qty", "------" + qty + "-");
+                    Log.e("cost-discount=total", "------" + cost + "-" + dis + "=" + priceWithDisc);
+                    double getCgst = 0, getSgst = 0, getCess = 0;
+                    if (cgstPercent != null && !cgstPercent.equals("")) {
+                        getCgst = Double.parseDouble(cgstPercent);
+                    }
+                    if (sgstPercent != null && !sgstPercent.equals("")) {
+                        getSgst = Double.parseDouble(sgstPercent);
+                    }
+                    if (cessPercent != null && !cessPercent.equals("")) {
+                        getCess = Double.parseDouble(cessPercent);
+                    }
+                    double cgstAmount = (priceWithDisc * getCgst) / 100;
+                    double sgstAmount = (priceWithDisc * getSgst) / 100;
+                    double cessAmount = (priceWithDisc * getCess) / 100;
+                    Log.e("price*vat=vatline", "---" + priceWithDisc + "*" + getCgst + "=" + cgstAmount);
+
+
+                    // setting discounted price to the item
+                    holder.txtPrice.setText(currency + f.format(priceWithDisc));
+
+                    //update product discount to db
+                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+                    databaseAccess.open();
+                    databaseAccess.updateProductDiscount(cart_id, "" + discount);
+
+                    //updates discounted tax to db
+                    databaseAccess.open();
+                    databaseAccess.updatecgst(cart_id, "" + cgstAmount);
+                    databaseAccess.open();
+                    databaseAccess.updatesgst(cart_id, "" + sgstAmount);
+                    databaseAccess.open();
+                    databaseAccess.updatecess(cart_id, "" + cessAmount);
+
+                    // setting  tax amount to the item
+                    if (country.equals("UAE")) {
+                        holder.txtCgst.setText("VAT" + " " + currency + " " + f.format(cgstAmount));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                        holder.txtSgst.setVisibility(View.GONE);
+                        holder.txtCess.setVisibility(View.GONE);
+                    } else {
+
+                        if (Double.valueOf(cgst) != 0) {
+                            holder.txtCgst.setVisibility(View.VISIBLE);
+                            holder.txtCgst.setText(context.getString(R.string.cgst) + " " + currency + " " + f.format(cgstAmount));
+                        } else {
+                            holder.txtCgst.setVisibility(View.GONE);
+                        }
+
+                        if (Double.valueOf(sgst) != 0) {
+                            holder.txtSgst.setVisibility(View.VISIBLE);
+                            holder.txtSgst.setText(context.getString(R.string.sgst) + " " + currency + " " + f.format(sgstAmount));
+                        } else {
+                            holder.txtSgst.setVisibility(View.GONE);
+                        }
+
+                        if (Double.valueOf(cess) != 0) {
+                            holder.txtCess.setVisibility(View.VISIBLE);
+                            holder.txtCess.setText(context.getString(R.string.cess) + " " + currency + " " + f.format(cessAmount));
+                        } else {
+                            holder.txtCess.setVisibility(View.GONE);
+                        }
+
+                    }
+
+                    allDiscount = 0.0;
+                    //getting total discount from db
+                    databaseAccess.open();
+                    allDiscount = databaseAccess.getTotalProductDiscount();
+
+                    //setting total discount
+                    txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + ": " + currency + " " + f.format(allDiscount));
+
+                    //getting total tax from db
+                    databaseAccess.open();
+                    allDiscountedCgst = databaseAccess.getTotalCGST();
+                    databaseAccess.open();
+                    allDiscountedSgst = databaseAccess.getTotalSGST();
+                    databaseAccess.open();
+                    allDiscountedCess = databaseAccess.getTotalCESS();
+                    databaseAccess.open();
+                    allDiscountedTax = databaseAccess.getTotalTax();
+
+                    //setting total tax amount
+                    if (country.equals("UAE")) {
+                        txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allDiscountedCgst));
+//            holder.txtSgst.setText("VAT 2" + " " + currency + sgst);
+                        txtTotalSgst.setVisibility(View.GONE);
+                        txtTotalCess.setVisibility(View.GONE);
+                    } else {
+                        if (Double.valueOf(allDiscountedCgst) != 0) {
+                            txtTotalCgst.setVisibility(View.VISIBLE);
+                            txtTotalCgst.setText(context.getString(R.string.total_cgst_cart) + "(+)" + ": " + currency + " " + f.format(allDiscountedCgst));
+                        } else {
+                            txtTotalCgst.setVisibility(View.GONE);
+                        }
+
+                        if (Double.valueOf(allDiscountedSgst) != 0) {
+                            txtTotalSgst.setVisibility(View.VISIBLE);
+                            txtTotalSgst.setText(context.getString(R.string.total_sgst_cart) + "(+)" + ": " + currency + " " + f.format(allDiscountedSgst));
+                        } else {
+                            txtTotalSgst.setVisibility(View.GONE);
+                        }
+
+                        if (Double.valueOf(allDiscountedCess) != 0) {
+                            txtTotalCess.setVisibility(View.VISIBLE);
+                            txtTotalCess.setText(context.getString(R.string.total_cess_cart) + "(+)" + ": " + currency + " " + f.format(allDiscountedCess));
+                        } else {
+                            txtTotalCess.setVisibility(View.GONE);
+                        }
+
+                    }
+
+
+                    double lineTotalTax = cgstAmount + sgstAmount + cessAmount;
+                    double lineTotal = priceWithDisc + lineTotalTax;
+                    Log.e("Price*TotalTax=lineT", "---" + priceWithDisc + "+" + lineTotalTax + "=" + lineTotal);
+
+                    databaseAccess.open();
+                    databaseAccess.updateLineTotal(cart_id, "" + lineTotal);
+
+//                databaseAccess.open();
+//                finalTotal= databaseAccess.getFinalTotalPrice();
+                    finalTotal = (totalPrice - allDiscount) + allDiscountedTax;
+
+                    if (finalTotal != 0) {
+                        txtFinalTotal.setVisibility(View.VISIBLE);
+                        txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(roundOff2Decimal(finalTotal)));
+                    } else {
+                        txtFinalTotal.setVisibility(View.GONE);
+                    }
+
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+
+                }
+            });
+
+
+        }
+
+        public void removeAt(List<HashMap<String, String>> cartProduct, int position) {
+            cartProduct.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, cartProduct.size());
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemCount() {
+            return cartProduct.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
+        }
+
+        public  class MyViewHolder extends RecyclerView.ViewHolder {
+
+            TextView txtItemName, txtPrice, txtWeight, txtQtyNumber, txtPlus, txtMinus, txtCgst, txtSgst, txtCess;
+            ImageView imgProduct, imgDelete;
+            EditText edtDisc;
+
+            public MyViewHolder(View itemView) {
+                super(itemView);
+                txtItemName = itemView.findViewById(R.id.txt_item_name);
+                txtPrice = itemView.findViewById(R.id.txt_price);
+                txtWeight = itemView.findViewById(R.id.txt_weight);
+                txtQtyNumber = itemView.findViewById(R.id.txt_number);
+                imgProduct = itemView.findViewById(R.id.cart_product_image);
+                imgDelete = itemView.findViewById(R.id.img_delete);
+                txtMinus = itemView.findViewById(R.id.txt_minus);
+                txtPlus = itemView.findViewById(R.id.txt_plus);
+                edtDisc = itemView.findViewById(R.id.edt_disc);
+
+                txtCgst = itemView.findViewById(R.id.txt_cgst);
+                txtSgst = itemView.findViewById(R.id.txt_sgst);
+                txtCess = itemView.findViewById(R.id.txt_cess);
+
+            }
+
+
+        }
+
+
+    }
+
 
 }
 
