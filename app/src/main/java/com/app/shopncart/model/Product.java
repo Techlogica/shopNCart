@@ -2,7 +2,9 @@ package com.app.shopncart.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
 
 
     @SerializedName("product_id")
@@ -79,6 +81,9 @@ public class Product {
 
     @SerializedName("message")
     private String message;
+
+    @SerializedName("editable")
+    private String editable;
 
 
     public String getProductId() {
@@ -169,5 +174,9 @@ public class Product {
 
     public String getTotal_today_tax() {
         return total_today_tax;
+    }
+
+    public String getEditable() {
+        return editable;
     }
 }

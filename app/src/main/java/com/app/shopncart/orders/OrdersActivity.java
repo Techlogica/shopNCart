@@ -1,11 +1,14 @@
 package com.app.shopncart.orders;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -14,13 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
+import com.app.shopncart.adapter.ExpenseAdapter;
 import com.app.shopncart.adapter.OrderAdapter;
+import com.app.shopncart.expense.ExpenseActivity;
+import com.app.shopncart.model.Expense;
 import com.app.shopncart.model.OrderList;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
@@ -28,6 +35,7 @@ import com.app.shopncart.utils.BaseActivity;
 import com.app.shopncart.utils.Utils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -42,9 +50,9 @@ public class OrdersActivity extends BaseActivity {
 
     ImageView imgNoProduct;
     TextView txtNoProducts;
-    EditText etxtSearch;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    List<OrderList> orderList;
 
 
     @Override
@@ -55,10 +63,9 @@ public class OrdersActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-        mSwipeRefreshLayout =findViewById(R.id.swipeToRefresh);
+        mSwipeRefreshLayout = findViewById(R.id.swipeToRefresh);
 
-        txtNoProducts=findViewById(R.id.txt_no_products);
-        etxtSearch=findViewById(R.id.etxt_search_order);
+        txtNoProducts = findViewById(R.id.txt_no_products);
 
         //set color of swipe refresh
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
@@ -75,25 +82,21 @@ public class OrdersActivity extends BaseActivity {
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
 
-
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(OrdersActivity.this,LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(OrdersActivity.this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager); // set LayoutManager to RecyclerView
 
         recyclerView.setHasFixedSize(true);
 
-        Utils utils=new Utils();
+        Utils utils = new Utils();
 
 
         //swipe refresh listeners
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
-            if (utils.isNetworkAvailable(OrdersActivity.this))
-            {
-                getOrdersData("",shopID,ownerId);
-            }
-            else
-            {
+            if (utils.isNetworkAvailable(OrdersActivity.this)) {
+                getOrdersData("", shopID, ownerId);
+            } else {
                 Toasty.error(OrdersActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
 
@@ -103,13 +106,10 @@ public class OrdersActivity extends BaseActivity {
         });
 
 
-        if (utils.isNetworkAvailable(OrdersActivity.this))
-        {
+        if (utils.isNetworkAvailable(OrdersActivity.this)) {
             //Load data from server
-            getOrdersData("",shopID,ownerId);
-        }
-        else
-        {
+            getOrdersData("", shopID, ownerId);
+        } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
             imgNoProduct.setImageResource(R.drawable.not_found);
@@ -121,46 +121,14 @@ public class OrdersActivity extends BaseActivity {
         }
 
 
-        etxtSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                Log.d("data",s.toString());
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-
-                if (s.length() > 1) {
-
-                    //search data from server
-                    getOrdersData(s.toString(),shopID,ownerId);
-                } else {
-                    getOrdersData("",shopID,ownerId);
-                }
-
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("data",s.toString());
-            }
-
-
-        });
-
     }
 
 
-    public void getOrdersData(String searchText,String shopId,String ownerId) {
+    public void getOrdersData(String searchText, String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderList>> call;
-        call = apiInterface.getOrders(searchText,shopId,ownerId);
+        call = apiInterface.getOrders(searchText, shopId, ownerId);
 
         call.enqueue(new Callback<List<OrderList>>() {
             @Override
@@ -168,35 +136,10 @@ public class OrdersActivity extends BaseActivity {
 
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<OrderList> orderList;
                     orderList = response.body();
 
 
-                    if (orderList.isEmpty()) {
-
-                        recyclerView.setVisibility(View.GONE);
-                        imgNoProduct.setVisibility(View.VISIBLE);
-                        imgNoProduct.setImageResource(R.drawable.not_found);
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-
-                    } else {
-
-
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-                        recyclerView.setVisibility(View.VISIBLE);
-                        imgNoProduct.setVisibility(View.GONE);
-                        OrderAdapter orderAdapter = new OrderAdapter(OrdersActivity.this, orderList);
-
-                        recyclerView.setAdapter(orderAdapter);
-
-                    }
-
+                    setUpRecyclerView(orderList);
                 }
             }
 
@@ -211,13 +154,112 @@ public class OrdersActivity extends BaseActivity {
 
     }
 
-    //for back button
+
+    //filter by searchquery
+    private void filterList(String query) {
+
+        query = query.toLowerCase();
+        List<OrderList> arrayList = new ArrayList<>();
+
+
+        if (query.length() == 0) {
+            arrayList = orderList;
+        } else {
+            for (int i = 0; i < orderList.size(); i++) {
+                OrderList obj = orderList.get(i);
+                boolean filter = false;
+                if (obj.getCustomerName() != null)
+                    if (obj.getCustomerName().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (obj.getInvoiceId() != null)
+                    if (obj.getInvoiceId().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+
+                if (obj.getOrderPaymentMethod() != null)
+                    if (obj.getOrderPaymentMethod().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (filter) {
+                    arrayList.add(obj);
+                }
+            }
+
+        }
+        setUpRecyclerView(arrayList);
+    }
+
+    private void setUpRecyclerView(List<OrderList> arrayList) {
+
+        if (arrayList.isEmpty()) {
+
+            recyclerView.setVisibility(View.GONE);
+            imgNoProduct.setVisibility(View.VISIBLE);
+            imgNoProduct.setImageResource(R.drawable.not_found);
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+
+        } else {
+
+
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+            recyclerView.setVisibility(View.VISIBLE);
+            imgNoProduct.setVisibility(View.GONE);
+            OrderAdapter orderAdapter = new OrderAdapter(OrdersActivity.this, arrayList);
+
+            recyclerView.setAdapter(orderAdapter);
+
+        }
+
+
+    }
+
+
+    // searchview on toolbar
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        if (null != searchManager) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        }
+//        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                filterList(query);
+                return true;
+            }
+
+        });
+        return true;
+    }
+
+    // home button click
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }

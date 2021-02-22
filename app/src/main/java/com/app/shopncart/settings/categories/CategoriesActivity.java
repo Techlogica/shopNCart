@@ -1,11 +1,15 @@
 package com.app.shopncart.settings.categories;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,12 +18,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
-import com.app.shopncart.adapter.CategoryAdapter;
+import com.app.shopncart.database.DatabaseAccess;
 import com.app.shopncart.model.Category;
+import com.app.shopncart.model.Customer;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
+import com.app.shopncart.pos.ProductCart;
+import com.app.shopncart.settings.payment_method.AddPaymentMethodActivity;
+import com.app.shopncart.settings.payment_method.PaymentMethodActivity;
 import com.app.shopncart.utils.BaseActivity;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -28,6 +38,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
+
 public class CategoriesActivity extends BaseActivity {
 
 
@@ -35,6 +47,9 @@ public class CategoriesActivity extends BaseActivity {
 
     ImageView imgNoProduct;
     private ShimmerFrameLayout mShimmerViewContainer;
+    FloatingActionButton fabAdd;
+    String shopID = "", ownerId = "";
+    CategoryAdapter categoryAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,11 +64,11 @@ public class CategoriesActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recycler_view);
         imgNoProduct = findViewById(R.id.image_no_product);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
+        fabAdd = findViewById(R.id.fab_add);
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        String shopID = sp.getString(Constant.SP_SHOP_ID, "");
-        String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
-
+        shopID = sp.getString(Constant.SP_SHOP_ID, "");
+        ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -63,24 +78,28 @@ public class CategoriesActivity extends BaseActivity {
 
         recyclerView.setHasFixedSize(true);
 
-        getProductCategory(shopID,ownerId);
+        getProductCategory(shopID, ownerId);
 
-
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CategoriesActivity.this, CatagoryAddActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
 
 
     }
 
 
-
-
-    public void getProductCategory(String shopId,String ownerId) {
+    public void getProductCategory(String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId,ownerId);
+        call = apiInterface.getCategory(shopId, ownerId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -90,33 +109,30 @@ public class CategoriesActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
 
 
-
                     List<Category> productCategory;
                     productCategory = response.body();
 
-                    if (productCategory.isEmpty())
-                    {
-                        Toasty.info(CategoriesActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                    if (productCategory.isEmpty()) {
+//                        Toasty.info(CategoriesActivity.this, R.string.no_data_found, Toast.LENGTH_SHORT).show();
+                        imgNoProduct.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
                         imgNoProduct.setImageResource(R.drawable.no_data);
 
                         //Stopping Shimmer Effects
                         mShimmerViewContainer.stopShimmer();
                         mShimmerViewContainer.setVisibility(View.GONE);
-                    }
-
-                    else {
+                    } else {
 
 
                         //Stopping Shimmer Effects
                         mShimmerViewContainer.stopShimmer();
                         mShimmerViewContainer.setVisibility(View.GONE);
-
-                        CategoryAdapter categoryAdapter = new CategoryAdapter(CategoriesActivity.this, productCategory);
-
+                        imgNoProduct.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                        categoryAdapter = new CategoryAdapter(CategoriesActivity.this, productCategory);
                         recyclerView.setAdapter(categoryAdapter);
 
                     }
-
 
 
                 }
@@ -133,8 +149,57 @@ public class CategoriesActivity extends BaseActivity {
 
     }
 
+    //delete from server
+    private void deleteCategory(String categoryId) {
+
+        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+
+        Call<Category> call = apiInterface.deleteCategory(categoryId);
+        call.enqueue(new Callback<Category>() {
+            @Override
+            public void onResponse(@NonNull Call<Category> call, @NonNull Response<Category> response) {
 
 
+                if (response.isSuccessful() && response.body() != null) {
+
+                    String value = response.body().getValue();
+
+                    if (value.equals(Constant.KEY_SUCCESS)) {
+                        Toasty.success(CategoriesActivity.this, R.string.category_deleted, Toast.LENGTH_SHORT).show();
+                        getProductCategory(shopID, ownerId);
+
+                    } else if (value.equals(Constant.KEY_FAILURE)) {
+                        Toasty.error(CategoriesActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(CategoriesActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Category> call, Throwable t) {
+                Toast.makeText(CategoriesActivity.this, "Error! " + t.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == 1) {
+                if (resultCode == RESULT_OK) {
+                    getProductCategory(shopID, ownerId);
+                }
+            }
+        } catch (Exception ex) {
+            Toast.makeText(CategoriesActivity.this, ex.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
 
     //for back button
@@ -145,6 +210,106 @@ public class CategoriesActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
+
+
+        private List<Category> categoryData;
+        private Context context;
+
+
+        public CategoryAdapter(Context context, List<Category> categoryData) {
+            this.context = context;
+            this.categoryData = categoryData;
+
+        }
+
+
+        @NonNull
+        @Override
+        public CategoryAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_item, parent, false);
+            return new MyViewHolder(view);
+        }
+
+
+        @Override
+        public void onBindViewHolder(@NonNull final CategoryAdapter.MyViewHolder holder, int position) {
+
+
+            String categoryName = categoryData.get(position).getProductCategoryName();
+            String categoryId = categoryData.get(position).getProductCategoryId();
+            holder.txtCategoryName.setText(categoryName);
+
+            holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+                    dialogBuilder
+                            .withTitle(context.getString(R.string.delete))
+                            .withMessage(context.getString(R.string.want_to_delete))
+                            .withEffect(Slidetop)
+                            .withDialogColor("#2979ff") //use color code for dialog
+                            .withButton1Text(context.getString(R.string.yes))
+                            .withButton2Text(context.getString(R.string.cancel))
+                            .setButton1Click(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    deleteCategory(categoryId);
+                                    dialogBuilder.dismiss();
+                                }
+                            })
+                            .setButton2Click(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    dialogBuilder.dismiss();
+                                }
+                            })
+                            .show();
+
+
+                }
+            });
+
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return categoryData.size();
+        }
+
+        public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            TextView txtCategoryName;
+            ImageView imgDelete;
+
+
+            public MyViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                txtCategoryName = itemView.findViewById(R.id.txt_category_name);
+                imgDelete = itemView.findViewById(R.id.img_delete);
+
+
+                itemView.setOnClickListener(this);
+
+            }
+
+            @Override
+            public void onClick(View v) {
+
+                Toast.makeText(context, categoryData.get(getAdapterPosition()).getProductCategoryName(), Toast.LENGTH_SHORT).show();
+
+            }
+        }
+
+
     }
 
 }

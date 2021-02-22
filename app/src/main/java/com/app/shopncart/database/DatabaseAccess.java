@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.app.shopncart.Constant;
 
@@ -61,7 +62,6 @@ public class DatabaseAccess {
         }
     }
 
-
     //insert payment method
     public boolean addPaymentMethod(String paymentMethodName) {
 
@@ -81,8 +81,6 @@ public class DatabaseAccess {
             return true;
         }
     }
-
-
 
     //update payment method
     public boolean updatePaymentMethod(String paymentMethodId, String paymentMethodName) {
@@ -104,11 +102,134 @@ public class DatabaseAccess {
         }
     }
 
+    //Add product into cart
+    public int addProducts(String productId, String productName, String productCode, String productCatId, String productSellPrice,
+                           String productCostPrice, String weight, String weightUnit,
+                           String supplierName, String productImage, String productStock, String cgst, String sgst, String cess,
+                           String totalOrderPrice, String totalTax, String totalDiscount, String editable, String categoryName) {
 
 
+        Cursor result = database.rawQuery("SELECT * FROM products WHERE product_id='" + productId + "'", null);
+        if (result.getCount() >= 1) {
+
+            return 2;
+
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Constant.PRODUCT_ID, productId);
+            values.put(Constant.PRODUCT_NAME, productName);
+            values.put(Constant.PRODUCT_CODE, productCode);
+            values.put(Constant.PRODUCT_CATEGORY_ID, productCatId);
+            values.put(Constant.PRODUCT_SELL_PRICE, productSellPrice);
+            values.put(Constant.PRODUCT_COST_PRICE, productCostPrice);
+            values.put(Constant.PRODUCT_WEIGHT, weight);
+            values.put(Constant.PRODUCT_WEIGHT_UNIT_NAME, weightUnit);
+            values.put(Constant.SUPPLIERS_NAME, supplierName);
+            values.put(Constant.PRODUCT_IMAGE, productImage);
+            values.put(Constant.PRODUCT_STOCK, productStock);
+            values.put(Constant.KEY_CGST, cgst);
+            values.put(Constant.KEY_SGST, sgst);
+            values.put(Constant.KEY_CESS, cess);
+            values.put(Constant.SP_TODAY_SALES, totalOrderPrice);
+            values.put(Constant.TOTAL_TAX, totalTax);
+            values.put(Constant.TOTAL_DISCOUNT, totalDiscount);
+            values.put(Constant.EDITABLE, editable);
+            values.put(Constant.CATEGORY, categoryName);
+
+            long check = database.insert(Constant.products, null, values);
+
+
+            result.close();
+            database.close();
+
+
+            //if data insert success, its return 1, if failed return -1
+            if (check == -1) {
+                return -1;
+            } else {
+                return 1;
+
+            }
+        }
+
+    }
 
     //Add product into cart
-    public int addToCart(String productId, String productName, String weight, String weightUnit, String price, int qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount,String cgstPercent,String sgstPercent,String cessPercent,double discountedTotal,double lineTotal) {
+    public int addCategory(String categoryId, String categoryName) {
+
+
+        Cursor result = database.rawQuery("SELECT * FROM category WHERE product_category_id='" + categoryId + "'", null);
+        if (result.getCount() >= 1) {
+
+            return 2;
+
+        } else {
+            ContentValues values = new ContentValues();
+            values.put(Constant.PRODUCT_CATEGORY_ID, categoryId);
+            values.put(Constant.CATEGORY, categoryName);
+
+            long check = database.insert(Constant.category, null, values);
+
+
+            result.close();
+            database.close();
+
+
+            //if data insert success, its return 1, if failed return -1
+            if (check == -1) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+    }
+
+    //update stock
+    public void updateStock(String productId, String productStock) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("product_stock", productStock);
+
+        database.update("products", values, "product_id=?", new String[]{productId});
+
+    }
+
+
+    public void updateProducts(String productId, String productName, String productCode, String productCatId, String productSellPrice,
+                               String productCostPrice, String weight, String weightUnit,
+                               String supplierName, String productImage, String productStock, String cgst, String sgst, String cess,
+                               String totalOrderPrice, String totalTax, String totalDiscount, String editable, String categoryName) {
+
+        ContentValues values = new ContentValues();
+        values.put(Constant.PRODUCT_ID, productId);
+        values.put(Constant.PRODUCT_NAME, productName);
+        values.put(Constant.PRODUCT_CODE, productCode);
+        values.put(Constant.PRODUCT_CATEGORY_ID, productCatId);
+        values.put(Constant.PRODUCT_SELL_PRICE, productSellPrice);
+        values.put(Constant.PRODUCT_COST_PRICE, productCostPrice);
+        values.put(Constant.PRODUCT_WEIGHT, weight);
+        values.put(Constant.PRODUCT_WEIGHT_UNIT_NAME, weightUnit);
+        values.put(Constant.SUPPLIERS_NAME, supplierName);
+        values.put(Constant.PRODUCT_IMAGE, productImage);
+        values.put(Constant.PRODUCT_STOCK, productStock);
+        values.put(Constant.KEY_CGST, cgst);
+        values.put(Constant.KEY_SGST, sgst);
+        values.put(Constant.KEY_CESS, cess);
+        values.put(Constant.SP_TODAY_SALES, totalOrderPrice);
+        values.put(Constant.TOTAL_TAX, totalTax);
+        values.put(Constant.TOTAL_DISCOUNT, totalDiscount);
+        values.put(Constant.EDITABLE, editable);
+        values.put(Constant.CATEGORY, categoryName);
+
+        database.update("products", values, "product_id=?", new String[]{productId});
+
+
+    }
+
+    //Add product into cart
+    public int addToCart(String productId, String productName, String weight, String weightUnit, String price, Double qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount, String cgstPercent, String sgstPercent, String cessPercent, double discountedTotal, double lineTotal, String editable) {
 
 
         Cursor result = database.rawQuery("SELECT * FROM product_cart WHERE product_id='" + productId + "'", null);
@@ -136,6 +257,7 @@ public class DatabaseAccess {
             values.put(Constant.PRODUCT_CESS_PERCENT, cessPercent);
             values.put(Constant.PRODUCT_DISCOUNTED_TOTAL, discountedTotal);
             values.put(Constant.PRODUCT_LINE_TOTAL, lineTotal);
+            values.put(Constant.EDITABLE, editable);
 
             long check = database.insert(Constant.productCart, null, values);
 
@@ -154,9 +276,8 @@ public class DatabaseAccess {
 
     }
 
-
     //Add product into cart
-    public int addToHold(String productId, String productName, String weight, String weightUnit, String price, int qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount,String cgstPercent,String sgstPercent,String cessPercent,double discountedTotal,double lineTotal) {
+    public int addToHold(String productId, String productName, String weight, String weightUnit, String price, double qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount, String cgstPercent, String sgstPercent, String cessPercent, double discountedTotal, double lineTotal, String editable) {
 
 
         Cursor result = database.rawQuery("SELECT * FROM product_cart_hold WHERE product_id='" + productId + "'", null);
@@ -184,6 +305,7 @@ public class DatabaseAccess {
             values.put(Constant.PRODUCT_CESS_PERCENT, cessPercent);
             values.put(Constant.PRODUCT_DISCOUNTED_TOTAL, discountedTotal);
             values.put(Constant.PRODUCT_LINE_TOTAL, lineTotal);
+            values.put(Constant.EDITABLE, editable);
 
             long check = database.insert(Constant.productCartHold, null, values);
 
@@ -202,7 +324,6 @@ public class DatabaseAccess {
 
     }
 
-
     //get cart product
     public ArrayList<HashMap<String, String>> getCartProduct() {
         ArrayList<HashMap<String, String>> product = new ArrayList<>();
@@ -220,24 +341,111 @@ public class DatabaseAccess {
                 map.put(Constant.PRODUCT_QTY, cursor.getString(cursor.getColumnIndex("product_qty")));
                 map.put(Constant.PRODUCT_IMAGE, cursor.getString(cursor.getColumnIndex("product_image")));
                 map.put(Constant.PRODUCT_STOCK, cursor.getString(cursor.getColumnIndex("product_stock")));
-
                 map.put(Constant.KEY_CGST, cursor.getString(cursor.getColumnIndex("cgst")));
-
                 map.put(Constant.KEY_SGST, cursor.getString(cursor.getColumnIndex("sgst")));
-
                 map.put(Constant.KEY_CESS, cursor.getString(cursor.getColumnIndex("cess")));
-
                 map.put(Constant.PRODUCT_DISC, cursor.getString(cursor.getColumnIndex("product_discount")));
                 map.put(Constant.PRODUCT_CGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_cegst_percent")));
                 map.put(Constant.PRODUCT_SGST_PERCENT, cursor.getString(cursor.getColumnIndex("product_sgst_percent")));
                 map.put(Constant.PRODUCT_CESS_PERCENT, cursor.getString(cursor.getColumnIndex("product_cess_percent")));
                 map.put(Constant.PRODUCT_DISCOUNTED_TOTAL, cursor.getString(cursor.getColumnIndex("product_discounted_total")));
                 map.put(Constant.PRODUCT_LINE_TOTAL, cursor.getString(cursor.getColumnIndex("product_line_total")));
+                map.put(Constant.EDITABLE, cursor.getString(cursor.getColumnIndex("editable")));
 
                 product.add(map);
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+        database.close();
+        return product;
+    }
+
+    //get product data
+    public ArrayList<HashMap<String, String>> getProducts() {
+        ArrayList<HashMap<String, String>> product = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM products ORDER BY product_id DESC", null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<>();
+
+                map.put(Constant.PRODUCT_ID, cursor.getString(cursor.getColumnIndex("product_id")));
+                map.put(Constant.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex("product_name")));
+                map.put(Constant.PRODUCT_CODE, cursor.getString(cursor.getColumnIndex("product_code")));
+                map.put(Constant.PRODUCT_CATEGORY_ID, cursor.getString(cursor.getColumnIndex("product_category_id")));
+                map.put(Constant.PRODUCT_SELL_PRICE, cursor.getString(cursor.getColumnIndex("product_sell_price")));
+                map.put(Constant.PRODUCT_COST_PRICE, cursor.getString(cursor.getColumnIndex("product_cost_price")));
+                map.put(Constant.PRODUCT_WEIGHT, cursor.getString(cursor.getColumnIndex("product_weight")));
+                map.put(Constant.PRODUCT_WEIGHT_UNIT_NAME, cursor.getString(cursor.getColumnIndex("product_weight_unit_name")));
+                map.put(Constant.SUPPLIERS_NAME, cursor.getString(cursor.getColumnIndex("suppliers_name")));
+                map.put(Constant.PRODUCT_IMAGE, cursor.getString(cursor.getColumnIndex("product_image")));
+                map.put(Constant.PRODUCT_STOCK, cursor.getString(cursor.getColumnIndex("product_stock")));
+                map.put(Constant.KEY_CGST, cursor.getString(cursor.getColumnIndex("cgst")));
+                map.put(Constant.KEY_SGST, cursor.getString(cursor.getColumnIndex("sgst")));
+                map.put(Constant.KEY_CESS, cursor.getString(cursor.getColumnIndex("cess")));
+                map.put(Constant.SP_TODAY_SALES, cursor.getString(cursor.getColumnIndex("total_order_price")));
+                map.put(Constant.TOTAL_TAX, cursor.getString(cursor.getColumnIndex("total_tax")));
+                map.put(Constant.TOTAL_DISCOUNT, cursor.getString(cursor.getColumnIndex("total_discount")));
+                map.put(Constant.EDITABLE, cursor.getString(cursor.getColumnIndex("editable")));
+                map.put(Constant.CATEGORY, cursor.getString(cursor.getColumnIndex("product_category_name")));
+
+
+                product.add(map);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        database.close();
+        return product;
+    }
+
+    public ArrayList<HashMap<String, String>> searchProducts(String searchTxt) {
+        ArrayList<HashMap<String, String>> reportData = new ArrayList<>();
+
+        Cursor cursor = database.rawQuery("SELECT * FROM products  WHERE product_name='" + searchTxt + "'OR product_code='" + searchTxt + "'OR product_category_name='" + searchTxt + "'", null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(Constant.PRODUCT_ID, cursor.getString(cursor.getColumnIndex("product_id")));
+                map.put(Constant.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex("product_name")));
+                map.put(Constant.PRODUCT_CODE, cursor.getString(cursor.getColumnIndex("product_code")));
+                map.put(Constant.PRODUCT_CATEGORY_ID, cursor.getString(cursor.getColumnIndex("product_category_id")));
+                map.put(Constant.PRODUCT_SELL_PRICE, cursor.getString(cursor.getColumnIndex("product_sell_price")));
+                map.put(Constant.PRODUCT_COST_PRICE, cursor.getString(cursor.getColumnIndex("product_cost_price")));
+                map.put(Constant.PRODUCT_WEIGHT, cursor.getString(cursor.getColumnIndex("product_weight")));
+                map.put(Constant.PRODUCT_WEIGHT_UNIT_NAME, cursor.getString(cursor.getColumnIndex("product_weight_unit_name")));
+                map.put(Constant.SUPPLIERS_NAME, cursor.getString(cursor.getColumnIndex("suppliers_name")));
+                map.put(Constant.PRODUCT_IMAGE, cursor.getString(cursor.getColumnIndex("product_image")));
+                map.put(Constant.PRODUCT_STOCK, cursor.getString(cursor.getColumnIndex("product_stock")));
+                map.put(Constant.KEY_CGST, cursor.getString(cursor.getColumnIndex("cgst")));
+                map.put(Constant.KEY_SGST, cursor.getString(cursor.getColumnIndex("sgst")));
+                map.put(Constant.KEY_CESS, cursor.getString(cursor.getColumnIndex("cess")));
+                map.put(Constant.SP_TODAY_SALES, cursor.getString(cursor.getColumnIndex("total_order_price")));
+                map.put(Constant.TOTAL_TAX, cursor.getString(cursor.getColumnIndex("total_tax")));
+                map.put(Constant.TOTAL_DISCOUNT, cursor.getString(cursor.getColumnIndex("total_discount")));
+                map.put(Constant.EDITABLE, cursor.getString(cursor.getColumnIndex("editable")));
+                map.put(Constant.CATEGORY, cursor.getString(cursor.getColumnIndex("product_category_name")));
+                reportData.add(map);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        database.close();
+        return reportData;
+    }
+
+
+    public ArrayList<HashMap<String, String>> getCategory() {
+        ArrayList<HashMap<String, String>> product = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM category ORDER BY product_category_id DESC", null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<>();
+
+                map.put(Constant.PRODUCT_CATEGORY_ID, cursor.getString(cursor.getColumnIndex("product_category_id")));
+                map.put(Constant.CATEGORY, cursor.getString(cursor.getColumnIndex("product_category_name")));
+
+                product.add(map);
+            } while (cursor.moveToNext());
+        }
         cursor.close();
         database.close();
         return product;
@@ -272,6 +480,7 @@ public class DatabaseAccess {
                 map.put(Constant.PRODUCT_CESS_PERCENT, cursor.getString(cursor.getColumnIndex("product_cess_percent")));
                 map.put(Constant.PRODUCT_DISCOUNTED_TOTAL, cursor.getString(cursor.getColumnIndex("product_discounted_total")));
                 map.put(Constant.PRODUCT_LINE_TOTAL, cursor.getString(cursor.getColumnIndex("product_line_total")));
+                map.put(Constant.EDITABLE, cursor.getString(cursor.getColumnIndex("editable")));
 
                 product.add(map);
             } while (cursor.moveToNext());
@@ -280,6 +489,20 @@ public class DatabaseAccess {
         cursor.close();
         database.close();
         return product;
+    }
+
+    //clear products
+    public void clearProducts() {
+
+        database.delete(Constant.products, null, null);
+        database.close();
+    }
+
+    //clear category
+    public void clearCategory() {
+
+        database.delete(Constant.category, null, null);
+        database.close();
     }
 
     //empty cart
@@ -391,7 +614,6 @@ public class DatabaseAccess {
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
 
-
     }
 
     //get product name
@@ -428,7 +650,7 @@ public class DatabaseAccess {
             do {
 
                 double price = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_price")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = price * qty;
                 totalPrice = totalPrice + subTotal;
 
@@ -453,7 +675,7 @@ public class DatabaseAccess {
             do {
 
                 double price = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_line_total")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = price * qty;
                 totalPrice = totalPrice + price;
 
@@ -480,8 +702,8 @@ public class DatabaseAccess {
                 double cgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cgst")));
                 double sgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("sgst")));
                 double cess = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cess")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
-                double subTotal = cgst+sgst+cess;
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double subTotal = cgst + sgst + cess;
                 totalTax = totalTax + subTotal;
 
 
@@ -505,7 +727,7 @@ public class DatabaseAccess {
             do {
 
                 double cgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cgst")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = cgst * qty;
                 totalCGST = totalCGST + cgst;
 
@@ -530,7 +752,7 @@ public class DatabaseAccess {
             do {
 
                 double sgst = Double.parseDouble(cursor.getString(cursor.getColumnIndex("sgst")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = sgst * qty;
                 totalSGST = totalSGST + sgst;
 
@@ -555,7 +777,7 @@ public class DatabaseAccess {
             do {
 
                 double cess = Double.parseDouble(cursor.getString(cursor.getColumnIndex("cess")));
-                int qty = Integer.parseInt(cursor.getString(cursor.getColumnIndex("product_qty")));
+                double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = cess * qty;
                 totalCess = totalCess + cess;
 
@@ -729,7 +951,7 @@ public class DatabaseAccess {
             do {
 
                 double price = Double.parseDouble(cursor.getString(4));
-                int qty = Integer.parseInt(cursor.getString(5));
+                double qty = Double.parseDouble(cursor.getString(5));
                 double subTotal = price * qty;
                 totalPrice = totalPrice + subTotal;
 
@@ -758,7 +980,7 @@ public class DatabaseAccess {
             do {
 
                 double price = Double.parseDouble(cursor.getString(4));
-                int qty = Integer.parseInt(cursor.getString(5));
+                double qty = Double.parseDouble(cursor.getString(5));
                 double subTotal = price * qty;
                 totalPrice = totalPrice + subTotal;
 
@@ -893,19 +1115,6 @@ public class DatabaseAccess {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     //get customer data
     public ArrayList<HashMap<String, String>> searchCustomers(String s) {
         ArrayList<HashMap<String, String>> customer = new ArrayList<>();
@@ -981,36 +1190,6 @@ public class DatabaseAccess {
         cursor.close();
         database.close();
         return shopInfo;
-    }
-
-
-    //get product data
-    public ArrayList<HashMap<String, String>> getProducts() {
-        ArrayList<HashMap<String, String>> product = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT * FROM products ORDER BY product_id DESC", null);
-        if (cursor.moveToFirst()) {
-            do {
-                HashMap<String, String> map = new HashMap<>();
-
-
-                map.put(Constant.PRODUCT_ID, cursor.getString(0));
-                map.put(Constant.PRODUCT_NAME, cursor.getString(1));
-                map.put(Constant.PRODUCT_CODE, cursor.getString(2));
-                map.put(Constant.PRODUCT_CATEGORY, cursor.getString(3));
-                map.put(Constant.PRODUCT_DESCRIPTION, cursor.getString(4));
-                map.put(Constant.PRODUCT_SELL_PRICE, cursor.getString(5));
-                map.put(Constant.PRODUCT_SUPPLIER, cursor.getString(6));
-                map.put(Constant.PRODUCT_IMAGE, cursor.getString(7));
-                map.put(Constant.PRODUCT_WEIGHT_UNIT_ID, cursor.getString(8));
-                map.put(Constant.PRODUCT_WEIGHT, cursor.getString(9));
-
-
-                product.add(map);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        database.close();
-        return product;
     }
 
 

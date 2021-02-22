@@ -15,9 +15,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -28,6 +31,7 @@ import androidx.annotation.NonNull;
 
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
+import com.app.shopncart.database.DatabaseAccess;
 import com.app.shopncart.model.Category;
 import com.app.shopncart.model.Product;
 import com.app.shopncart.model.Suppliers;
@@ -54,9 +58,10 @@ import retrofit2.Response;
 public class EditProductActivity extends BaseActivity {
 
     public static EditText etxtProductCode;
-    EditText etxtProductName, etxtProductStock, etxtCGST, etxtSGST, etxtCESS, etxtProductCategory, etxtProductDescription, etxtProductSellPrice, etxtProductSupplier, etxtProdcutWeightUnit, etxtProductWeight,etxtProductCostPrice;
+    EditText etxtProductName, etxtProductStock, etxtCGST, etxtSGST, etxtCESS, etxtProductCategory, etxtProductDescription, etxtProductSellPrice, etxtProductSupplier, etxtProdcutWeightUnit, etxtProductWeight, etxtProductCostPrice;
     TextView txtUpdate, txtChooseImage, txtEditProduct, textViewcgst, textViewsgst, textViewcess;
     ImageView imgProduct, imgScanCode;
+    DatabaseAccess db;
     String mediaPath = "na", encodedImage = "N/A";
     ArrayAdapter<String> categoryAdapter, supplierAdapter, weightUnitAdapter;
     List<Category> productCategory;
@@ -65,6 +70,9 @@ public class EditProductActivity extends BaseActivity {
     List<String> categoryNames, supplierNames, weightUnitNames;
     ProgressDialog loading;
     String country = "";
+    String supplierName, weightUnitName, categoryName;
+    CheckBox checkBox;
+    String isEditable = "";
 
     String selectedCategoryID, selectedSupplierID, selectedWeightUnitID, productID;
 
@@ -72,9 +80,12 @@ public class EditProductActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_product);
+        db = DatabaseAccess.getInstance(this);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.product_details);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
 
         etxtProductName = findViewById(R.id.etxt_product_name);
         etxtProductCode = findViewById(R.id.etxt_product_code);
@@ -82,6 +93,7 @@ public class EditProductActivity extends BaseActivity {
         etxtProductDescription = findViewById(R.id.etxt_product_description);
         etxtProductSellPrice = findViewById(R.id.etxt_product_sell_price);
         etxtProductCostPrice = findViewById(R.id.etxt_product_cost_price);
+        checkBox = findViewById(R.id.checkBox);
 
         etxtProductSupplier = findViewById(R.id.etxt_supplier);
         etxtProdcutWeightUnit = findViewById(R.id.etxt_product_weight_unit);
@@ -106,8 +118,7 @@ public class EditProductActivity extends BaseActivity {
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
 
-        etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1","1000000000"), new InputFilter.LengthFilter(30)});
-
+        etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1", "1000000000"), new InputFilter.LengthFilter(30)});
 
 
         etxtProductName.setEnabled(false);
@@ -127,6 +138,7 @@ public class EditProductActivity extends BaseActivity {
         etxtCGST.setEnabled(false);
         etxtSGST.setEnabled(false);
         etxtCESS.setEnabled(false);
+        checkBox.setEnabled(false);
 
         txtUpdate.setVisibility(View.GONE);
 
@@ -144,6 +156,17 @@ public class EditProductActivity extends BaseActivity {
 
         productID = getIntent().getExtras().getString(Constant.PRODUCT_ID);
         getProductsData(productID, shopID);
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    isEditable = "yes";
+                } else {
+                    isEditable = "no";
+                }
+            }
+        });
 
 
         imgProduct.setOnClickListener(new View.OnClickListener() {
@@ -247,6 +270,7 @@ public class EditProductActivity extends BaseActivity {
                         if (categoryNames.get(i).equalsIgnoreCase(selectedItem)) {
                             // Get the ID of selected Country
                             categoryId = productCategory.get(i).getProductCategoryId();
+                            categoryName = productCategory.get(i).getProductCategoryName();
                         }
                     }
 
@@ -323,6 +347,7 @@ public class EditProductActivity extends BaseActivity {
                             if (supplierNames.get(i).equalsIgnoreCase(selectedItem)) {
 
                                 supplierId = productSuppliers.get(i).getSuppliersId();
+                                supplierName = productSuppliers.get(i).getSuppliersName();
                             }
                         }
 
@@ -401,6 +426,7 @@ public class EditProductActivity extends BaseActivity {
                             if (weightUnitNames.get(i).equalsIgnoreCase(selectedItem)) {
 
                                 weightUnitId = weightUnits.get(i).getWeightUnitId();
+                                weightUnitName = weightUnits.get(i).getWeightUnitName();
                             }
                         }
 
@@ -436,6 +462,7 @@ public class EditProductActivity extends BaseActivity {
                 etxtCGST.setEnabled(true);
                 etxtSGST.setEnabled(true);
                 etxtCESS.setEnabled(true);
+                checkBox.setEnabled(true);
 
 
                 etxtProductName.setTextColor(Color.RED);
@@ -479,6 +506,16 @@ public class EditProductActivity extends BaseActivity {
                 String sgst = etxtSGST.getText().toString();
                 String cess = etxtCESS.getText().toString();
 
+                if(cgst.equals("")){
+                    cgst="0";
+                }
+                if(sgst.equals("")){
+                    sgst="0";
+                }
+                if(cess.equals("")){
+                    cess="0";
+                }
+
 
                 if (productName.isEmpty()) {
                     etxtProductName.setError(getString(R.string.product_name_cannot_be_empty));
@@ -495,7 +532,7 @@ public class EditProductActivity extends BaseActivity {
                 } else if (productSellPrice.isEmpty()) {
                     etxtProductSellPrice.setError(getString(R.string.product_sell_price_cannot_be_empty));
                     etxtProductSellPrice.requestFocus();
-                }  else if (productCostPrice.isEmpty()) {
+                } else if (productCostPrice.isEmpty()) {
                     etxtProductCostPrice.setError(getString(R.string.product_cost_price_cannot_be_empty));
                     etxtProductCostPrice.requestFocus();
                 } else if (productWeight.isEmpty()) {
@@ -504,7 +541,7 @@ public class EditProductActivity extends BaseActivity {
                 } else {
 
 
-                    updateProduct(productName, productCode, selectedCategoryID, productDescription, productCostPrice,productSellPrice, productWeight, selectedWeightUnitID, selectedSupplierID, productStock, cgst, sgst, cess);
+                    updateProduct(productName, productCode, selectedCategoryID, productDescription, productCostPrice, productSellPrice, productWeight, selectedWeightUnitID, selectedSupplierID, productStock, cgst, sgst, cess);
 
 
                 }
@@ -586,7 +623,11 @@ public class EditProductActivity extends BaseActivity {
                         String cgst = productData.get(0).getCgst();
                         String sgst = productData.get(0).getSgst();
                         String cess = productData.get(0).getCess();
+                        String editable = productData.get(0).getEditable();
 
+                        supplierName=productSupplierName;
+                        categoryName=productCategoryName;
+                        weightUnitName=productWeightUnit;
 
                         selectedCategoryID = productData.get(0).getProductCategoryId();
                         selectedSupplierID = productData.get(0).getProductSupplierID();
@@ -611,7 +652,13 @@ public class EditProductActivity extends BaseActivity {
                         etxtCGST.setText(cgst);
                         etxtSGST.setText(sgst);
                         etxtCESS.setText(cess);
-
+                        if(editable!=null) {
+                            if (editable.toLowerCase().equals("yes")) {
+                                checkBox.setChecked(true);
+                            } else {
+                                checkBox.setChecked(false);
+                            }
+                        }
                         String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
 
                         if (productImage != null) {
@@ -808,14 +855,15 @@ public class EditProductActivity extends BaseActivity {
         RequestBody getCgst = RequestBody.create(MediaType.parse("text/plain"), cgst);
         RequestBody getSgst = RequestBody.create(MediaType.parse("text/plain"), sgst);
         RequestBody getCess = RequestBody.create(MediaType.parse("text/plain"), cess);
+        RequestBody getEditable = RequestBody.create(MediaType.parse("text/plain"), isEditable);
 
 
         ApiInterface getResponse = ApiClient.getApiClient().create(ApiInterface.class);
         Call<Product> call;
         if (mediaPath.equals("na")) {
-            call = getResponse.updateProductWithoutImage(name, code, category, description, costPrice,sellPrice, weight, weightUnitId, supplierId, stock, getProductID, getCgst, getSgst, getCess);
+            call = getResponse.updateProductWithoutImage(name, code, category, description, costPrice, sellPrice, weight, weightUnitId, supplierId, stock, getProductID, getCgst, getSgst, getCess,getEditable);
         } else {
-            call = getResponse.updateProduct(fileToUpload, filename, name, code, category, description,costPrice, sellPrice, weight, weightUnitId, supplierId, stock, getProductID, getCgst, getSgst, getCess);
+            call = getResponse.updateProduct(fileToUpload, filename, name, code, category, description, costPrice, sellPrice, weight, weightUnitId, supplierId, stock, getProductID, getCgst, getSgst, getCess,getEditable);
         }
         call.enqueue(new Callback<Product>() {
             @Override
@@ -825,17 +873,24 @@ public class EditProductActivity extends BaseActivity {
 
                     loading.dismiss();
                     String value = response.body().getValue();
+                    String productImage = "";
+                    if (response.body().getProductImage() != null && !response.body().getProductImage().equals("")) {
+                        productImage = response.body().getProductImage();
+                    }
                     if (value.equals(Constant.KEY_SUCCESS)) {
                         Toasty.success(getApplicationContext(), R.string.update_successfully, Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(EditProductActivity.this, ProductActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        db.open();
+                        db.updateProducts(productID, productName, productCode, productCategoryId, productSellPrice, productCostPrice,
+                                productWeight, weightUnitName, supplierName, productImage, productStock, cgst, sgst, cess, "", "", "", isEditable, categoryName);
                     } else if (value.equals(Constant.KEY_FAILURE)) {
 
                         loading.dismiss();
 
                         String message = response.body().getMessage();
-                        Toasty.error(EditProductActivity.this,message, Toast.LENGTH_SHORT).show();
+                        Toasty.error(EditProductActivity.this, message, Toast.LENGTH_SHORT).show();
 
 
                     } else {

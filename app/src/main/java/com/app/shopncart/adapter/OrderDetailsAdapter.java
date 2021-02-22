@@ -66,7 +66,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         String unitPrice = orderData.get(position).getProductPrice();
         String qty = orderData.get(position).getProductQuantity();
         double price = Double.parseDouble(unitPrice);
-        int quantity = Integer.parseInt(qty);
+        double quantity = Double.parseDouble(qty);
         double cost = quantity * price;
 
         subTotalPrice=subTotalPrice+cost;

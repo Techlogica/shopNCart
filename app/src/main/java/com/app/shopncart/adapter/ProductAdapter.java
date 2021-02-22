@@ -24,6 +24,8 @@ import com.bumptech.glide.Glide;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -36,7 +38,7 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHolder> {
 
 
-    private List<Product> productData;
+    private ArrayList<HashMap<String, String>> productData;
     private Context context;
     Utils utils;
     SharedPreferences sp;
@@ -45,7 +47,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
 
 
-    public ProductAdapter(Context context, List<Product> productData) {
+    public ProductAdapter(Context context, ArrayList<HashMap<String, String>> productData) {
         this.context = context;
         this.productData = productData;
         utils = new Utils();
@@ -69,18 +71,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
 
 
-        final String product_id = productData.get(position).getProductId();
-        String name = productData.get(position).getProductName();
-        String stock = productData.get(position).getProductStock();
-        String sellPrice = productData.get(position).getProductSellPrice();
-        String productImage = productData.get(position).getProductImage();
-
+        final String product_id = productData.get(position).get("product_id");
+        String productName = productData.get(position).get("product_name");
+        String productStock = productData.get(position).get("product_stock");
+        String productPrice = productData.get(position).get("product_sell_price");
+        String productImage = productData.get(position).get("product_image");
         String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
 
 
-        holder.txtProductName.setText(name);
-        holder.txtSupplierName.setText(context.getString(R.string.stock) + " :" + stock);
-        holder.txtSellPrice.setText(context.getString(R.string.sell_price) + currency + decimn.format(Double.parseDouble(sellPrice)));
+        holder.txtProductName.setText(productName);
+        holder.txtSupplierName.setText(context.getString(R.string.stock) + " :" + productStock);
+        holder.txtSellPrice.setText(context.getString(R.string.sell_price) + currency + decimn.format(Double.parseDouble(productPrice)));
 
 
         if (productImage != null) {
@@ -148,6 +149,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         return productData.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView txtProductName, txtSupplierName, txtSellPrice;
@@ -172,7 +178,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         @Override
         public void onClick(View view) {
             Intent i = new Intent(context, EditProductActivity.class);
-            i.putExtra(Constant.PRODUCT_ID, productData.get(getAdapterPosition()).getProductId());
+            i.putExtra(Constant.PRODUCT_ID, productData.get(getAdapterPosition()).get("product_id"));
             context.startActivity(i);
 
         }

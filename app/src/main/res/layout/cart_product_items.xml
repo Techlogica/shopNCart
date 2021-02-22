@@ -124,20 +124,18 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="left"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:gravity="left"
+                    android:minHeight="40dp"
+                    android:layout_marginRight="2dp"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:minWidth="100dp"
+                        android:layout_marginRight="2dp"
                         android:orientation="vertical"
-                        android:layout_marginLeft="5dp"
-
-                        >
+                        android:layout_marginLeft="5dp">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -152,13 +150,23 @@
                             android:layout_height="wrap_content"
                             android:minWidth="80dp"
                             android:minHeight="30dp"
-                            android:textSize="14sp"
+                            android:textSize="10sp"
                             android:inputType="numberDecimal"
                             android:gravity="center"
                             android:padding="5dp"
                             android:background="@drawable/round_border_cart"
                             />
                     </LinearLayout>
+
+                    <CheckBox
+                        android:id="@+id/checkBox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="20dp"
+                        android:text="Percent.(%)"
+                        android:textColor="#4C4C4C"
+                        android:layout_gravity="bottom"
+                        android:textSize="8sp"
+                         />
 
 
                 </LinearLayout>
@@ -211,14 +219,16 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <TextView
+            <EditText
                 android:id="@+id/txt_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textCursorDrawable="@null"
                 android:paddingLeft="10dp"
                 android:textColor="@color/white"
                 android:paddingTop="3dp"
+                android:inputType="numberDecimal"
                 android:paddingRight="10dp"
                 android:paddingBottom="5dp"
                 android:text="1"

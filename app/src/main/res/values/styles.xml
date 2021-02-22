@@ -21,4 +21,14 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!--Dialog theme (without this theme dialog will not show apptheme(primary,accent))-->
+    <style name="AppDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+
 </resources>

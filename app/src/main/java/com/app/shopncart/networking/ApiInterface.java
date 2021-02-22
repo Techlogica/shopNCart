@@ -4,6 +4,7 @@ package com.app.shopncart.networking;
 import com.app.shopncart.Constant;
 import com.app.shopncart.model.Category;
 import com.app.shopncart.model.Customer;
+import com.app.shopncart.model.Device;
 import com.app.shopncart.model.Expense;
 import com.app.shopncart.model.ExpenseReport;
 import com.app.shopncart.model.Login;
@@ -34,7 +35,6 @@ import retrofit2.http.Query;
 public interface ApiInterface {
 
 
-
     //for login
     @FormUrlEncoded
     @POST("login.php")
@@ -43,13 +43,11 @@ public interface ApiInterface {
             @Field(Constant.KEY_PASSWORD) String password);
 
 
-
     //calling json array , need list
     @POST("orders_submit.php")
     Call<String> submitOrders(
             @Body RequestBody ordersData
     );
-
 
 
     //get customers data
@@ -93,6 +91,14 @@ public interface ApiInterface {
 
     );
 
+    //get customers data
+    @GET("get_products.php")
+    Call<List<Product>> getProductsStock(
+            @Query(Constant.SHOP_ID) String shopId,
+            @Query(Constant.SP_OWNER_ID) String ownerId
+
+    );
+
 
     //get product data
     @GET("get_product_by_id.php")
@@ -103,18 +109,12 @@ public interface ApiInterface {
     );
 
 
-
     //get order data
     @GET("order_details_by_invoice.php")
     Call<List<OrderDetails>> OrderDetailsByInvoice(
             @Query(Constant.INVOICE_ID) String invoiceId
 
     );
-
-
-
-
-
 
 
     //get order data
@@ -135,7 +135,6 @@ public interface ApiInterface {
     );
 
 
-
     //get order data
     @GET("get_sales_report.php")
     Call<List<SalesReport>> getSalesReport(
@@ -144,7 +143,6 @@ public interface ApiInterface {
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId
     );
-
 
 
     //get expense data
@@ -173,7 +171,6 @@ public interface ApiInterface {
     );
 
 
-
     //for category data
     @GET("get_category.php")
     Call<List<Category>> getCategory(
@@ -181,6 +178,11 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String ownerId
     );
 
+    //for category data
+    @GET("get_shop_D_count.php")
+    Call<Device> getDeviceCount(
+            @Query(Constant.SP_SHOP_ID) String shopId
+    );
 
 
     //for product data
@@ -188,8 +190,6 @@ public interface ApiInterface {
     Call<List<Product>> searchProductByCategory(
             @Query(Constant.KEY_CATEGORY_ID) String categoryId
     );
-
-
 
 
     //add customer data to server
@@ -202,6 +202,20 @@ public interface ApiInterface {
             @Field(Constant.CUSTOMER_ADDRESS) String address,
             @Field(Constant.SP_SHOP_ID) String shopId,
             @Field(Constant.SP_OWNER_ID) String ownerId);
+
+    @FormUrlEncoded
+    @POST("add_category.php")
+    Call<Category> addCategory(
+            @Field(Constant.CATEGORY) String name,
+            @Field(Constant.SP_SHOP_ID) String shopId,
+            @Field(Constant.SP_OWNER_ID) String ownerId);
+
+    //delete customer
+    @FormUrlEncoded
+    @POST("delete_category.php")
+    Call<Category> deleteCategory(
+            @Field(Constant.PRODUCT_CATEGORY_ID) String categoryId
+    );
 
 
     //add expense data to server
@@ -342,7 +356,8 @@ public interface ApiInterface {
                              @Part(Constant.KEY_SGST) RequestBody sgst,
                              @Part(Constant.KEY_CESS) RequestBody cess,
                              @Part(Constant.SP_SHOP_ID) RequestBody shopId,
-                             @Part(Constant.SP_OWNER_ID) RequestBody ownerId);
+                             @Part(Constant.SP_OWNER_ID) RequestBody ownerId,
+                             @Part(Constant.EDITABLE) RequestBody editable);
 
 
     //for upload image and info
@@ -363,7 +378,8 @@ public interface ApiInterface {
                                 @Part(Constant.PRODUCT_ID) RequestBody product_id,
                                 @Part(Constant.KEY_CGST) RequestBody cgst,
                                 @Part(Constant.KEY_SGST) RequestBody sgst,
-                                @Part(Constant.KEY_CESS) RequestBody cess
+                                @Part(Constant.KEY_CESS) RequestBody cess,
+                                @Part(Constant.EDITABLE) RequestBody editable
     );
 
 
@@ -385,7 +401,8 @@ public interface ApiInterface {
             @Part(Constant.PRODUCT_ID) RequestBody productId,
             @Part(Constant.KEY_CGST) RequestBody cgst,
             @Part(Constant.KEY_SGST) RequestBody sgst,
-            @Part(Constant.KEY_CESS) RequestBody cess
+            @Part(Constant.KEY_CESS) RequestBody cess,
+            @Part(Constant.EDITABLE) RequestBody editable
 
     );
 
@@ -398,7 +415,6 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String ownerId
 
     );
-
 
 
     //get expense data

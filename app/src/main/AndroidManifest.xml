@@ -57,7 +57,8 @@
         <activity android:name="com.app.shopncart.customers.AddCustomersActivity" />
         <activity android:name="com.app.shopncart.customers.CustomersActivity" />
         <activity android:name="com.app.shopncart.report.SummaryReportActivity" />
-
+        <activity android:name=".settings.sync.SyncActivity" />
+        <activity android:name=".settings.categories.CatagoryAddActivity" />
         <activity android:name="com.app.shopncart.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name="com.app.shopncart.SplashActivity">

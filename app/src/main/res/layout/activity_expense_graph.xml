@@ -74,11 +74,12 @@
 
                 <TextView
                     android:id="@+id/txt_total_sales"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
                     android:fontFamily="@font/sailec_regular"
                     android:padding="10dp"
+                    android:gravity="right"
                     android:text="@string/total_sales"
                     android:textColor="#fff"
                     android:textSize="16sp" />

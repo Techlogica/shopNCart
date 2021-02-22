@@ -1,5 +1,6 @@
 package com.app.shopncart.suppliers;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -14,13 +17,17 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
+import com.app.shopncart.adapter.CustomerAdapter;
 import com.app.shopncart.adapter.SupplierAdapter;
+import com.app.shopncart.customers.CustomersActivity;
+import com.app.shopncart.model.Customer;
 import com.app.shopncart.model.Suppliers;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
@@ -29,6 +36,7 @@ import com.app.shopncart.utils.Utils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -44,11 +52,10 @@ public class SuppliersActivity extends BaseActivity {
     private RecyclerView recyclerView;
 
     ImageView imgNoProduct;
-    EditText etxtSearch;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
-
+    List<Suppliers> suppliersList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +68,6 @@ public class SuppliersActivity extends BaseActivity {
 
         recyclerView = findViewById(R.id.cart_recyclerview);
         imgNoProduct = findViewById(R.id.image_no_product);
-        etxtSearch = findViewById(R.id.etxt_supplier_search);
         fabAdd = findViewById(R.id.fab_add);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         mSwipeRefreshLayout =findViewById(R.id.swipeToRefresh);
@@ -124,57 +130,115 @@ public class SuppliersActivity extends BaseActivity {
             Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
 
-
-
-
-
-        etxtSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("data", s.toString());
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-                if (s.length() > 1) {
-
-                    //search data from server
-                    getSuppliersData(s.toString(),shopID,ownerId);
-                } else {
-                    getSuppliersData("",shopID,ownerId);
-                }
-
-
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("data", s.toString());
-            }
-
-
-        });
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            this.finish();
-            return true;
+    //filter by searchquery
+    private void filterList(String query) {
+
+        query = query.toLowerCase();
+        List<Suppliers> arrayList = new ArrayList<>();
+
+
+        if (query.length() == 0) {
+            arrayList = suppliersList;
+        } else {
+            for (int i = 0; i < suppliersList.size(); i++) {
+                Suppliers obj=suppliersList.get(i);
+                boolean filter = false;
+                if (obj.getSuppliersName() != null)
+                    if (obj.getSuppliersName().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (obj.getSuppliersId() != null)
+                    if (obj.getSuppliersId().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+
+                if (obj.getSuppliersCell() != null)
+                    if (obj.getSuppliersCell().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (filter) {
+                    arrayList.add(obj);
+                }
+            }
+
+        }
+        setUpRecyclerView(arrayList);
+    }
+
+    private void setUpRecyclerView(List<Suppliers> arrayList) {
+
+        if (arrayList.isEmpty()) {
+
+            recyclerView.setVisibility(View.GONE);
+            imgNoProduct.setVisibility(View.VISIBLE);
+            imgNoProduct.setImageResource(R.drawable.not_found);
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+
+        } else {
+
+
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+            recyclerView.setVisibility(View.VISIBLE);
+            imgNoProduct.setVisibility(View.GONE);
+            SupplierAdapter supplierAdapter = new SupplierAdapter(SuppliersActivity.this, arrayList);
+
+            recyclerView.setAdapter(supplierAdapter);
+
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
 
+    // searchview on toolbar
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
 
 
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        if (null != searchManager) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        }
+//        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                filterList(query);
+                return true;
+            }
+
+        });
+        return true;
+    }
+
+    // home button click
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
+        }
+        return true;
+    }
 
 
     public void getSuppliersData(String searchText,String shopId,String ownerId) {
@@ -189,34 +253,10 @@ public class SuppliersActivity extends BaseActivity {
 
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Suppliers> suppliersList;
                     suppliersList = response.body();
 
 
-                    if (suppliersList.isEmpty()) {
-
-                        recyclerView.setVisibility(View.GONE);
-                        imgNoProduct.setVisibility(View.VISIBLE);
-                        imgNoProduct.setImageResource(R.drawable.not_found);
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-
-                    } else {
-
-
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-                        recyclerView.setVisibility(View.VISIBLE);
-                        imgNoProduct.setVisibility(View.GONE);
-                        SupplierAdapter supplierAdapter = new SupplierAdapter(SuppliersActivity.this, suppliersList);
-
-                        recyclerView.setAdapter(supplierAdapter);
-
-                    }
+                   setUpRecyclerView(suppliersList);
 
                 }
             }

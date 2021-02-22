@@ -6,6 +6,10 @@
         android:title="@string/about_us"
         android:visible="true" />
     <item
+        android:id="@+id/item_sync"
+        android:title="@string/sync"
+        android:visible="true"/>
+    <item
         android:id="@+id/item_settings"
         android:title="@string/action_settings"
         android:visible="true"/>

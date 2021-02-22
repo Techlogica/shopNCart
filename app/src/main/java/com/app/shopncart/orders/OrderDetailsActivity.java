@@ -190,7 +190,7 @@ public class OrderDetailsActivity extends BaseActivity {
             qty = orderDetails.get(i).getProductQuantity();
             weight = orderDetails.get(i).getProductWeight();
 
-            costTotal = Integer.parseInt(qty) * Double.parseDouble(price);
+            costTotal = Double.parseDouble(qty) * Double.parseDouble(price);
 
             rows.add(new String[]{name + "\n" + weight + "\n" + "(" + qty + "x" + currency + price + ")", currency + costTotal});
 

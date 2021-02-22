@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import com.app.shopncart.Constant;
 import com.app.shopncart.HomeActivity;
 import com.app.shopncart.R;
+import com.app.shopncart.helper.PrefManager;
 import com.app.shopncart.model.Login;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
@@ -42,12 +43,13 @@ public class LoginActivity extends BaseActivity {
     SharedPreferences sp;
     ProgressDialog loading;
     Utils utils;
+    PrefManager pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        pref=new PrefManager(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().hide();
 
@@ -182,6 +184,7 @@ public class LoginActivity extends BaseActivity {
                             loading.dismiss();
                         } else if (value.equals(Constant.SUCCESS)) {
                             loading.dismiss();
+                            pref.setKeyDevice("1");
                             //Creating editor to store values to shared preferences
                             SharedPreferences.Editor editor = sp.edit();
                             //Adding values to editor

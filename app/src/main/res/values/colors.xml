@@ -13,11 +13,16 @@
     <color name="grey_5">#f2f2f2</color>
     <color name="grey_60">#666666</color>
     <color name="grey_10">#e6e6e6</color>
-
+    <color name="shader">#33000000</color>
 
     <color name="grey">#757575</color>
 
     <color name="background">#dddddd</color>
+
+    <color name="lightBlue700">#FF0288D1</color>
+    <color name="dark_grey">#999999</color>
+    <color name="greenAccent400">#FF00E676</color>
+
 
     <color name="transparent_black">#88000000</color>
 

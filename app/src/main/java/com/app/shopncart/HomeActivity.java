@@ -34,6 +34,7 @@ import com.app.shopncart.product.ProductActivity;
 import com.app.shopncart.report.ReportActivity;
 import com.app.shopncart.report.SalesReportActivity;
 import com.app.shopncart.settings.SettingsActivity;
+import com.app.shopncart.settings.sync.SyncActivity;
 import com.app.shopncart.suppliers.SuppliersActivity;
 import com.app.shopncart.utils.BaseActivity;
 import com.app.shopncart.utils.LocaleManager;
@@ -369,6 +370,10 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                 Intent intent1 = new Intent(HomeActivity.this, AboutActivity.class);
                 startActivity(intent1);
                 return true;
+            case R.id.item_sync:
+                Intent intent2 = new Intent(HomeActivity.this, SyncActivity.class);
+                startActivity(intent2);
+                return true;
             case R.id.item_settings:
 
                 if (userType.equals(Constant.ADMIN)) {
@@ -426,7 +431,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
                     counterSetiings();
-                    getSalesReport("Today",shopID,ownerId);
+                    getSalesReport("Today", shopID, ownerId);
                 }
             }
         } catch (Exception ex) {

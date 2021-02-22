@@ -11,19 +11,6 @@
         android:orientation="vertical">
 
 
-        <EditText
-            android:id="@+id/etxt_search"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@drawable/round_border"
-            android:drawableRight="@drawable/ic_search"
-            android:ems="10"
-            android:fontFamily="@font/sailec_regular"
-            android:hint="@string/search_here"
-            android:inputType="textPersonName"
-            android:padding="10dp" />
-
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmer_view_container"
             android:layout_width="match_parent"

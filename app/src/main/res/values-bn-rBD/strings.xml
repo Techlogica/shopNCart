@@ -260,6 +260,15 @@
     <string name="summary_report_print">Summary Report</string>
     <string name="hold">Hold</string>
     <string name="total_return">Total Return :</string>
+    <string name="quantity_empty">Quantity should not be empty</string>
+    <string name="enter_catagory_name">Enter Category Name</string>
+    <string name="add_catagory">Add Category</string>
+    <string name="catagory_name">Category Name</string>
+    <string name="category_deleted">Category deleted</string>
+    <string name="sync">Sync</string>
+<string name="synced">Synced</string>
+<string name="syncing">Syncing</string><string name="exit">Exit</string>
+    <string name="device_count">Device Count</string>
 
 
 </resources>

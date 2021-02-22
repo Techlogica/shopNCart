@@ -76,6 +76,8 @@ public class Constant {
     public static final String KEY_TYPE="type";
     public static final String KEY_CATEGORY_ID="category_id";
     public static final String TABLE_NO="table_no";
+    public static final String TOTAL_TAX="total_tax";
+    public static final String TOTAL_DISCOUNT="total_discount";
 
     public static final String STATUS_OPEN="OPEN";
 
@@ -108,6 +110,7 @@ public class Constant {
     public static final String PRODUCT_DESCRIPTION="product_description";
     public static final String PRODUCT_WEIGHT_UNIT_ID="product_weight_unit_id";
     public static final String PRODUCT_WEIGHT_UNIT="product_weight_unit";
+    public static final String PRODUCT_WEIGHT_UNIT_NAME="product_weight_unit_name";
     public static final String PRODUCT_WEIGHT="product_weight";
     public static final String PRODUCT_STOCK="product_stock";
     public static final String PRODUCT_PRICE="product_price";
@@ -118,6 +121,7 @@ public class Constant {
     public static final String PRODUCT_CESS_PERCENT="product_cess_percent";
     public static final String PRODUCT_DISCOUNTED_TOTAL="product_discounted_total";
     public static final String PRODUCT_LINE_TOTAL="product_line_total";
+    public static final String EDITABLE="editable";
     public static final String PRODUCT_SUPPLIER="product_supplier";
     public static final String PRODUCT_SELL_PRICE="product_sell_price";
     public static final String PRODUCT_COST_PRICE="product_cost_price";
@@ -152,6 +156,7 @@ public class Constant {
     public static String suppliers="suppliers";
     public static String productCategory="product_category";
     public static String products="products";
+    public static String category="category";
     public static String paymentMethod="payment_method";
     public static String expense="expense";
     public static String productCart="product_cart";
@@ -177,6 +182,8 @@ public class Constant {
     public static final String SP_USER_ID = "user_id";
 
     public static final String SEARCH_TEXT = "search_text";
+    public static final String CATEGORY = "product_category_name";
+    public static final String PRODUCT_CATEGORY_ID = "product_category_id";
 
 
     public static final String SP_IS_FIRST_TIME = "is_first_time";

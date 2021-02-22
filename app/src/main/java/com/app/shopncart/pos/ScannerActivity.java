@@ -1,6 +1,7 @@
 package com.app.shopncart.pos;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -67,9 +68,14 @@ public class ScannerActivity extends BaseActivity implements ZXingScannerView.Re
         final String myResult = result.getText();
 
         //set result in main activity or previous activity
-        PosActivity.etxtSearch.setText(myResult);
+//        PosActivity.etxtSearch.setText(myResult);
         Log.d("QRCodeScanner", result.getText());
         Log.d("QRCodeScanner", result.getBarcodeFormat().toString());
+
+        Intent intent = new Intent();
+        intent.putExtra("product_code", myResult);
+        setResult(RESULT_OK, intent);
+        finish();
 
         onBackPressed();
 

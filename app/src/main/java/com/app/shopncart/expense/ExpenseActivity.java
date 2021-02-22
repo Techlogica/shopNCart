@@ -1,5 +1,6 @@
 package com.app.shopncart.expense;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -14,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,14 +25,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.app.shopncart.Constant;
 import com.app.shopncart.R;
 import com.app.shopncart.adapter.ExpenseAdapter;
+import com.app.shopncart.adapter.SupplierAdapter;
 import com.app.shopncart.model.Expense;
+import com.app.shopncart.model.Suppliers;
 import com.app.shopncart.networking.ApiClient;
 import com.app.shopncart.networking.ApiInterface;
+import com.app.shopncart.suppliers.SuppliersActivity;
 import com.app.shopncart.utils.BaseActivity;
 import com.app.shopncart.utils.Utils;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -43,10 +51,10 @@ public class ExpenseActivity extends BaseActivity {
 
 
     ImageView imgNoProduct;
-    EditText etxtSearch;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    List<Expense> expenseList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +63,6 @@ public class ExpenseActivity extends BaseActivity {
 
 
         fabAdd = findViewById(R.id.fab_add);
-        etxtSearch = findViewById(R.id.etxt_search);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.all_expense);
@@ -64,14 +71,14 @@ public class ExpenseActivity extends BaseActivity {
         imgNoProduct = findViewById(R.id.image_no_product);
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-        mSwipeRefreshLayout =findViewById(R.id.swipeToRefresh);
+        mSwipeRefreshLayout = findViewById(R.id.swipeToRefresh);
         //set color of swipe refresh
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
-        Utils utils=new Utils();
+        Utils utils = new Utils();
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -83,12 +90,9 @@ public class ExpenseActivity extends BaseActivity {
         //swipe refresh listeners
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
-            if (utils.isNetworkAvailable(ExpenseActivity.this))
-            {
-                getExpenseData("",shopID,ownerId);
-            }
-            else
-            {
+            if (utils.isNetworkAvailable(ExpenseActivity.this)) {
+                getExpenseData("", shopID, ownerId);
+            } else {
                 Toasty.error(ExpenseActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
 
@@ -98,13 +102,10 @@ public class ExpenseActivity extends BaseActivity {
         });
 
 
-        if (utils.isNetworkAvailable(ExpenseActivity.this))
-        {
+        if (utils.isNetworkAvailable(ExpenseActivity.this)) {
             //Load data from server
-            getExpenseData("",shopID,ownerId);
-        }
-        else
-        {
+            getExpenseData("", shopID, ownerId);
+        } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
             imgNoProduct.setImageResource(R.drawable.not_found);
@@ -125,46 +126,14 @@ public class ExpenseActivity extends BaseActivity {
         });
 
 
-        etxtSearch.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                Log.d("data",s.toString());
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-
-                if (s.length() > 1) {
-
-                    //search data from server
-                    getExpenseData(s.toString(),shopID,ownerId);
-                } else {
-                    getExpenseData("",shopID,ownerId);
-                }
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                Log.d("data",s.toString());
-            }
-
-
-        });
-
-
     }
 
 
-    public void getExpenseData(String searchText,String shopId,String ownerId) {
+    public void getExpenseData(String searchText, String shopId, String ownerId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Expense>> call;
-        call = apiInterface.getExpense(searchText,shopId,ownerId);
+        call = apiInterface.getExpense(searchText, shopId, ownerId);
 
         call.enqueue(new Callback<List<Expense>>() {
             @Override
@@ -172,34 +141,9 @@ public class ExpenseActivity extends BaseActivity {
 
 
                 if (response.isSuccessful() && response.body() != null) {
-                    List<Expense> expenseList;
                     expenseList = response.body();
 
-
-                    if (expenseList.isEmpty()) {
-
-                        recyclerView.setVisibility(View.GONE);
-                        imgNoProduct.setVisibility(View.VISIBLE);
-                        imgNoProduct.setImageResource(R.drawable.not_found);
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-
-                    } else {
-
-
-                        //Stopping Shimmer Effects
-                        mShimmerViewContainer.stopShimmer();
-                        mShimmerViewContainer.setVisibility(View.GONE);
-
-                        recyclerView.setVisibility(View.VISIBLE);
-                        imgNoProduct.setVisibility(View.GONE);
-                        ExpenseAdapter expenseAdapter = new ExpenseAdapter(ExpenseActivity.this, expenseList);
-
-                        recyclerView.setAdapter(expenseAdapter);
-
-                    }
+                    setUpRecyclerView(expenseList);
 
                 }
             }
@@ -215,16 +159,111 @@ public class ExpenseActivity extends BaseActivity {
 
     }
 
+    //filter by searchquery
+    private void filterList(String query) {
+
+        query = query.toLowerCase();
+        List<Expense> arrayList = new ArrayList<>();
 
 
+        if (query.length() == 0) {
+            arrayList = expenseList;
+        } else {
+            for (int i = 0; i < expenseList.size(); i++) {
+                Expense obj = expenseList.get(i);
+                boolean filter = false;
+                if (obj.getExpenseName() != null)
+                    if (obj.getExpenseName().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (obj.getExpenseId() != null)
+                    if (obj.getExpenseId().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
 
-    //for back button
+                if (obj.getExpenseDate() != null)
+                    if (obj.getExpenseDate().toLowerCase().contains(query)) {
+                        filter = true;
+                    }
+                if (filter) {
+                    arrayList.add(obj);
+                }
+            }
+
+        }
+        setUpRecyclerView(arrayList);
+    }
+
+    private void setUpRecyclerView(List<Expense> arrayList) {
+
+        if (arrayList.isEmpty()) {
+
+            recyclerView.setVisibility(View.GONE);
+            imgNoProduct.setVisibility(View.VISIBLE);
+            imgNoProduct.setImageResource(R.drawable.not_found);
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+
+        } else {
+
+
+            //Stopping Shimmer Effects
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+
+            recyclerView.setVisibility(View.VISIBLE);
+            imgNoProduct.setVisibility(View.GONE);
+            ExpenseAdapter expenseAdapter = new ExpenseAdapter(ExpenseActivity.this, arrayList);
+
+            recyclerView.setAdapter(expenseAdapter);
+
+        }
+
+
+    }
+
+
+    // searchview on toolbar
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.menu_item_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        if (null != searchManager) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        }
+//        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                filterList(query);
+                return true;
+            }
+
+        });
+        return true;
+    }
+
+    // home button click
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 }
