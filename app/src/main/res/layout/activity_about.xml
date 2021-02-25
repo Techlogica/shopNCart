@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.app.shopncart.about.AboutActivity">
+    tools:context="com.tids.shopncart.about.AboutActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

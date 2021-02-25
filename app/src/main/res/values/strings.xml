@@ -11,11 +11,11 @@
 
 
     <!--Replace your adMob application ID here -->
-    <string name="admob_application_id" translatable="false">ca-app-pub-5657501787263234~9247968350</string>
+    <string name="admob_application_id" translatable="false">ca-app-pub-5657501787263234~9699567872</string>
 
     <!--Replace your adMob Banner Ads ID here -->
     <!--        <string name="admob_banner_ads_id" translatable="false">ca-app-pub-3940256099942544/6300978111</string>-->
-    <string name="admob_banner_ads_id" translatable="false">ca-app-pub-5657501787263234/6681277084</string>
+    <string name="admob_banner_ads_id" translatable="false">ca-app-pub-5657501787263234/1113311477</string>
 
     <!--Replace your admob Interstitial Ads ID here -->
     <string name="admob_interstitial_ads_id" translatable="false">"ca-app-pub-5657501787263234/9770195613"</string>
