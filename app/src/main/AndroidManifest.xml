@@ -58,6 +58,7 @@
         <activity android:name="com.tids.shopncart.customers.CustomersActivity" />
         <activity android:name="com.tids.shopncart.report.SummaryReportActivity" />
         <activity android:name="com.tids.shopncart.settings.sync.SyncActivity" />
+        <activity android:name="com.tids.shopncart.clockinclockout.ClockInClockOutActivity" />
         <activity android:name="com.tids.shopncart.settings.categories.CatagoryAddActivity" />
         <activity android:name="com.tids.shopncart.HomeActivity"
             android:theme="@style/AppTheme.NoActionBar"/>

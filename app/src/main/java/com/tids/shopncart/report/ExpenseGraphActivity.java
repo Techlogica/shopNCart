@@ -65,6 +65,7 @@ public class ExpenseGraphActivity extends BaseActivity {
         f = new DecimalFormat("#,###,##0.00");
         String shopId = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         barChart = findViewById(R.id.barchart);
@@ -87,7 +88,7 @@ public class ExpenseGraphActivity extends BaseActivity {
         txtSelectYear.setText(getString(R.string.year) + currentYear);
 
 
-        getMonthlyExpense(shopId,ownerId);
+        getMonthlyExpense(shopId,ownerId,staffId);
 
     }
 
@@ -121,11 +122,11 @@ public class ExpenseGraphActivity extends BaseActivity {
 
 
 
-    public void getMonthlyExpense(String shopId,String ownerId) {
+    public void getMonthlyExpense(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<MonthData>> call;
-        call = apiInterface.getMonthlyExpense(shopId,ownerId);
+        call = apiInterface.getMonthlyExpense(shopId,ownerId,staffId);
 
         call.enqueue(new Callback<List<MonthData>>() {
             @Override

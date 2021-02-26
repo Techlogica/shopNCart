@@ -146,6 +146,7 @@ public class LoginActivity extends BaseActivity {
                     String staffId = response.body().getStaffId();
                     String staffName = response.body().getName();
                     String userType = response.body().getUserType();
+                    Log.e("staff----","--"+staffId);
 
 
                     String shopName = response.body().getShopName();

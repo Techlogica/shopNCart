@@ -99,7 +99,7 @@
                         android:background="@drawable/round_border_login"
                         android:drawableRight="@drawable/ic_lock_login"
                         android:hint="@string/password"
-                        android:inputType="textPassword"
+                        android:inputType="numberPassword"
                         android:maxLength="12"
                         android:padding="10dp"
                         android:textColor="@color/white"

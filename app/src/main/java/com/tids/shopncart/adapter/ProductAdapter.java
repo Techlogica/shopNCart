@@ -6,7 +6,9 @@ import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +70,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull final ProductAdapter.MyViewHolder holder, int position) {
 
+        holder.fullCoverProduct.startAnimation(AnimationUtils.loadAnimation(context,R.anim.recycler_view_animation));
 
 
         final String product_id = productData.get(position).get("product_id");
@@ -157,6 +160,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
         TextView txtProductName, txtSupplierName, txtSellPrice;
         ImageView imgDelete, productImage;
+        LinearLayout fullCoverProduct;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -167,6 +171,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
             imgDelete = itemView.findViewById(R.id.img_delete);
             productImage = itemView.findViewById(R.id.product_image);
+            fullCoverProduct = itemView.findViewById(R.id.full_cover_prodect);
 
             itemView.setOnClickListener(this);
 

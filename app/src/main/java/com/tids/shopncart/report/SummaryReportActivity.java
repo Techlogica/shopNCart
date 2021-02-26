@@ -74,6 +74,7 @@ public class SummaryReportActivity extends BaseActivity {
     String currency = "";
     String shopID = "";
     String ownerId = "";
+    String staffId = "";
     Calendar calendar;
     Calendar calendar1;
     Button print;
@@ -115,6 +116,7 @@ public class SummaryReportActivity extends BaseActivity {
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
         shopName = sp.getString(Constant.SP_SHOP_NAME, "");
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
@@ -142,7 +144,7 @@ public class SummaryReportActivity extends BaseActivity {
 
     private void getDataFromServer() {
         if (isNetworkAvailable(SummaryReportActivity.this)) {
-            getPayMethodData(shopID, ownerId);
+            getPayMethodData(shopID, ownerId,staffId);
         } else {
             Toasty.error(SummaryReportActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
@@ -170,13 +172,13 @@ public class SummaryReportActivity extends BaseActivity {
     };*/
 
 
-    public void getPayMethodData(String shopId, String ownerId) {
+    public void getPayMethodData(String shopId, String ownerId, String staffId) {
 
         loading.setVisibility(View.VISIBLE);
         nodata.setVisibility(View.GONE);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<PayMethod>> call;
-        call = apiInterface.getPaymethod(shopId, ownerId, parseAppSqlite(fromDate), parseAppSqlite(toDate), parseSqliteTimeApp(fromTime), parseSqliteTimeApp(toTime));
+        call = apiInterface.getPaymethod(shopId, ownerId,staffId, parseAppSqlite(fromDate), parseAppSqlite(toDate), parseSqliteTimeApp(fromTime), parseSqliteTimeApp(toTime));
         Log.e("request : ", "----------" + shopId + "," + ownerId + "," + parseAppSqlite(fromDate) + "," + parseAppSqlite(toDate) + "," + parseSqliteTimeApp(fromTime) + "," + parseSqliteTimeApp(toTime));
         call.enqueue(new Callback<List<PayMethod>>() {
             @Override

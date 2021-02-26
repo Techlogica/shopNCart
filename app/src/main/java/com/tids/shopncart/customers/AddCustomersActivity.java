@@ -54,6 +54,7 @@ public class AddCustomersActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
 
@@ -83,7 +84,7 @@ public class AddCustomersActivity extends BaseActivity {
 
 
 
-                     addCustomer(customerName, customerCell, customerEmail, customerAddress,shopID,ownerId);
+                     addCustomer(customerName, customerCell, customerEmail, customerAddress,shopID,ownerId,staffId);
 
 
                 }
@@ -111,7 +112,7 @@ public class AddCustomersActivity extends BaseActivity {
 
 
 
-    private void addCustomer(String name,String cell,String email, String address,String shopId,String ownerId) {
+    private void addCustomer(String name,String cell,String email, String address,String shopId,String ownerId,String staffId) {
 
 
         loading=new ProgressDialog(this);
@@ -120,7 +121,7 @@ public class AddCustomersActivity extends BaseActivity {
         loading.show();
        ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
-        Call<Customer> call = apiInterface.addCustomers(name,cell,email,address,shopId,ownerId);
+        Call<Customer> call = apiInterface.addCustomers(name,cell,email,address,shopId,ownerId,staffId);
         call.enqueue(new Callback<Customer>() {
             @Override
             public void onResponse(@NonNull Call<Customer> call, @NonNull Response<Customer> response) {

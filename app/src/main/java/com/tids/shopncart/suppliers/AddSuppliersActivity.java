@@ -52,6 +52,7 @@ public class AddSuppliersActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
 
@@ -85,7 +86,7 @@ public class AddSuppliersActivity extends BaseActivity {
                 } else {
 
 
-                    addSupplier(suppliersName, suppliersContactPerson, suppliersCell, suppliersEmail, suppliersAddress,shopID,ownerId);
+                    addSupplier(suppliersName, suppliersContactPerson, suppliersCell, suppliersEmail, suppliersAddress,shopID,ownerId,staffId);
 
                 }
 
@@ -110,7 +111,7 @@ public class AddSuppliersActivity extends BaseActivity {
 
 
 
-    private void addSupplier(String name,String contactPerson,String cell,String email, String address,String shopId,String ownerId) {
+    private void addSupplier(String name,String contactPerson,String cell,String email, String address,String shopId,String ownerId,String staffId) {
 
 
         loading=new ProgressDialog(this);
@@ -119,7 +120,7 @@ public class AddSuppliersActivity extends BaseActivity {
         loading.show();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
-        Call<Suppliers> call = apiInterface.addSuppliers(name,contactPerson,cell,email,address,shopId,ownerId);
+        Call<Suppliers> call = apiInterface.addSuppliers(name,contactPerson,cell,email,address,shopId,ownerId,staffId);
         call.enqueue(new Callback<Suppliers>() {
             @Override
             public void onResponse(@NonNull Call<Suppliers> call, @NonNull Response<Suppliers> response) {

@@ -55,7 +55,8 @@ public interface ApiInterface {
     Call<List<Customer>> getCustomers(
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
 
     );
 
@@ -64,6 +65,7 @@ public interface ApiInterface {
     Call<List<PayMethod>> getPaymethod(
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_F_DATE) String fromDate,
             @Query(Constant.SP_T_DATE) String toDate,
             @Query(Constant.TIME1) String fromTime,
@@ -77,7 +79,9 @@ public interface ApiInterface {
     Call<List<OrderList>> getOrders(
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String owner
+            @Query(Constant.SP_OWNER_ID) String owner,
+            @Query(Constant.SP_STAFF_ID) String staffId
+
 
     );
 
@@ -87,15 +91,16 @@ public interface ApiInterface {
     Call<List<Product>> getProducts(
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
-
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
     );
 
     //get customers data
     @GET("get_products.php")
     Call<List<Product>> getProductsStock(
             @Query(Constant.SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
 
     );
 
@@ -122,7 +127,8 @@ public interface ApiInterface {
     Call<List<OrderDetails>> getReportList(
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
 
     );
 
@@ -141,7 +147,8 @@ public interface ApiInterface {
 
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
     );
 
 
@@ -151,7 +158,9 @@ public interface ApiInterface {
 
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
+
     );
 
 
@@ -159,7 +168,9 @@ public interface ApiInterface {
     @GET("get_monthly_expense.php")
     Call<List<MonthData>> getMonthlyExpense(
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
+
     );
 
 
@@ -167,7 +178,9 @@ public interface ApiInterface {
     @GET("get_monthly_sales.php")
     Call<List<MonthData>> getMonthlySales(
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
+
     );
 
 
@@ -175,7 +188,9 @@ public interface ApiInterface {
     @GET("get_category.php")
     Call<List<Category>> getCategory(
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
+
     );
 
     //for category data
@@ -201,14 +216,17 @@ public interface ApiInterface {
             @Field(Constant.CUSTOMER_EMAIL) String email,
             @Field(Constant.CUSTOMER_ADDRESS) String address,
             @Field(Constant.SP_SHOP_ID) String shopId,
-            @Field(Constant.SP_OWNER_ID) String ownerId);
+            @Field(Constant.SP_OWNER_ID) String ownerId,
+            @Field(Constant.SP_STAFF_ID) String staffId);
+
 
     @FormUrlEncoded
     @POST("add_category.php")
     Call<Category> addCategory(
             @Field(Constant.CATEGORY) String name,
             @Field(Constant.SP_SHOP_ID) String shopId,
-            @Field(Constant.SP_OWNER_ID) String ownerId);
+            @Field(Constant.SP_OWNER_ID) String ownerId,
+            @Field(Constant.SP_STAFF_ID) String staffId);
 
     //delete customer
     @FormUrlEncoded
@@ -228,7 +246,10 @@ public interface ApiInterface {
             @Field(Constant.EXPENSE_DATE) String date,
             @Field(Constant.EXPENSE_TIME) String time,
             @Field(Constant.SP_SHOP_ID) String shopId,
-            @Field(Constant.SP_OWNER_ID) String ownerId);
+            @Field(Constant.SP_OWNER_ID) String ownerId,
+            @Field(Constant.SP_STAFF_ID) String staffId
+
+            );
 
 
     //update expense data to server
@@ -253,7 +274,8 @@ public interface ApiInterface {
             @Field(Constant.SUPPLIERS_EMAIL) String email,
             @Field(Constant.SUPPLIERS_ADDRESS) String address,
             @Field(Constant.SP_SHOP_ID) String shopId,
-            @Field(Constant.SP_OWNER_ID) String ownerId);
+            @Field(Constant.SP_OWNER_ID) String ownerId,
+            @Field(Constant.SP_STAFF_ID) String staffId);
 
 
     //add suppliers data to server
@@ -324,7 +346,8 @@ public interface ApiInterface {
     Call<List<Suppliers>> getSuppliers(
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SP_SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
 
     );
 
@@ -357,6 +380,7 @@ public interface ApiInterface {
                              @Part(Constant.KEY_CESS) RequestBody cess,
                              @Part(Constant.SP_SHOP_ID) RequestBody shopId,
                              @Part(Constant.SP_OWNER_ID) RequestBody ownerId,
+                             @Part(Constant.SP_STAFF_ID) RequestBody staffId,
                              @Part(Constant.EDITABLE) RequestBody editable);
 
 
@@ -412,8 +436,8 @@ public interface ApiInterface {
     Call<List<Expense>> getExpense(
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
-
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
     );
 
 
@@ -422,7 +446,8 @@ public interface ApiInterface {
     Call<List<Expense>> getAllExpense(
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SHOP_ID) String shopId,
-            @Query(Constant.SP_OWNER_ID) String ownerId
+            @Query(Constant.SP_OWNER_ID) String ownerId,
+            @Query(Constant.SP_STAFF_ID) String staffId
 
     );
 

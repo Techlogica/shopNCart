@@ -163,7 +163,7 @@ public class ProductCart extends BaseActivity {
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
 
 
-        getCustomers(shopID, ownerId);
+        getCustomers(shopID, ownerId,staffId);
 
         recyclerView = findViewById(R.id.cart_recyclerview);
         imgNoProduct = findViewById(R.id.image_no_product);
@@ -329,6 +329,7 @@ public class ProductCart extends BaseActivity {
                     obj.put("served_by", servedBy);
                     obj.put("shop_id", shopID);
                     obj.put("owner_id", ownerId);
+                    obj.put("staff_id", staffId);
 
                     JSONArray array = new JSONArray();
 
@@ -1147,14 +1148,14 @@ public class ProductCart extends BaseActivity {
 
     }
 
-    public void getCustomers(String shopId, String ownerId) {
+    public void getCustomers(String shopId, String ownerId, String staff_id) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Customer>> call;
 
 
-        call = apiInterface.getCustomers("", shopId, ownerId);
+        call = apiInterface.getCustomers("", shopId, ownerId,staff_id);
 
         call.enqueue(new Callback<List<Customer>>() {
             @Override

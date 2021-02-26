@@ -247,6 +247,7 @@
 <string name="synced">Synced</string>
 <string name="syncing">Syncing</string><string name="exit">Exit</string>
     <string name="device_count">Device Count</string>
+    <string name="clock_in_clock_out">CLOCK IN CLOCK OUT</string>
 
 
 </resources>

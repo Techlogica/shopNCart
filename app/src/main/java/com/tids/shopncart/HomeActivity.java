@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.tids.shopncart.about.AboutActivity;
+import com.tids.shopncart.clockinclockout.ClockInClockOutActivity;
 import com.tids.shopncart.customers.CustomersActivity;
 import com.tids.shopncart.database.DatabaseAccess;
 import com.tids.shopncart.expense.ExpenseActivity;
@@ -59,11 +60,12 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemClickListener {
 
 
-    LinearLayout cardCustomers, cardProducts, cardSupplier, cardPos, cardOrderList, cardReport, cardSettings, cardExpense, cardAbout, cardLogout;
+    LinearLayout cardCustomers, cardProducts, cardSupplier, cardPos, cardOrderList, cardReport, cardClockInOut, cardSettings, cardExpense, cardAbout, cardLogout;
     //for double back press to exit
     private static final int TIME_DELAY = 2000;
     private static long backPressed;
     TextView txtNetSales;
+    public static final int RESULT_CART = -2;
 
     SharedPreferences sp;
     SharedPreferences.Editor editor;
@@ -73,6 +75,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     String currency = "";
     String shopID = "";
     String ownerId = "";
+    String staffId = "";
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
     private AdView adView;
@@ -90,6 +93,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         cardPos = findViewById(R.id.card_pos);
         cardOrderList = findViewById(R.id.card_all_orders);
         cardReport = findViewById(R.id.card_reports);
+        cardClockInOut = findViewById(R.id.card_clock_in_out);
         cardSettings = findViewById(R.id.card_settings);
         cardExpense = findViewById(R.id.card_expense);
 //        cardAbout = findViewById(R.id.card_about_us);
@@ -109,6 +113,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
         txtShopName.setText(shopName);
         txtSubText.setText("Hi " + staffName);
@@ -213,6 +218,17 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                 } else {
                     Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
                 }
+
+            }
+        });
+
+        cardClockInOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(HomeActivity.this, ClockInClockOutActivity.class);
+                startActivity(intent);
+
 
             }
         });
@@ -426,7 +442,10 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
                     counterSetiings();
-                    getSalesReport("Today", shopID, ownerId);
+                    getSalesReport("Today", shopID, ownerId, staffId);
+                }
+                if (resultCode == RESULT_CART) {
+                    counterSetiings();
                 }
             }
         } catch (Exception ex) {
@@ -450,11 +469,11 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         }
     }
 
-    public void getSalesReport(String type, String shopId, String ownerId) {
+    public void getSalesReport(String type, String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<SalesReport>> call;
-        call = apiInterface.getSalesReport(type, shopId, ownerId);
+        call = apiInterface.getSalesReport(type, shopId, ownerId, staffId);
 
         call.enqueue(new Callback<List<SalesReport>>() {
             @Override

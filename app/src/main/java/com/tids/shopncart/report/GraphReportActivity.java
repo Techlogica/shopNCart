@@ -64,6 +64,7 @@ public class GraphReportActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
         f = new DecimalFormat("#,###,##0.00");
 
         barChart = findViewById(R.id.barchart);
@@ -89,7 +90,7 @@ public class GraphReportActivity extends BaseActivity {
         txtSelectYear.setText(getString(R.string.year) + currentYear);
 
 
-        getMonthlySales(shopID, ownerId);
+        getMonthlySales(shopID, ownerId,staffId);
     }
 
 
@@ -118,11 +119,11 @@ public class GraphReportActivity extends BaseActivity {
     }
 
 
-    public void getMonthlySales(String shopId, String ownerId) {
+    public void getMonthlySales(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<MonthData>> call;
-        call = apiInterface.getMonthlySales(shopId, ownerId);
+        call = apiInterface.getMonthlySales(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<MonthData>>() {
             @Override

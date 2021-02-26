@@ -71,6 +71,7 @@ public class SuppliersActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +95,7 @@ public class SuppliersActivity extends BaseActivity {
 
             if (utils.isNetworkAvailable(SuppliersActivity.this))
             {
-                getSuppliersData("",shopID,ownerId);
+                getSuppliersData("",shopID,ownerId,staffId);
             }
             else
             {
@@ -110,7 +111,7 @@ public class SuppliersActivity extends BaseActivity {
         if (utils.isNetworkAvailable(SuppliersActivity.this))
         {
             //Load data from server
-            getSuppliersData("",shopID,ownerId);
+            getSuppliersData("",shopID,ownerId,staffId);
         }
         else
         {
@@ -235,11 +236,11 @@ public class SuppliersActivity extends BaseActivity {
     }
 
 
-    public void getSuppliersData(String searchText,String shopId,String ownerId) {
+    public void getSuppliersData(String searchText,String shopId,String ownerId,String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Suppliers>> call;
-        call = apiInterface.getSuppliers(searchText,shopId,ownerId);
+        call = apiInterface.getSuppliers(searchText,shopId,ownerId,staffId);
 
         call.enqueue(new Callback<List<Suppliers>>() {
             @Override

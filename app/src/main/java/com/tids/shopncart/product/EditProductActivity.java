@@ -116,6 +116,7 @@ public class EditProductActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
 
         etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1", "1000000000"), new InputFilter.LengthFilter(30)});
@@ -201,8 +202,8 @@ public class EditProductActivity extends BaseActivity {
         }));
 
 
-        getProductCategory(shopID, ownerId);
-        getProductSuppliers(shopID, ownerId);
+        getProductCategory(shopID, ownerId,staffId);
+        getProductSuppliers(shopID, ownerId,staffId);
         getWeightUnits();
 
 
@@ -695,14 +696,14 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-    public void getProductCategory(String shopId, String ownerId) {
+    public void getProductCategory(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId, ownerId);
+        call = apiInterface.getCategory(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -735,14 +736,14 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-    public void getProductSuppliers(String shopId, String ownerId) {
+    public void getProductSuppliers(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Suppliers>> call;
 
 
-        call = apiInterface.getSuppliers("", shopId, ownerId);
+        call = apiInterface.getSuppliers("", shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Suppliers>>() {
             @Override

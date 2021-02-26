@@ -71,6 +71,7 @@ public class ExpenseActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
         Utils utils = new Utils();
 
@@ -85,7 +86,7 @@ public class ExpenseActivity extends BaseActivity {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             if (utils.isNetworkAvailable(ExpenseActivity.this)) {
-                getExpenseData("", shopID, ownerId);
+                getExpenseData("", shopID, ownerId,staffId);
             } else {
                 Toasty.error(ExpenseActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
@@ -98,7 +99,7 @@ public class ExpenseActivity extends BaseActivity {
 
         if (utils.isNetworkAvailable(ExpenseActivity.this)) {
             //Load data from server
-            getExpenseData("", shopID, ownerId);
+            getExpenseData("", shopID, ownerId,staffId);
         } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
@@ -123,11 +124,11 @@ public class ExpenseActivity extends BaseActivity {
     }
 
 
-    public void getExpenseData(String searchText, String shopId, String ownerId) {
+    public void getExpenseData(String searchText, String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Expense>> call;
-        call = apiInterface.getExpense(searchText, shopId, ownerId);
+        call = apiInterface.getExpense(searchText, shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Expense>>() {
             @Override

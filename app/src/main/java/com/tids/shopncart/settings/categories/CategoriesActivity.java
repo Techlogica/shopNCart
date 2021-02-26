@@ -43,7 +43,7 @@ public class CategoriesActivity extends BaseActivity {
     ImageView imgNoProduct;
     private ShimmerFrameLayout mShimmerViewContainer;
     FloatingActionButton fabAdd;
-    String shopID = "", ownerId = "";
+    String shopID = "", ownerId = "", staffId = "";
     CategoryAdapter categoryAdapter;
 
     @Override
@@ -64,6 +64,7 @@ public class CategoriesActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -73,7 +74,7 @@ public class CategoriesActivity extends BaseActivity {
 
         recyclerView.setHasFixedSize(true);
 
-        getProductCategory(shopID, ownerId);
+        getProductCategory(shopID, ownerId,staffId);
 
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,14 +88,14 @@ public class CategoriesActivity extends BaseActivity {
     }
 
 
-    public void getProductCategory(String shopId, String ownerId) {
+    public void getProductCategory(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId, ownerId);
+        call = apiInterface.getCategory(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -161,7 +162,7 @@ public class CategoriesActivity extends BaseActivity {
 
                     if (value.equals(Constant.KEY_SUCCESS)) {
                         Toasty.success(CategoriesActivity.this, R.string.category_deleted, Toast.LENGTH_SHORT).show();
-                        getProductCategory(shopID, ownerId);
+                        getProductCategory(shopID, ownerId,staffId);
 
                     } else if (value.equals(Constant.KEY_FAILURE)) {
                         Toasty.error(CategoriesActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
@@ -186,7 +187,7 @@ public class CategoriesActivity extends BaseActivity {
 
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
-                    getProductCategory(shopID, ownerId);
+                    getProductCategory(shopID, ownerId,staffId);
                 }
             }
         } catch (Exception ex) {

@@ -62,6 +62,7 @@ public class SyncActivity extends AppCompatActivity {
     Button btnDone;
     String shopID = "";
     String ownerId = "";
+    String staffId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class SyncActivity extends AppCompatActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
         if (!pref.isSynced()) {
             setContentView(R.layout.activity_sync);
@@ -81,8 +83,8 @@ public class SyncActivity extends AppCompatActivity {
 
             initViews();
             if (isNetworkAvailable(this)) {
-                getProductsData("", shopID, ownerId);
-                getProductCategory(shopID, ownerId);
+                getProductsData("", shopID, ownerId,staffId);
+                getProductCategory(shopID, ownerId,staffId);
                 getDeviceCount(shopID);
 
             } else {
@@ -96,7 +98,7 @@ public class SyncActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkAvailable(SyncActivity.this))
-                    getProductsData("", shopID, ownerId);
+                    getProductsData("", shopID, ownerId,staffId);
                 else
                     Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
             }
@@ -106,7 +108,7 @@ public class SyncActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkAvailable(SyncActivity.this))
-                    getProductCategory(shopID, ownerId);
+                    getProductCategory(shopID, ownerId,staffId);
                 else
                     Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
             }
@@ -211,11 +213,11 @@ public class SyncActivity extends AppCompatActivity {
     }
 
 
-    public void getProductsData(String searchText, String shopId, String ownerId) {
+    public void getProductsData(String searchText, String shopId, String ownerId, String staffId) {
         toggleTextView(txtProducts, isProductsSynced, true);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProducts(searchText, shopId, ownerId);
+        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
@@ -242,14 +244,14 @@ public class SyncActivity extends AppCompatActivity {
 
     }
 
-    public void getProductCategory(String shopId, String ownerId) {
+    public void getProductCategory(String shopId, String ownerId, String staffId) {
         toggleTextView(txtCategory, isCategorySynced, true);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId, ownerId);
+        call = apiInterface.getCategory(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override

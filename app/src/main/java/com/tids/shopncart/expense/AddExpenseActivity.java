@@ -66,6 +66,7 @@ public class AddExpenseActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
 
@@ -112,7 +113,7 @@ public class AddExpenseActivity extends BaseActivity {
                     etxtExpenseAmount.requestFocus();
                 } else {
 
-                    addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime,shopID,ownerId);
+                    addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime,shopID,ownerId,staffId);
 
 
                 }
@@ -195,7 +196,7 @@ public class AddExpenseActivity extends BaseActivity {
 
 
 
-    private void addExpense(String name,String amount,String note, String date,String time,String shopId,String ownerId) {
+    private void addExpense(String name,String amount,String note, String date,String time,String shopId,String ownerId,String staffId) {
 
 
         Log.d("Expense Data", name+ " "+amount+ " "+note);
@@ -206,7 +207,7 @@ public class AddExpenseActivity extends BaseActivity {
         loading.show();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
-        Call<Expense> call = apiInterface.addExpense(name,amount,note,date,time,shopId,ownerId);
+        Call<Expense> call = apiInterface.addExpense(name,amount,note,date,time,shopId,ownerId,staffId);
         call.enqueue(new Callback<Expense>() {
             @Override
             public void onResponse(@NonNull Call<Expense> call, @NonNull Response<Expense> response) {

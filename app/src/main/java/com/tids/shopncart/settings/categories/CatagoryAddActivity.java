@@ -49,6 +49,7 @@ public class CatagoryAddActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
         txtAddCategory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +62,7 @@ public class CatagoryAddActivity extends BaseActivity {
                     etxtCategory.requestFocus();
                 } else {
 
-                    addCategory(categoryName, shopID, ownerId);
+                    addCategory(categoryName, shopID, ownerId,staffId);
 
                 }
 
@@ -72,7 +73,7 @@ public class CatagoryAddActivity extends BaseActivity {
 
     }
 
-    private void addCategory(String categoryName, String shopId, String ownerId) {
+    private void addCategory(String categoryName, String shopId, String ownerId, String staffId) {
 
         loading = new ProgressDialog(this);
         loading.setCancelable(false);
@@ -80,7 +81,7 @@ public class CatagoryAddActivity extends BaseActivity {
         loading.show();
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
-        Call<Category> call = apiInterface.addCategory(categoryName, shopId, ownerId);
+        Call<Category> call = apiInterface.addCategory(categoryName, shopId, ownerId,staffId);
         call.enqueue(new Callback<Category>() {
             @Override
             public void onResponse(@NonNull Call<Category> call, @NonNull Response<Category> response) {

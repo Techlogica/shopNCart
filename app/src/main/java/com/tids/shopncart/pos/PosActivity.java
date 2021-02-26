@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -74,6 +75,7 @@ public class PosActivity extends BaseActivity {
     static int cartCount = 0;
     String shopID = "";
     String ownerId = "";
+    String staffId = "";
     public static Resources mResources;
     ArrayList<HashMap<String, String>> productsList = new ArrayList<>();
     List<Product> productsApiList = new ArrayList<>();
@@ -108,6 +110,7 @@ public class PosActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         counterSetiings();
@@ -155,7 +158,7 @@ public class PosActivity extends BaseActivity {
                 databaseAccess.open();
                 categoryList = databaseAccess.getCategory();
                 if (isNetworkAvailable(PosActivity.this)) {
-                    getProductsData("", shopID, ownerId);
+                    getProductsData("", shopID, ownerId,staffId);
 
                 } else {
                     Toasty.error(PosActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -176,7 +179,7 @@ public class PosActivity extends BaseActivity {
                 if (!pref.getKeyDevice().equals("")) {
                     if (Double.parseDouble(pref.getKeyDevice()) > 1) {
                         if (isNetworkAvailable(PosActivity.this)) {
-                            getProductsData("", shopID, ownerId);
+                            getProductsData("", shopID, ownerId,staffId);
 
                         } else {
                             Toasty.error(PosActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -287,14 +290,14 @@ public class PosActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    public void getProductCategory(String shopId, String ownerId) {
+    public void getProductCategory(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId, ownerId);
+        call = apiInterface.getCategory(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -340,13 +343,13 @@ public class PosActivity extends BaseActivity {
         categoryRecyclerView.setAdapter(categoryAdapter);
     }
 
-    public void getProductsData(String searchText, String shopId, String ownerId) {
+    public void getProductsData(String searchText, String shopId, String ownerId, String staffId) {
         mShimmerViewContainer.startShimmer();
         mShimmerViewContainer.setVisibility(View.VISIBLE);
         productsApiList.clear();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProducts(searchText, shopId, ownerId);
+        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override
@@ -616,7 +619,7 @@ public class PosActivity extends BaseActivity {
                     if (!pref.getKeyDevice().equals("")) {
                         if (Double.parseDouble(pref.getKeyDevice()) > 1) {
                             if (isNetworkAvailable(PosActivity.this)) {
-                                getProductsData("", shopID, ownerId);
+                                getProductsData("", shopID, ownerId,staffId);
 
                             } else {
                                 Toasty.error(PosActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -688,6 +691,7 @@ public class PosActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+            holder.cardView.startAnimation(AnimationUtils.loadAnimation(context,R.anim.recycler_view_animation));
 
             databaseAccess.open();
             String productId = productData.get(position).get("product_id");
@@ -928,6 +932,7 @@ public class PosActivity extends BaseActivity {
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
             CardView cardProduct;
+            CardView cardView;
             TextView txtProductName, txtWeight, txtPrice, txtStock, txtStockStatus, txtCGST, txtSGST, txtCESS, txtLabelCESS, txtHintCGST, txtHintSGST;
             ImageView productImage;
 
@@ -940,6 +945,7 @@ public class PosActivity extends BaseActivity {
                 txtPrice = itemView.findViewById(R.id.txt_price);
                 productImage = itemView.findViewById(R.id.img_product);
                 cardProduct = itemView.findViewById(R.id.card_product);
+                cardView = itemView.findViewById(R.id.card_product);
                 txtStockStatus = itemView.findViewById(R.id.txt_stock_status);
                 txtCGST = itemView.findViewById(R.id.txt_cgst);
                 txtSGST = itemView.findViewById(R.id.txt_sgst);
@@ -992,6 +998,8 @@ public class PosActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+
+            holder.cardView.startAnimation(AnimationUtils.loadAnimation(context,R.anim.recycler_view_animation));
 
 
             Product obj = productData.get(position);
@@ -1237,6 +1245,7 @@ public class PosActivity extends BaseActivity {
 
         public class MyViewHolder extends RecyclerView.ViewHolder {
 
+            CardView cardView;;
             CardView cardProduct;
             TextView txtProductName, txtWeight, txtPrice, txtStock, txtStockStatus, txtCGST, txtSGST, txtCESS, txtLabelCESS, txtHintCGST, txtHintSGST;
             ImageView productImage;
@@ -1250,6 +1259,7 @@ public class PosActivity extends BaseActivity {
                 txtPrice = itemView.findViewById(R.id.txt_price);
                 productImage = itemView.findViewById(R.id.img_product);
                 cardProduct = itemView.findViewById(R.id.card_product);
+                cardView = itemView.findViewById(R.id.card_product);
                 txtStockStatus = itemView.findViewById(R.id.txt_stock_status);
                 txtCGST = itemView.findViewById(R.id.txt_cgst);
                 txtSGST = itemView.findViewById(R.id.txt_sgst);

@@ -113,6 +113,7 @@ public class AddProductActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
 
         if (country.equals("UAE")) {
@@ -125,8 +126,8 @@ public class AddProductActivity extends BaseActivity {
         }
 
 
-        getProductCategory(shopID, ownerId);
-        getProductSuppliers(shopID, ownerId);
+        getProductCategory(shopID, ownerId,staffId);
+        getProductSuppliers(shopID, ownerId,staffId);
         getWeightUnits();
 
         imgScanCode.setOnClickListener(v -> {
@@ -455,7 +456,7 @@ public class AddProductActivity extends BaseActivity {
                     etxtProductWeight.requestFocus();
                 } else {
 
-                    addProduct(productName, productCode, productCategoryId, productDescription, productCostPrice,productSellPrice, productWeight, productWeightUnitId, productSupplierId, productStock, cgst, sgst, cess, shopID, ownerId);
+                    addProduct(productName, productCode, productCategoryId, productDescription, productCostPrice,productSellPrice, productWeight, productWeightUnitId, productSupplierId, productStock, cgst, sgst, cess, shopID, ownerId,staffId);
 
 
                 }
@@ -502,7 +503,7 @@ public class AddProductActivity extends BaseActivity {
 
 
     // Uploading Image/Video
-    private void addProduct(String productName, String productCode, String productCategoryId, String productDescription, String productCostPrice, String productSellPrice, String productWeight, String productWeightUnitId, String productSupplierId, String productStock, String cgst, String sgst, String cess, String shopId, String ownerId) {
+    private void addProduct(String productName, String productCode, String productCategoryId, String productDescription, String productCostPrice, String productSellPrice, String productWeight, String productWeightUnitId, String productSupplierId, String productStock, String cgst, String sgst, String cess, String shopId, String ownerId, String staffId) {
 
         loading = new ProgressDialog(this);
         loading.setCancelable(false);
@@ -535,6 +536,7 @@ public class AddProductActivity extends BaseActivity {
             RequestBody stock = RequestBody.create(MediaType.parse("text/plain"), productStock);
             RequestBody getShopId = RequestBody.create(MediaType.parse("text/plain"), shopId);
             RequestBody getOwnerId = RequestBody.create(MediaType.parse("text/plain"), ownerId);
+            RequestBody getStaffId = RequestBody.create(MediaType.parse("text/plain"), staffId);
 
             RequestBody getCGST = RequestBody.create(MediaType.parse("text/plain"), cgst);
             RequestBody getSGST = RequestBody.create(MediaType.parse("text/plain"), sgst);
@@ -543,7 +545,7 @@ public class AddProductActivity extends BaseActivity {
 
 
             ApiInterface getResponse = ApiClient.getApiClient().create(ApiInterface.class);
-            Call<Product> call = getResponse.addProduct(fileToUpload, filename, name, code, category, description,costPrice, sellPrice, weight, weightUnitId, supplierId, stock, getCGST, getSGST, getCESS, getShopId, getOwnerId,getEditable);
+            Call<Product> call = getResponse.addProduct(fileToUpload, filename, name, code, category, description,costPrice, sellPrice, weight, weightUnitId, supplierId, stock, getCGST, getSGST, getCESS, getShopId, getOwnerId,getStaffId,getEditable);
             call.enqueue(new Callback<Product>() {
                 @Override
                 public void onResponse(@NonNull Call<Product> call, @NonNull Response<Product> response) {
@@ -599,14 +601,14 @@ public class AddProductActivity extends BaseActivity {
     }
 
 
-    public void getProductCategory(String shopId, String ownerId) {
+    public void getProductCategory(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
 
 
-        call = apiInterface.getCategory(shopId, ownerId);
+        call = apiInterface.getCategory(shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Category>>() {
             @Override
@@ -640,14 +642,14 @@ public class AddProductActivity extends BaseActivity {
     }
 
 
-    public void getProductSuppliers(String shopId, String ownerId) {
+    public void getProductSuppliers(String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Suppliers>> call;
 
 
-        call = apiInterface.getSuppliers("", shopId, ownerId);
+        call = apiInterface.getSuppliers("", shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<Suppliers>>() {
             @Override

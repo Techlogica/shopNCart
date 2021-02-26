@@ -74,6 +74,7 @@ public class OrdersActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        String staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -89,7 +90,7 @@ public class OrdersActivity extends BaseActivity {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             if (utils.isNetworkAvailable(OrdersActivity.this)) {
-                getOrdersData("", shopID, ownerId);
+                getOrdersData("", shopID, ownerId,staffId);
             } else {
                 Toasty.error(OrdersActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
@@ -102,7 +103,7 @@ public class OrdersActivity extends BaseActivity {
 
         if (utils.isNetworkAvailable(OrdersActivity.this)) {
             //Load data from server
-            getOrdersData("", shopID, ownerId);
+            getOrdersData("", shopID, ownerId, staffId);
         } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
@@ -118,11 +119,11 @@ public class OrdersActivity extends BaseActivity {
     }
 
 
-    public void getOrdersData(String searchText, String shopId, String ownerId) {
+    public void getOrdersData(String searchText, String shopId, String ownerId, String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderList>> call;
-        call = apiInterface.getOrders(searchText, shopId, ownerId);
+        call = apiInterface.getOrders(searchText, shopId, ownerId,staffId);
 
         call.enqueue(new Callback<List<OrderList>>() {
             @Override

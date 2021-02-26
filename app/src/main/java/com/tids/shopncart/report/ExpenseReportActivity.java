@@ -43,7 +43,7 @@ public class ExpenseReportActivity extends BaseActivity {
 
     private ShimmerFrameLayout mShimmerViewContainer;
     SharedPreferences sp;
-    String currency,shopId,ownerId;
+    String currency,shopId,ownerId,staffId;
     DecimalFormat f;
 
 
@@ -74,6 +74,7 @@ public class ExpenseReportActivity extends BaseActivity {
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopId = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
+        staffId = sp.getString(Constant.SP_STAFF_ID, "");
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -84,9 +85,9 @@ public class ExpenseReportActivity extends BaseActivity {
 
 
         //sum of all transaction
-        getExpenseData("Today",shopId,ownerId);
+        getExpenseData("Today",shopId,ownerId,staffId);
         //to view all sales data
-        getExpenseReport("Today",shopId,ownerId);
+        getExpenseReport("Today",shopId,ownerId,staffId);
 
 
     }
@@ -110,35 +111,31 @@ public class ExpenseReportActivity extends BaseActivity {
                 this.finish();
                 return true;
             case R.id.menu_all_sales:
-                getReport("all",shopId,ownerId);
-                getExpenseData("all",shopId,ownerId);
-
+                getReport("all",shopId,ownerId,staffId);
                 return true;
 
             case R.id.menu_daily:
-                getReport("daily",shopId,ownerId);
-                getExpenseData("daily",shopId,ownerId);
+                getReport("Today",shopId,ownerId,staffId);
+                getSupportActionBar().setTitle(R.string.daily);
 
                 return true;
 
             case R.id.menu_weekly:
-                getReport("weekly",shopId,ownerId);
-                getExpenseData("weekly",shopId,ownerId);
+                getReport("last_week",shopId,ownerId,staffId);
+                getSupportActionBar().setTitle(R.string.weekly);
 
                 return true;
 
 
             case R.id.menu_monthly:
-                getReport("monthly",shopId,ownerId);
-                getExpenseData("monthly",shopId,ownerId);
-
+                getReport("monthly",shopId,ownerId,staffId);
+                getSupportActionBar().setTitle(R.string.monthly);
 
                 return true;
 
             case R.id.menu_yearly:
-                getReport("yearly",shopId,ownerId);
-                getExpenseData("yearly",shopId,ownerId);
-
+                getReport("yearly",shopId,ownerId,staffId);
+                getSupportActionBar().setTitle(R.string.yearly);
 
                 return true;
 
@@ -149,10 +146,10 @@ public class ExpenseReportActivity extends BaseActivity {
     }
 
 
-    public void getReport(String type,String shopId,String ownerId) {
+    public void getReport(String type,String shopId,String ownerId,String staffId) {
 
-        getExpenseData(type,shopId,ownerId);
-        getExpenseReport(type,shopId,ownerId);
+        getExpenseData(type,shopId,ownerId,staffId);
+        getExpenseReport(type,shopId,ownerId,staffId);
         //Stopping Shimmer Effects
         mShimmerViewContainer.startShimmer();
         mShimmerViewContainer.setVisibility(View.VISIBLE);
@@ -161,11 +158,11 @@ public class ExpenseReportActivity extends BaseActivity {
     }
 
 
-    public void getExpenseData(String type,String shopId,String ownerId) {
+    public void getExpenseData(String type,String shopId,String ownerId,String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Expense>> call;
-        call = apiInterface.getAllExpense(type,shopId,ownerId);
+        call = apiInterface.getAllExpense(type,shopId,ownerId,staffId);
 
         call.enqueue(new Callback<List<Expense>>() {
             @Override
@@ -217,11 +214,11 @@ public class ExpenseReportActivity extends BaseActivity {
     }
 
 
-    public void getExpenseReport(String type,String shopId,String ownerId) {
+    public void getExpenseReport(String type,String shopId,String ownerId,String staffId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<ExpenseReport>> call;
-        call = apiInterface.getExpenseReport(type,shopId,ownerId);
+        call = apiInterface.getExpenseReport(type,shopId,ownerId,staffId);
 
         call.enqueue(new Callback<List<ExpenseReport>>() {
             @Override

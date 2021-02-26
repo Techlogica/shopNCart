@@ -112,7 +112,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -485,6 +484,48 @@
                         android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/card_clock_in_out"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginRight="20dp"
+                            android:layout_weight="1"
+                            android:visibility="gone"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_expense"></ImageView>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/clock_in_clock_out"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
                             android:id="@+id/card_reports"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
@@ -567,6 +608,73 @@
                                     android:layout_gravity="center"
                                     android:background="@color/white" />
                             </LinearLayout>
+                        </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:orientation="horizontal">
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="50dp"
+                                android:layout_gravity="left"
+                                android:layout_marginTop="20dp"
+                                android:src="@drawable/ic_settings" />
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:padding="1dp"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:textAllCaps="true"
+                                    android:text="@string/action_settings"
+                                    android:minHeight="30dp"
+                                    android:textColor="@color/darkBlue"
+                                    android:background="@drawable/cardshape_icon"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="5dp"
+                                    android:layout_marginTop="1dp"
+                                    android:layout_gravity="center"
+                                    android:background="@color/white" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
                         </LinearLayout>
 
                     </LinearLayout>
