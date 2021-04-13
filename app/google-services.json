@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "314398287332",
+    "project_id": "shopncart-5aa32",
+    "storage_bucket": "shopncart-5aa32.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314398287332:android:b87aba6790512c15f213f1",
+        "android_client_info": {
+          "package_name": "com.tids.shopncart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314398287332-7kvhd6pcamdal5vhhnugg71eukd7v21i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8nUjEcgzBjx1eN1QX4OgAbOEaDXhFtbU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314398287332-7kvhd6pcamdal5vhhnugg71eukd7v21i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

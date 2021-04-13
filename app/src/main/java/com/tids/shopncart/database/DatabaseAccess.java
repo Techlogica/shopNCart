@@ -184,6 +184,53 @@ public class DatabaseAccess {
 
     }
 
+    public int addClockData(String staffId, String clockInDate, String clockOutDate, String clockInTime, String clockOutTime,String totalTime, Boolean isClockIn,String clockId ) {
+
+
+        Cursor result = database.rawQuery("SELECT * FROM clock_in_out WHERE staff_id='" + staffId + "'", null);
+
+            ContentValues values = new ContentValues();
+            values.put(Constant.SP_STAFF_ID, staffId);
+            values.put(Constant.CLOCK_IN_DATE, clockInDate);
+            values.put(Constant.CLOCK_OUT_DATE, clockOutDate);
+            values.put(Constant.CLOCK_IN_TIME, clockInTime);
+            values.put(Constant.CLOCK_OUT_TIME, clockOutTime);
+            values.put(Constant.TOTAL_TIME, totalTime);
+            values.put(Constant.STATUS, isClockIn);
+
+            long check = database.insert(Constant.clockInOut, null, values);
+
+
+            result.close();
+            database.close();
+
+
+            //if data insert success, its return 1, if failed return -1
+            if (check == -1) {
+                return -1;
+            } else {
+                return 1;
+            }
+
+
+    }
+
+    public void updateClockData(String staffId, String clockInDate, String clockOutDate, String clockInTime, String clockOutTime,String totalTime, Boolean isClockIn,String clockId) {
+
+        ContentValues values = new ContentValues();
+        values.put(Constant.SP_STAFF_ID, staffId);
+        values.put(Constant.CLOCK_IN_DATE, clockInDate);
+        values.put(Constant.CLOCK_OUT_DATE, clockOutDate);
+        values.put(Constant.CLOCK_IN_TIME, clockInTime);
+        values.put(Constant.CLOCK_OUT_TIME, clockOutTime);
+        values.put(Constant.TOTAL_TIME, totalTime);
+        values.put(Constant.STATUS, isClockIn);
+
+        database.update(Constant.clockInOut, values, "clock_id=?", new String[]{clockId});
+
+
+    }
+
     //update stock
     public void updateStock(String productId, String productStock) {
 
@@ -274,6 +321,43 @@ public class DatabaseAccess {
         }
 
     }
+
+    public int addScannedItem(String productId, String productName, String weight, String weightUnit, String price, Double qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount, String cgstPercent, String sgstPercent, String cessPercent, double discountedTotal, double lineTotal, String editable) {
+
+            ContentValues values = new ContentValues();
+            values.put(Constant.PRODUCT_ID, productId);
+            values.put(Constant.PRODUCT_NAME, productName);
+            values.put(Constant.PRODUCT_WEIGHT, weight);
+            values.put(Constant.PRODUCT_WEIGHT_UNIT, weightUnit);
+            values.put(Constant.PRODUCT_PRICE, price);
+            values.put(Constant.PRODUCT_QTY, qty);
+            values.put(Constant.PRODUCT_IMAGE, productImage);
+            values.put(Constant.PRODUCT_STOCK, productStock);
+
+            values.put(Constant.KEY_CGST, cgst);
+            values.put(Constant.KEY_SGST, sgst);
+            values.put(Constant.KEY_CESS, cess);
+            values.put(Constant.PRODUCT_DISC, discount);
+            values.put(Constant.PRODUCT_CGST_PERCENT, cgstPercent);
+            values.put(Constant.PRODUCT_SGST_PERCENT, sgstPercent);
+            values.put(Constant.PRODUCT_CESS_PERCENT, cessPercent);
+            values.put(Constant.PRODUCT_DISCOUNTED_TOTAL, discountedTotal);
+            values.put(Constant.PRODUCT_LINE_TOTAL, lineTotal);
+            values.put(Constant.EDITABLE, editable);
+
+            long check = database.insert(Constant.productCart, null, values);
+            database.close();
+
+
+            //if data insert success, its return 1, if failed return -1
+            if (check == -1) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+
 
     //Add product into cart
     public int addToHold(String productId, String productName, String weight, String weightUnit, String price, double qty, String productImage, String productStock, double cgst, double sgst, double cess, double discount, String cgstPercent, String sgstPercent, String cessPercent, double discountedTotal, double lineTotal, String editable) {
@@ -450,6 +534,31 @@ public class DatabaseAccess {
         return product;
     }
 
+
+    //calculate total price of product
+    public HashMap<String, String> getStaffClock() {
+
+        HashMap<String, String> map = new HashMap<>();
+
+        Cursor cursor = database.rawQuery("SELECT * FROM clock_in_out", null);
+        if (cursor.moveToFirst()) {
+            do {
+                map.put(Constant.SP_STAFF_ID,cursor.getString(cursor.getColumnIndex("staff_id")));
+                map.put(Constant.CLOCK_IN_DATE,cursor.getString(cursor.getColumnIndex("c_in_date")));
+                map.put(Constant.CLOCK_OUT_DATE,cursor.getString(cursor.getColumnIndex("c_o_date")));
+                map.put(Constant.CLOCK_IN_TIME,cursor.getString(cursor.getColumnIndex("clock_time_in")));
+                map.put(Constant.CLOCK_OUT_TIME,cursor.getString(cursor.getColumnIndex("clock_time_out")));
+                map.put(Constant.TOTAL_TIME,cursor.getString(cursor.getColumnIndex("time")));
+                map.put(Constant.STATUS,cursor.getString(cursor.getColumnIndex("status")));
+            } while (cursor.moveToNext());
+        } else {
+            map.clear();
+        }
+        cursor.close();
+        database.close();
+        return map;
+    }
+
     public ArrayList<HashMap<String, String>> getCartProductTemp() {
         ArrayList<HashMap<String, String>> product = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT * FROM product_cart_hold ORDER BY cart_id DESC", null);
@@ -501,6 +610,13 @@ public class DatabaseAccess {
     public void clearCategory() {
 
         database.delete(Constant.category, null, null);
+        database.close();
+    }
+
+    //clear clock
+    public void clearClock() {
+
+        database.delete(Constant.clockInOut, null, null);
         database.close();
     }
 
@@ -559,6 +675,18 @@ public class DatabaseAccess {
 
     }
 
+    //delete product from cart
+    public void updateProductPrice(String id, String price) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("product_price", price);
+
+        database.update("product_cart", values, "cart_id=?", new String[]{id});
+
+
+    }
+
     //update product discount cart
     public void updateProductDiscount(String id, String discount) {
 
@@ -570,6 +698,8 @@ public class DatabaseAccess {
 
 
     }
+
+
 
     public void updatecgst(String id, String cgst) {
 

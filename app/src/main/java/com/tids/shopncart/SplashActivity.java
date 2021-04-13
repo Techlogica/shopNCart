@@ -13,14 +13,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.login.LoginActivity;
 
 public class SplashActivity extends AppCompatActivity {
-    ImageView logo,appName,cart,shade;
-    Animation side,fade,bottamAnim,sideAnim;
+    ImageView logo, appName, cart, shade;
+    Animation side, fade, bottamAnim, sideAnim;
     View text;
     TextView txtVersion;
-    String version ="";
+    String version = "";
+    PrefManager pref;
 
     public static int splashTimeOut = 1000;
 
@@ -32,6 +34,7 @@ public class SplashActivity extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+        pref = new PrefManager(this);
 
         logo = findViewById(R.id.logo);
         appName = findViewById(R.id.appName);
@@ -39,12 +42,12 @@ public class SplashActivity extends AppCompatActivity {
         cart = findViewById(R.id.cart);
         shade = findViewById(R.id.shade);
 
-        txtVersion=findViewById(R.id.txt_version);
+        txtVersion = findViewById(R.id.txt_version);
 
-        side = AnimationUtils.loadAnimation(this,R.anim.side);
-        sideAnim = AnimationUtils.loadAnimation(this,R.anim.side_animation);
-        fade = AnimationUtils.loadAnimation(this,R.anim.fade);
-        bottamAnim = AnimationUtils.loadAnimation(this,R.anim.bottom);
+        side = AnimationUtils.loadAnimation(this, R.anim.side);
+        sideAnim = AnimationUtils.loadAnimation(this, R.anim.side_animation);
+        fade = AnimationUtils.loadAnimation(this, R.anim.fade);
+        bottamAnim = AnimationUtils.loadAnimation(this, R.anim.bottom);
 
 
         try {
@@ -54,8 +57,9 @@ public class SplashActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        if(!version.equals("")){
-            txtVersion.setText("v "+version);}else{
+        if (!version.equals("")) {
+            txtVersion.setText("v " + version);
+        } else {
             txtVersion.setVisibility(View.GONE);
         }
 
@@ -66,9 +70,16 @@ public class SplashActivity extends AppCompatActivity {
         shade.setAnimation(fade);
 
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+
+            if (pref.isLoggedIn()) {
+                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
         }, 5000);
     }
 }

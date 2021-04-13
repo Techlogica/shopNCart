@@ -269,5 +269,7 @@
     <string name="exit">Exit</string>
     <string name="device_count">Device Count</string>
     <string name="clock_in_clock_out">CLOCK IN CLOCK OUT</string>
+    <string name="header_discount">Header Discount</string>
+    <string name="exclude_tax">exclude tax</string>
 
 </resources>

@@ -300,6 +300,36 @@
             </LinearLayout>
 
             <View
+                android:id="@+id/view_header"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_10" />
+            <LinearLayout
+                android:id="@+id/layout_header"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/sailec_regular"
+                    android:padding="15dp"
+                    android:text="@string/header_discount"
+                    android:textSize="14sp" />
+
+                <CheckBox
+                    android:id="@+id/header_checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:textColor="#4C4C4C"
+                    android:textSize="8sp"
+                    />
+            </LinearLayout>
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/grey_10" />
@@ -308,27 +338,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
+                android:layout_marginRight="10dp"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".8"
                     android:fontFamily="@font/sailec_regular"
                     android:padding="10dp"
                     android:text="@string/discount"
                     android:textSize="14sp" />
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+                <CheckBox
+                    android:id="@+id/checkBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="Percent.(%)"
+                    android:textColor="#4C4C4C"
+                    android:visibility="gone"
+                    android:textSize="8sp"
+                    />
+
                 <TextView
+                    android:id="@+id/currency_discount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/sailec_regular" />
+
+                <EditText
                     android:id="@+id/dialog_txt_total_discount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/sailec_regular"
-                    android:gravity="end"
-                    android:padding="15dp"
-                    android:text="00"
-                    android:textSize="14sp" />
+                    android:minWidth="50dp"
+                    android:background="@drawable/round_border_login"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/textColorSecondaryLight"
+                    android:gravity="center"
+                    android:enabled="false"
+                    android:textSize="14sp"
+                    app:fontFamily="@font/sailec_regular" />
+
 
             </LinearLayout>
 
@@ -359,6 +414,21 @@
                     android:text="00"
                     android:textSize="14sp" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_exclude_tax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sailec_regular"
+                android:gravity="end"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/price_button"
+                android:layout_gravity="end"
+                android:padding="5dp"
+                android:text="@string/exclude_tax"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="10sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"

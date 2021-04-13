@@ -16,11 +16,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tids.shopncart.about.AboutActivity;
 import com.tids.shopncart.clockinclockout.ClockInClockOutActivity;
 import com.tids.shopncart.customers.CustomersActivity;
 import com.tids.shopncart.database.DatabaseAccess;
 import com.tids.shopncart.expense.ExpenseActivity;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.login.LoginActivity;
 import com.tids.shopncart.model.SalesReport;
 import com.tids.shopncart.networking.ApiClient;
@@ -56,11 +58,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
+import static com.tids.shopncart.pos.ProductCart.RESULT_CART;
+import static com.tids.shopncart.utils.Utils.isNetworkAvailable;
 
 public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemClickListener {
 
 
-    LinearLayout cardCustomers, cardProducts, cardSupplier, cardPos, cardOrderList, cardReport, cardClockInOut, cardSettings, cardExpense, cardAbout, cardLogout;
+    LinearLayout cardCustomers, cardProducts, cardSupplier, clockLayout, cardPos, cardOrderList, cardReport, cardClockInOut, cardSettings, cardExpense, cardAbout, cardLogout;
     //for double back press to exit
     private static final int TIME_DELAY = 2000;
     private static long backPressed;
@@ -70,14 +74,17 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     SharedPreferences sp;
     SharedPreferences.Editor editor;
     String userType;
-    TextView txtShopName, txtSubText, txtCounterText;
+    TextView txtShopName, txtSubText, txtCounterText, clockTxt;
     DatabaseAccess databaseAccess;
     String currency = "";
     String shopID = "";
     String ownerId = "";
     String staffId = "";
+    String deviceID = "";
+    String clockTime = "";
+    PrefManager pref;
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
-
+    private FirebaseAnalytics mFirebaseAnalytics;
     private AdView adView;
 
 
@@ -85,17 +92,19 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_new);
-
-
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        pref = new PrefManager(this);
         cardCustomers = findViewById(R.id.card_customers);
         cardSupplier = findViewById(R.id.card_suppliers);
         cardProducts = findViewById(R.id.card_products);
         cardPos = findViewById(R.id.card_pos);
+        clockTxt = findViewById(R.id.clock_txt);
         cardOrderList = findViewById(R.id.card_all_orders);
         cardReport = findViewById(R.id.card_reports);
         cardClockInOut = findViewById(R.id.card_clock_in_out);
         cardSettings = findViewById(R.id.card_settings);
         cardExpense = findViewById(R.id.card_expense);
+        clockLayout = findViewById(R.id.clock_layout);
 //        cardAbout = findViewById(R.id.card_about_us);
 //        cardLogout = findViewById(R.id.card_logout);
         txtShopName = findViewById(R.id.txt_shop_name);
@@ -114,6 +123,9 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        deviceID = pref.getKeyDeviceId();
+        clockTime = sp.getString(Constant.SP_CLOCK_TIME, "");
+
 
         txtShopName.setText(shopName);
         txtSubText.setText("Hi " + staffName);
@@ -121,8 +133,13 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         String netSales = sp.getString(Constant.SP_TODAY_SALES, "");
         double todaySales = Double.parseDouble(netSales);
         txtNetSales.setText(getString(R.string.daily) + ":" + currency + " " + decimn.format(todaySales));
+        if (clockTime.equals("yes")) {
+            clockLayout.setVisibility(View.VISIBLE);
+        } else {
+            clockLayout.setVisibility(View.GONE);
+        }
 
-
+        clockText();
         counterSetiings();
 
 
@@ -175,7 +192,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             }
         });
 
-
         cardProducts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -185,7 +201,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
 
             }
         });
-
 
         cardPos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +222,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             }
         });
 
-
         cardReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -227,39 +241,32 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             public void onClick(View v) {
 
                 Intent intent = new Intent(HomeActivity.this, ClockInClockOutActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, 2);
 
 
             }
         });
-
 
         cardExpense.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (userType.equals(Constant.ADMIN) || userType.equals(Constant.MANAGER)) {
                     Intent intent = new Intent(HomeActivity.this, ExpenseActivity.class);
                     startActivity(intent);
-                } else {
-                    Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
-
 
         cardSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (userType.equals(Constant.ADMIN)) {
                     Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                     startActivity(intent);
-                } else {
-                    Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
+
         findViewById(R.id.home_cart).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -387,12 +394,10 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                 return true;
             case R.id.item_settings:
 
-                if (userType.equals(Constant.ADMIN)) {
                     Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                     startActivity(intent);
-                } else {
-                    Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
-                }
+
+
                 return true;
             case R.id.item_logout:
 
@@ -412,6 +417,7 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                                 editor.putString(Constant.SP_USER_NAME, "");
                                 editor.putString(Constant.SP_USER_TYPE, "");
                                 editor.apply();
+                                pref.setLogin(false);
 
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -442,17 +448,42 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             if (requestCode == 1) {
                 if (resultCode == RESULT_OK) {
                     counterSetiings();
-                    getSalesReport("Today", shopID, ownerId, staffId);
+                    getSalesReport("Today", shopID, ownerId, staffId,deviceID);
                 }
                 if (resultCode == RESULT_CART) {
                     counterSetiings();
                 }
+            }
+            if (requestCode == 2) {
+                if (resultCode == RESULT_OK) {
+                    clockText();
+                }
+
             }
         } catch (Exception ex) {
             Toast.makeText(HomeActivity.this, ex.toString(),
                     Toast.LENGTH_SHORT).show();
         }
 
+    }
+
+    private void clockText() {
+        databaseAccess.open();
+        HashMap<String, String> map = databaseAccess.getStaffClock();
+        String dbStaffId = map.get("staff_id");
+        String status = map.get("status");
+
+        if (!staffId.equals(dbStaffId)) {
+            clockTxt.setText("Clock In");
+        } else {
+            if (status != null) {
+                if (status.equals("0")) {
+                    clockTxt.setText("Clock Out");
+                } else if (status.equals("1")) {
+                    clockTxt.setText("Clock In");
+                }
+            }
+        }
     }
 
     private void counterSetiings() {
@@ -469,11 +500,11 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         }
     }
 
-    public void getSalesReport(String type, String shopId, String ownerId, String staffId) {
+    public void getSalesReport(String type, String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<SalesReport>> call;
-        call = apiInterface.getSalesReport(type, shopId, ownerId, staffId);
+        call = apiInterface.getSalesReport(type, shopId, ownerId, staffId, deviceId);
 
         call.enqueue(new Callback<List<SalesReport>>() {
             @Override

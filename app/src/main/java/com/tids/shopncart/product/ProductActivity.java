@@ -70,6 +70,7 @@ public class ProductActivity extends BaseActivity {
     String shopID = "";
     String ownerId = "";
     String staffId = "";
+    String deviceId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class ProductActivity extends BaseActivity {
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        deviceId = pref.getKeyDeviceId();
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -128,7 +130,7 @@ public class ProductActivity extends BaseActivity {
         if (!pref.getKeyDevice().equals("")) {
             if (Double.parseDouble(pref.getKeyDevice()) > 1) {
                 if (isNetworkAvailable(ProductActivity.this)) {
-                    getProductsData("", shopID, ownerId,staffId);
+                    getProductsData("", shopID, ownerId,staffId,deviceId);
 
                 } else {
                     Toasty.error(ProductActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -222,11 +224,11 @@ public class ProductActivity extends BaseActivity {
     }
 
 
-    public void getProductsData(String searchText, String shopId, String ownerId, String staffId) {
+    public void getProductsData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {
         productsApiList.clear();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId);
+        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId,deviceId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override

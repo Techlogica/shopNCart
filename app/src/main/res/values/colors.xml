@@ -3,10 +3,11 @@
     <color name="colorPrimary">#110c7e</color>
     <color name="colorPrimaryDark">#110c7e</color>
     <color name="colorAccent">#110c7e</color>
+    <color name="colorPrimarylight">#8985F6</color>
     <color name="white">#FFFFFF</color>
 
-    <color name="textColorPrimaryDark">#757575</color>
-    <color name="textColorSecondaryLight">#666666</color>
+    <color name="textColorPrimaryDark">#515050</color>
+    <color name="textColorSecondaryLight">#989898</color>
 
     <color name="windowBackground">#eeeeee</color>
 

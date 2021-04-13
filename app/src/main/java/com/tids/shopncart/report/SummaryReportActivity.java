@@ -21,6 +21,7 @@ import com.ahmedelsayed.sunmiprinterutill.PrintMe;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.adapter.PayMethodAdapter;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.PayMethod;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -75,6 +76,7 @@ public class SummaryReportActivity extends BaseActivity {
     String shopID = "";
     String ownerId = "";
     String staffId = "";
+    String deviceId = "";
     Calendar calendar;
     Calendar calendar1;
     Button print;
@@ -82,6 +84,7 @@ public class SummaryReportActivity extends BaseActivity {
     RelativeLayout loading, nodata;
     PayMethodAdapter payMethodAdapter;
     List<PayMethod> payMethodList;
+    PrefManager pref;
     SimpleDateFormat sdf = new SimpleDateFormat(APP_DATE_FORMAT, Locale.ENGLISH);
 
 
@@ -95,6 +98,7 @@ public class SummaryReportActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.summary_report);
         printMe = new PrintMe(this);
+        pref = new PrefManager(this);
 
         recyclerView = findViewById(R.id.recyclerview);
         txtTotalSales = findViewById(R.id.txt_total_sale);
@@ -117,6 +121,7 @@ public class SummaryReportActivity extends BaseActivity {
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        deviceId = pref.getKeyDeviceId();
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
         shopName = sp.getString(Constant.SP_SHOP_NAME, "");
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
@@ -144,7 +149,7 @@ public class SummaryReportActivity extends BaseActivity {
 
     private void getDataFromServer() {
         if (isNetworkAvailable(SummaryReportActivity.this)) {
-            getPayMethodData(shopID, ownerId,staffId);
+            getPayMethodData(shopID, ownerId,staffId,deviceId);
         } else {
             Toasty.error(SummaryReportActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
@@ -172,13 +177,13 @@ public class SummaryReportActivity extends BaseActivity {
     };*/
 
 
-    public void getPayMethodData(String shopId, String ownerId, String staffId) {
+    public void getPayMethodData(String shopId, String ownerId, String staffId, String deviceId) {
 
         loading.setVisibility(View.VISIBLE);
         nodata.setVisibility(View.GONE);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<PayMethod>> call;
-        call = apiInterface.getPaymethod(shopId, ownerId,staffId, parseAppSqlite(fromDate), parseAppSqlite(toDate), parseSqliteTimeApp(fromTime), parseSqliteTimeApp(toTime));
+        call = apiInterface.getPaymethod(shopId, ownerId,staffId, parseAppSqlite(fromDate), parseAppSqlite(toDate), parseSqliteTimeApp(fromTime), parseSqliteTimeApp(toTime),deviceId);
         Log.e("request : ", "----------" + shopId + "," + ownerId + "," + parseAppSqlite(fromDate) + "," + parseAppSqlite(toDate) + "," + parseSqliteTimeApp(fromTime) + "," + parseSqliteTimeApp(toTime));
         call.enqueue(new Callback<List<PayMethod>>() {
             @Override

@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Expense;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -41,7 +42,7 @@ public class AddExpenseActivity extends BaseActivity {
     String dateTime = "";
     int mYear, mMonth, mDay, mHour, mMinute;
     ProgressDialog loading;
-
+    PrefManager pref;
 
     EditText etxtExpenseName, etxtExpenseNote, etxtExpenseAmount, etxtDate, etxtTime;
     TextView txtAddExpense;
@@ -50,7 +51,7 @@ public class AddExpenseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
-
+        pref = new PrefManager(this);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.add_expense);
@@ -67,7 +68,7 @@ public class AddExpenseActivity extends BaseActivity {
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
-
+        String deviceId = pref.getKeyDeviceId();
 
 
         String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
@@ -84,7 +85,6 @@ public class AddExpenseActivity extends BaseActivity {
                 datePicker();
             }
         });
-
 
         etxtTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +113,7 @@ public class AddExpenseActivity extends BaseActivity {
                     etxtExpenseAmount.requestFocus();
                 } else {
 
-                    addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime,shopID,ownerId,staffId);
+                    addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime, shopID, ownerId, staffId,deviceId);
 
 
                 }
@@ -194,20 +194,18 @@ public class AddExpenseActivity extends BaseActivity {
     }
 
 
+    private void addExpense(String name, String amount, String note, String date, String time, String shopId, String ownerId, String staffId, String deviceId) {
 
 
-    private void addExpense(String name,String amount,String note, String date,String time,String shopId,String ownerId,String staffId) {
+        Log.d("Expense Data", name + " " + amount + " " + note);
 
-
-        Log.d("Expense Data", name+ " "+amount+ " "+note);
-
-        loading=new ProgressDialog(this);
+        loading = new ProgressDialog(this);
         loading.setCancelable(false);
         loading.setMessage(getString(R.string.please_wait));
         loading.show();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
-        Call<Expense> call = apiInterface.addExpense(name,amount,note,date,time,shopId,ownerId,staffId);
+        Call<Expense> call = apiInterface.addExpense(name, amount, note, date, time, shopId, ownerId, staffId, deviceId);
         call.enqueue(new Callback<Expense>() {
             @Override
             public void onResponse(@NonNull Call<Expense> call, @NonNull Response<Expense> response) {
@@ -225,17 +223,14 @@ public class AddExpenseActivity extends BaseActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
 
-                    }
-                    else if (value.equals(Constant.KEY_FAILURE)) {
+                    } else if (value.equals(Constant.KEY_FAILURE)) {
 
                         loading.dismiss();
 
                         Toasty.error(AddExpenseActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
                         finish();
 
-                    }
-
-                    else {
+                    } else {
                         loading.dismiss();
                         Toasty.error(AddExpenseActivity.this, R.string.failed, Toast.LENGTH_SHORT).show();
                     }

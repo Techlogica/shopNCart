@@ -116,6 +116,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/img_cart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
@@ -150,23 +151,33 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_price"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="33dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:orientation="vertical">
-
+                android:layout_gravity="center"
+                android:background="@drawable/price_tag_icon"
+                android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/txt_currency"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/sourcesanspro_semibold"
+                    android:textColor="#fff"
+                    android:textSize="12sp" />
+                <EditText
                     android:id="@+id/txt_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:background="@drawable/price_tag_icon"
+                    android:layout_gravity="bottom"
+                    android:enabled="false"
                     android:fontFamily="@font/sourcesanspro_semibold"
-                    android:text="300000000"
                     android:textColor="#fff"
+                    android:inputType="numberDecimal"
                     android:textSize="12sp" />
             </LinearLayout>
 

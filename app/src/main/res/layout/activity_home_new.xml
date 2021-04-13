@@ -17,15 +17,14 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal">
 
 
             <ImageView
@@ -33,20 +32,20 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="5dp"
-                android:src="@drawable/ic_cart"/>
+                android:src="@drawable/ic_cart" />
 
             <TextView
                 android:id="@+id/home_cart_counter"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginLeft="25dp"
-                android:fontFamily="@font/sourcesanspro_semibold"
                 android:background="@drawable/cart_counter"
-                android:textColor="@color/black"
+                android:fontFamily="@font/sourcesanspro_semibold"
                 android:gravity="center"
+                android:src="@drawable/cart_counter"
+                android:textColor="@color/black"
                 android:textSize="10sp"
-                android:visibility="gone"
-                android:src="@drawable/cart_counter"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -54,9 +53,9 @@
             android:id="@+id/menu_bar"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:src="@drawable/ic_home_menu"/>
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_home_menu" />
 
 
     </LinearLayout>
@@ -65,92 +64,93 @@
         android:id="@+id/toplayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/toolbar_layout">
+        android:layout_below="@+id/toolbar_layout"
+        android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            app:cardCornerRadius="20dp"
             android:minHeight="100dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="10dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginLeft="10dp"
-                android:padding="2dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:orientation="vertical">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/cart"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/graph"
-                tools:ignore="DuplicateIds" />
-
-                <TextView
-                    android:id="@+id/txt_sales"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/sailec_regular"
-                    android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txt_shop_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:fontFamily="@font/sailec_regular"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:maxLines="1"
-                    android:padding="5dp"
-                    android:text="@string/app_name"
-                    android:textAllCaps="true"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="2dp">
 
-                <TextView
-                    android:id="@+id/txt_sub_text"
-                    android:layout_width="wrap_content"
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/cart"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/graph"
+                        tools:ignore="DuplicateIds" />
+
+                    <TextView
+                        android:id="@+id/txt_sales"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sailec_regular"
+                        android:textColor="@android:color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/txt_shop_name"
-                    android:layout_centerInParent="true"
-                    android:fontFamily="cursive"
+                    android:layout_weight="2"
                     android:gravity="center"
-                    android:maxLines="2"
-                    android:padding="5dp"
-                    android:text="Smart Solution for Your Shop"
-                    android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:textStyle="italic" />
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txt_shop_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:fontFamily="@font/sailec_regular"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:padding="5dp"
+                        android:text="@string/app_name"
+                        android:textAllCaps="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/txt_sub_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_shop_name"
+                        android:layout_centerInParent="true"
+                        android:fontFamily="cursive"
+                        android:gravity="center"
+                        android:maxLines="2"
+                        android:padding="5dp"
+                        android:text="Smart Solution for Your Shop"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="italic" />
 
 
-            </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -158,9 +158,9 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/cart"
-        android:layout_below="@+id/toplayout"
         android:layout_width="match_parent"
         android:layout_height="500dp"
+        android:layout_below="@+id/toplayout"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/background_effect"
@@ -169,15 +169,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toplayout"
-        android:layout_above="@+id/add_layout">
+        android:layout_above="@+id/add_layout"
+        android:layout_below="@+id/toplayout">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
-
 
 
             <ScrollView
@@ -185,7 +182,6 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -221,21 +217,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:padding="1dp"
-                                    android:textAllCaps="true"
-                                    android:text="@string/customers"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/customers"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -265,21 +262,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/suppliers"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/suppliers"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
 
@@ -317,21 +315,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/products"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/products"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -361,21 +360,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/pos"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/pos"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -411,21 +411,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/expense"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/expense"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -455,21 +456,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/all_orders"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/all_orders"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -483,47 +485,6 @@
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:id="@+id/card_clock_in_out"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginRight="20dp"
-                            android:layout_weight="1"
-                            android:visibility="gone"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="100dp"
-                                android:layout_height="50dp"
-                                android:layout_gravity="right"
-                                android:src="@drawable/ic_expense"></ImageView>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/clock_in_clock_out"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
-                                    android:background="@drawable/cardshape_icon"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold" />
-                                <View
-                                    android:layout_width="match_parent"
-                                    android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
-                                    android:layout_gravity="center"
-                                    android:background="@color/white" />
-                            </LinearLayout>
-                        </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/card_reports"
@@ -547,21 +508,22 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/report"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/report"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
@@ -591,54 +553,52 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/action_settings"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="@string/action_settings"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
 
 
-
                     </LinearLayout>
 
-
                     <LinearLayout
+                        android:id="@+id/clock_layout"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:visibility="gone"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:visibility="gone">
 
 
                         <LinearLayout
+                            android:id="@+id/card_clock_in_out"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="20dp"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="100dp"
                                 android:layout_height="50dp"
-                                android:layout_gravity="left"
-                                android:layout_marginTop="20dp"
-                                android:src="@drawable/ic_settings" />
-
+                                android:layout_gravity="right"
+                                android:src="@drawable/ic_expense"></ImageView>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -646,26 +606,29 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/clock_txt"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="1dp"
-                                    android:fontFamily="@font/sourcesanspro_semibold"
-                                    android:textAllCaps="true"
-                                    android:text="@string/action_settings"
-                                    android:minHeight="30dp"
-                                    android:textColor="@color/darkBlue"
                                     android:background="@drawable/cardshape_icon"
+                                    android:fontFamily="@font/sourcesanspro_semibold"
+                                    android:gravity="center"
+                                    android:minHeight="30dp"
+                                    android:padding="1dp"
+                                    android:text="Clock In"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/darkBlue"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
+
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="5dp"
-                                    android:layout_marginTop="1dp"
                                     android:layout_gravity="center"
+                                    android:layout_marginTop="1dp"
                                     android:background="@color/white" />
                             </LinearLayout>
                         </LinearLayout>
+
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -682,7 +645,6 @@
 
                 </LinearLayout>
 
-
             </ScrollView>
 
 
@@ -693,8 +655,8 @@
         android:id="@+id/add_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginTop="2dp"
         android:orientation="vertical"
         android:padding="2dp">
 

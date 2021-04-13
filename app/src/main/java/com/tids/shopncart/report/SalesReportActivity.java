@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.adapter.OrderDetailsAdapter;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.OrderDetails;
 import com.tids.shopncart.model.SalesReport;
 import com.tids.shopncart.networking.ApiClient;
@@ -43,15 +44,16 @@ public class SalesReportActivity extends BaseActivity {
     TextView txtNoProducts, txtTotalPrice, txtTotalTax, txtTotalDiscount, txtNetSales;
     private ShimmerFrameLayout mShimmerViewContainer;
     SharedPreferences sp;
-    String currency, shopID, ownerId, staffId;
+    String currency, shopID, ownerId, staffId,deviceId="";
     DecimalFormat f;
+    PrefManager pref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales_report);
-
+        pref=new PrefManager(this);
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
         f = new DecimalFormat("#,###,##0.00");
@@ -73,6 +75,7 @@ public class SalesReportActivity extends BaseActivity {
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        deviceId = pref.getKeyDeviceId();
 
 
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
@@ -88,9 +91,9 @@ public class SalesReportActivity extends BaseActivity {
 
 
         //sum of all transaction
-        getSalesReport("Today", shopID, ownerId, staffId);
+        getSalesReport("Today", shopID, ownerId, staffId,deviceId);
         //to view all sales data
-        getReport("Today", shopID, ownerId, staffId);
+        getReport("Today", shopID, ownerId, staffId,deviceId);
 
 
     }
@@ -114,31 +117,31 @@ public class SalesReportActivity extends BaseActivity {
                 this.finish();
                 return true;
             case R.id.menu_all_sales:
-                getReport("all", shopID, ownerId, staffId);
+                getReport("all", shopID, ownerId, staffId,deviceId);
                 return true;
 
             case R.id.menu_daily:
-                getReport("Today", shopID, ownerId, staffId);
+                getReport("Today", shopID, ownerId, staffId,deviceId);
                 getSupportActionBar().setTitle(R.string.daily);
 
                 return true;
 
             case R.id.menu_weekly:
-                getReport("last_week", shopID, ownerId, staffId);
+                getReport("last_week", shopID, ownerId, staffId,deviceId);
                 getSupportActionBar().setTitle(R.string.weekly);
 
                 return true;
 
 
             case R.id.menu_monthly:
-                getReport("monthly", shopID, ownerId, staffId);
+                getReport("monthly", shopID, ownerId, staffId,deviceId);
                 getSupportActionBar().setTitle(R.string.monthly);
 
 
                 return true;
 
             case R.id.menu_yearly:
-                getReport("yearly", shopID, ownerId, staffId);
+                getReport("yearly", shopID, ownerId, staffId,deviceId);
                 getSupportActionBar().setTitle(R.string.yearly);
 
 
@@ -151,10 +154,10 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-    public void getReport(String type, String shopId, String ownerId, String staffId) {
+    public void getReport(String type, String shopId, String ownerId, String staffId, String deviceId) {
 
-        getSalesReport(type, shopId, ownerId, staffId);
-        getReportList(type, shopId, ownerId, staffId);
+        getSalesReport(type, shopId, ownerId, staffId,deviceId);
+        getReportList(type, shopId, ownerId, staffId,deviceId);
         //Stopping Shimmer Effects
         mShimmerViewContainer.startShimmer();
         mShimmerViewContainer.setVisibility(View.VISIBLE);
@@ -163,11 +166,11 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-    public void getSalesReport(String type, String shopId, String ownerId, String staffId) {
+    public void getSalesReport(String type, String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<SalesReport>> call;
-        call = apiInterface.getSalesReport(type, shopId, ownerId, staffId);
+        call = apiInterface.getSalesReport(type, shopId, ownerId, staffId,deviceId);
 
         call.enqueue(new Callback<List<SalesReport>>() {
             @Override
@@ -241,12 +244,12 @@ public class SalesReportActivity extends BaseActivity {
     }
 
 
-    public void getReportList(String type, String shopId, String ownerId, String staffId) {
+    public void getReportList(String type, String shopId, String ownerId, String staffId, String deviceId) {
 
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderDetails>> call;
-        call = apiInterface.getReportList(type, shopId, ownerId, staffId);
+        call = apiInterface.getReportList(type, shopId, ownerId, staffId,deviceId);
 
         call.enqueue(new Callback<List<OrderDetails>>() {
             @Override

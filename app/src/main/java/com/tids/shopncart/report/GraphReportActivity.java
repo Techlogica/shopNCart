@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.MonthData;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -44,6 +45,7 @@ public class GraphReportActivity extends BaseActivity {
     TextView txtTotalSales, txtSelectYear, txtTotalTax, txtTotalDiscount, txtNetSales;
     ArrayList<BarEntry> barEntries;
     private ShimmerFrameLayout mShimmerViewContainer;
+    PrefManager pref;
 
     SharedPreferences sp;
     String currency;
@@ -58,13 +60,14 @@ public class GraphReportActivity extends BaseActivity {
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.monthly_sales_graph);
-
+        pref=new PrefManager(this);
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "N/A");
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        String deviceId = pref.getKeyDeviceId();
         f = new DecimalFormat("#,###,##0.00");
 
         barChart = findViewById(R.id.barchart);
@@ -90,7 +93,7 @@ public class GraphReportActivity extends BaseActivity {
         txtSelectYear.setText(getString(R.string.year) + currentYear);
 
 
-        getMonthlySales(shopID, ownerId,staffId);
+        getMonthlySales(shopID, ownerId,staffId,deviceId);
     }
 
 
@@ -119,11 +122,11 @@ public class GraphReportActivity extends BaseActivity {
     }
 
 
-    public void getMonthlySales(String shopId, String ownerId, String staffId) {
+    public void getMonthlySales(String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<MonthData>> call;
-        call = apiInterface.getMonthlySales(shopId, ownerId,staffId);
+        call = apiInterface.getMonthlySales(shopId, ownerId,staffId,deviceId);
 
         call.enqueue(new Callback<List<MonthData>>() {
             @Override

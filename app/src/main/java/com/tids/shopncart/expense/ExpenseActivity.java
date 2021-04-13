@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.adapter.ExpenseAdapter;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Expense;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -49,11 +50,13 @@ public class ExpenseActivity extends BaseActivity {
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     List<Expense> expenseList;
+    PrefManager pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
+        pref=new PrefManager(this);
 
 
         fabAdd = findViewById(R.id.fab_add);
@@ -72,6 +75,7 @@ public class ExpenseActivity extends BaseActivity {
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        String deviceId = pref.getKeyDeviceId();
 
         Utils utils = new Utils();
 
@@ -86,7 +90,7 @@ public class ExpenseActivity extends BaseActivity {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             if (utils.isNetworkAvailable(ExpenseActivity.this)) {
-                getExpenseData("", shopID, ownerId,staffId);
+                getExpenseData("", shopID, ownerId,staffId,deviceId);
             } else {
                 Toasty.error(ExpenseActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
@@ -99,7 +103,7 @@ public class ExpenseActivity extends BaseActivity {
 
         if (utils.isNetworkAvailable(ExpenseActivity.this)) {
             //Load data from server
-            getExpenseData("", shopID, ownerId,staffId);
+            getExpenseData("", shopID, ownerId,staffId,deviceId);
         } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
@@ -124,11 +128,11 @@ public class ExpenseActivity extends BaseActivity {
     }
 
 
-    public void getExpenseData(String searchText, String shopId, String ownerId, String staffId) {
+    public void getExpenseData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Expense>> call;
-        call = apiInterface.getExpense(searchText, shopId, ownerId,staffId);
+        call = apiInterface.getExpense(searchText, shopId, ownerId,staffId,deviceId);
 
         call.enqueue(new Callback<List<Expense>>() {
             @Override

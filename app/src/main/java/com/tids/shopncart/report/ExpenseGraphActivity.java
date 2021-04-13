@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.MonthData;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -47,17 +48,18 @@ public class ExpenseGraphActivity extends BaseActivity {
     private ShimmerFrameLayout mShimmerViewContainer;
     DecimalFormat f;
     SharedPreferences sp;
+    PrefManager pref;
     String currency;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_graph);
-
+        pref = new PrefManager(this);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.monthly_expense_in_graph);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
-
 
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -66,6 +68,7 @@ public class ExpenseGraphActivity extends BaseActivity {
         String shopId = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        String deviceID = pref.getKeyDeviceId();
 
 
         barChart = findViewById(R.id.barchart);
@@ -88,7 +91,7 @@ public class ExpenseGraphActivity extends BaseActivity {
         txtSelectYear.setText(getString(R.string.year) + currentYear);
 
 
-        getMonthlyExpense(shopId,ownerId,staffId);
+        getMonthlyExpense(shopId, ownerId, staffId,deviceID);
 
     }
 
@@ -116,17 +119,14 @@ public class ExpenseGraphActivity extends BaseActivity {
         barChart.setScaleEnabled(false);  //for fixed bar chart,no zoom
 
 
-
     }
 
 
-
-
-    public void getMonthlyExpense(String shopId, String ownerId, String staffId) {
+    public void getMonthlyExpense(String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<MonthData>> call;
-        call = apiInterface.getMonthlyExpense(shopId,ownerId,staffId);
+        call = apiInterface.getMonthlyExpense(shopId, ownerId, staffId, deviceId);
 
         call.enqueue(new Callback<List<MonthData>>() {
             @Override
@@ -151,19 +151,18 @@ public class ExpenseGraphActivity extends BaseActivity {
                         mShimmerViewContainer.setVisibility(View.GONE);
 
                         barEntries = new ArrayList<>();
-                        float jan=Float.parseFloat(monthDataList.get(0).getJan());
-                        float feb=Float.parseFloat(monthDataList.get(0).getFeb());
-                        float mar=Float.parseFloat(monthDataList.get(0).getMar());
-                        float apr=Float.parseFloat(monthDataList.get(0).getApr());
-                        float may=Float.parseFloat(monthDataList.get(0).getMay());
-                        float jun=Float.parseFloat(monthDataList.get(0).getJun());
-                        float jul=Float.parseFloat(monthDataList.get(0).getJul());
-                        float aug=Float.parseFloat(monthDataList.get(0).getAug());
-                        float sep=Float.parseFloat(monthDataList.get(0).getSep());
-                        float oct=Float.parseFloat(monthDataList.get(0).getOct());
-                        float nov=Float.parseFloat(monthDataList.get(0).getNov());
-                        float dec=Float.parseFloat(monthDataList.get(0).getDec());
-
+                        float jan = Float.parseFloat(monthDataList.get(0).getJan());
+                        float feb = Float.parseFloat(monthDataList.get(0).getFeb());
+                        float mar = Float.parseFloat(monthDataList.get(0).getMar());
+                        float apr = Float.parseFloat(monthDataList.get(0).getApr());
+                        float may = Float.parseFloat(monthDataList.get(0).getMay());
+                        float jun = Float.parseFloat(monthDataList.get(0).getJun());
+                        float jul = Float.parseFloat(monthDataList.get(0).getJul());
+                        float aug = Float.parseFloat(monthDataList.get(0).getAug());
+                        float sep = Float.parseFloat(monthDataList.get(0).getSep());
+                        float oct = Float.parseFloat(monthDataList.get(0).getOct());
+                        float nov = Float.parseFloat(monthDataList.get(0).getNov());
+                        float dec = Float.parseFloat(monthDataList.get(0).getDec());
 
 
                         barEntries.add(new BarEntry(1, jan));
@@ -184,8 +183,8 @@ public class ExpenseGraphActivity extends BaseActivity {
                         barChart.setVisibility(View.VISIBLE);
                         txtTotalExpense.setVisibility(View.VISIBLE);
 
-                        float totalExpense=jan+feb+mar+apr+may+jun+jul+aug+sep+oct+nov+dec;
-                        txtTotalExpense.setText(getString(R.string.total_expense)+currency+" " +f.format(totalExpense));
+                        float totalExpense = jan + feb + mar + apr + may + jun + jul + aug + sep + oct + nov + dec;
+                        txtTotalExpense.setText(getString(R.string.total_expense) + currency + " " + f.format(totalExpense));
 
                     }
 

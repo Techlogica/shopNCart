@@ -221,6 +221,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/label_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/candal"

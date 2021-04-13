@@ -63,6 +63,7 @@ public class SyncActivity extends AppCompatActivity {
     String shopID = "";
     String ownerId = "";
     String staffId = "";
+    String deviceId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class SyncActivity extends AppCompatActivity {
         shopID = sp.getString(Constant.SP_SHOP_ID, "");
         ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        deviceId = pref.getKeyDeviceId();
 
         if (!pref.isSynced()) {
             setContentView(R.layout.activity_sync);
@@ -83,7 +85,7 @@ public class SyncActivity extends AppCompatActivity {
 
             initViews();
             if (isNetworkAvailable(this)) {
-                getProductsData("", shopID, ownerId,staffId);
+                getProductsData("", shopID, ownerId,staffId,deviceId);
                 getProductCategory(shopID, ownerId,staffId);
                 getDeviceCount(shopID);
 
@@ -98,7 +100,7 @@ public class SyncActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (isNetworkAvailable(SyncActivity.this))
-                    getProductsData("", shopID, ownerId,staffId);
+                    getProductsData("", shopID, ownerId,staffId,deviceId);
                 else
                     Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
             }
@@ -213,11 +215,11 @@ public class SyncActivity extends AppCompatActivity {
     }
 
 
-    public void getProductsData(String searchText, String shopId, String ownerId, String staffId) {
+    public void getProductsData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {
         toggleTextView(txtProducts, isProductsSynced, true);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId);
+        call = apiInterface.getProducts(searchText, shopId, ownerId,staffId,deviceId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override

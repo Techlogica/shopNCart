@@ -32,6 +32,7 @@ import androidx.annotation.NonNull;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.database.DatabaseAccess;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Category;
 import com.tids.shopncart.model.Product;
 import com.tids.shopncart.model.Suppliers;
@@ -73,6 +74,7 @@ public class EditProductActivity extends BaseActivity {
     String supplierName, weightUnitName, categoryName;
     CheckBox checkBox;
     String isEditable = "";
+    PrefManager pref;
 
     String selectedCategoryID, selectedSupplierID, selectedWeightUnitID, productID;
 
@@ -81,6 +83,7 @@ public class EditProductActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_product);
         db = DatabaseAccess.getInstance(this);
+        pref = new PrefManager(this);
         getSupportActionBar().setHomeButtonEnabled(true); //for back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
         getSupportActionBar().setTitle(R.string.product_details);
@@ -117,6 +120,7 @@ public class EditProductActivity extends BaseActivity {
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        String deviceId =pref.getKeyDeviceId();
         country = sp.getString(Constant.SP_SHOP_COUNTRY, "");
 
         etxtProductWeight.setFilters(new InputFilter[]{new InputFilterMinMax("0.1", "1000000000"), new InputFilter.LengthFilter(30)});
@@ -156,7 +160,7 @@ public class EditProductActivity extends BaseActivity {
 
 
         productID = getIntent().getExtras().getString(Constant.PRODUCT_ID);
-        getProductsData(productID, shopID);
+        getProductsData(productID, shopID,staffId,deviceId);
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -575,7 +579,7 @@ public class EditProductActivity extends BaseActivity {
 
     }
 
-    public void getProductsData(String productId, String shopId) {
+    public void getProductsData(String productId, String shopId,String staffId, String deviceId) {
 
 
         Log.d("ProductID", productId);
@@ -586,7 +590,7 @@ public class EditProductActivity extends BaseActivity {
         loading.show();
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<Product>> call;
-        call = apiInterface.getProductById(productId, shopId);
+        call = apiInterface.getProductById(productId, shopId,staffId,deviceId);
 
         call.enqueue(new Callback<List<Product>>() {
             @Override

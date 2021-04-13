@@ -7,8 +7,8 @@ android {
         applicationId "com.tids.shopncart"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 3
-        versionName "1.3"
+        versionCode 8
+        versionName "1.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -37,6 +37,12 @@ dependencies {
     implementation 'com.github.GrenderG:Toasty:1.4.2'
     implementation 'com.squareup.okhttp3:okhttp:3.14.9'
 
+    implementation platform('com.google.firebase:firebase-bom:26.6.0')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     implementation 'com.github.maayyaannkk:ImagePicker:1.0.4'
@@ -83,8 +89,12 @@ dependencies {
     //admob library
     implementation 'com.google.android.gms:play-services-ads:19.5.0'
 
+
     implementation project(path: ':sunmiprinterutill')
 
+// ADD THIS AT THE BOTTOM
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
 
 
 

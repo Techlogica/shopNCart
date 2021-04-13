@@ -75,10 +75,14 @@ public class SupplierAdapter extends RecyclerView.Adapter<SupplierAdapter.MyView
         holder.imgCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String phone = "tel:" + cell;
-                callIntent.setData(Uri.parse(phone));
-                context.startActivity(callIntent);
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String phone = "tel:" + cell;
+                    callIntent.setData(Uri.parse(phone));
+                    context.startActivity(callIntent);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
 

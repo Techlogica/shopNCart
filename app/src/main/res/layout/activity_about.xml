@@ -5,84 +5,119 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.tids.shopncart.about.AboutActivity">
+    tools:context=".about.AboutActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="@drawable/wave"
         android:orientation="vertical">
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_marginBottom="20dp"
-                app:srcCompat="@drawable/applogo" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sailec_regular"
-                android:gravity="center"
-                android:text="in Association with"
-                android:textColor="@color/grey"
-                android:textSize="12sp"
-                 />
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/applogo" />
 
             <ImageView
-                android:id="@+id/logo"
-                android:layout_marginTop="10dp"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                 />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sailec_regular"
-                android:gravity="center"
-                android:layout_marginTop="20dp"
-                android:maxLines="2"
-                android:padding="5dp"
-                android:text="ShopN'Cart"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/sailec_regular"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="ShopN'Cart is a Smart Solution for your any shop. Manage your daily sales smartly by using ShopN'Cart Online POS"
-                android:textColor="@color/transparent_black" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:autoLink="web"
-                android:fontFamily="@font/sailec_regular"
-                android:gravity="center"
-                android:text="www.techlogica.com" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:autoLink="email"
-                android:fontFamily="@font/sailec_regular"
-                android:gravity="center"
-                android:text="info@shopncart.co" />
-
-
+                android:layout_width="220dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/titile" />
         </LinearLayout>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/sourcesanspro_semibold"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="ShopN'Cart is a Smart Solution for your any shop. Manage your daily sales smartly by using ShopN'Cart Online POS"
+        android:textColor="@color/transparent_black" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height=".5dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/grey" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/sailec_regular"
+            android:gravity="center"
+            android:text="in Association with"
+            android:textColor="@color/grey"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height=".5dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/grey" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        >
+
+        <ImageView
+            android:id="@+id/uibg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/uibg"
+            android:layout_alignParentBottom="true"/>
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/txt_tech"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/logo"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/sourcesanspro_semibold"
+            android:text="www.techlogica.com" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:autoLink="email"
+            android:layout_below="@+id/txt_tech"
+            android:fontFamily="@font/sourcesanspro_semibold"
+            android:text="info@shopncart.co" />
+
+
+    </RelativeLayout>
+
+
 </LinearLayout>

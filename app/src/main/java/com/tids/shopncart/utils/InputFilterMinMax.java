@@ -10,17 +10,17 @@ import android.text.Spanned;
 
 public class InputFilterMinMax implements InputFilter {
 
-    private Float min;
-    private Float max;
+    private Double min;
+    private Double max;
 
-    public InputFilterMinMax(float min, float max) {
+    public InputFilterMinMax(double min, double max) {
         this.min = min;
         this.max = max;
     }
 
     public InputFilterMinMax(String min, String max) {
-        this.min = Float.parseFloat(min);
-        this.max = Float.parseFloat(max);
+        this.min = Double.parseDouble(min);
+        this.max = Double.parseDouble(max);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class InputFilterMinMax implements InputFilter {
             return "0.";
         }
         try {
-            float input = Float.parseFloat(dest.toString() + source.toString());
+            double input = Double.parseDouble(dest.toString() + source.toString());
             if (isInRange(min, max, input))
                 return null;
         } catch (NumberFormatException nfe) {
@@ -37,7 +37,7 @@ public class InputFilterMinMax implements InputFilter {
         return "";
     }
 
-    private boolean isInRange(float a, float b, float c) {
+    private boolean isInRange(double a, double b, double c) {
         return b > a ? c >= a && c <= b : c >= b && c <= a;
     }
 }

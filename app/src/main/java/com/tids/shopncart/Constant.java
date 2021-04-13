@@ -44,6 +44,9 @@ public class Constant {
     public static final String SHOP_NUMBER="1";
     public static final String SHOP_ID="shop_id";
 
+    public static final String SP_HEADER_DISCOUNT="header_dis";
+    public static final String SP_HEADER_FLAG="header_flag";
+
     public static final String SP_SHOP_NAME="shop_name";
     public static final String SP_SHOP_ADDRESS="shop_address";
     public static final String SP_SHOP_EMAIL="shop_email";
@@ -53,6 +56,7 @@ public class Constant {
     public static final String SP_TODAY_SALES="total_order_price";
 
     public static final String SP_SHOP_STATUS="shop_status";
+    public static final String SP_CLOCK_TIME="clock_time";
     public static final String SP_CURRENCY_SYMBOL="currency_symbol";
     public static final String SP_TAX="tax";
 
@@ -150,6 +154,15 @@ public class Constant {
     public static final String EXPENSE_DATE="expense_date";
     public static final String EXPENSE_TIME="expense_time";
 
+    public static final String CLOCK_ID="clock_id";
+    public static final String CLOCK_IN_DATE="c_in_date";
+    public static final String CLOCK_OUT_DATE="c_o_date";
+    public static final String CLOCK_IN_TIME="clock_time_in";
+    public static final String CLOCK_OUT_TIME="clock_time_out";
+    public static final String TOTAL_TIME="time";
+    public static final String STATUS="status";
+
+
     //all table names
     public static String customers="customers";
     public static String users="users";
@@ -163,6 +176,7 @@ public class Constant {
     public static String productCartHold="product_cart_hold";
     public static String orderList="order_list";
     public static String orderDetails="order_details";
+    public static String clockInOut="clock_in_out";
 
 
 
@@ -177,6 +191,7 @@ public class Constant {
 
 
     public static final String SP_STAFF_ID = "staff_id";
+    public static final String SP_DEVICE_ID = "device_id";
     public static final String SP_STAFF_NAME = "staff_name";
     public static final String SP_STORE_ID = "store_id";
     public static final String SP_USER_ID = "user_id";
@@ -184,6 +199,7 @@ public class Constant {
     public static final String SEARCH_TEXT = "search_text";
     public static final String CATEGORY = "product_category_name";
     public static final String PRODUCT_CATEGORY_ID = "product_category_id";
+    public static final String IS_CLOCK_IN = "is_checked_in";
 
 
     public static final String SP_IS_FIRST_TIME = "is_first_time";

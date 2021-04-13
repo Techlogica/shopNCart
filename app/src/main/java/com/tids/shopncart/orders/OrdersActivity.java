@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.adapter.OrderAdapter;
+import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.OrderList;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
@@ -47,13 +48,14 @@ public class OrdersActivity extends BaseActivity {
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     List<OrderList> orderList;
+    PrefManager pref;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_orders);
-
+        pref=new PrefManager(this);
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
@@ -75,6 +77,7 @@ public class OrdersActivity extends BaseActivity {
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
         String ownerId = sp.getString(Constant.SP_OWNER_ID, "");
         String staffId = sp.getString(Constant.SP_STAFF_ID, "");
+        String deviceId =pref.getKeyDeviceId();
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -90,7 +93,7 @@ public class OrdersActivity extends BaseActivity {
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
             if (utils.isNetworkAvailable(OrdersActivity.this)) {
-                getOrdersData("", shopID, ownerId,staffId);
+                getOrdersData("", shopID, ownerId,staffId,deviceId);
             } else {
                 Toasty.error(OrdersActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
@@ -103,7 +106,7 @@ public class OrdersActivity extends BaseActivity {
 
         if (utils.isNetworkAvailable(OrdersActivity.this)) {
             //Load data from server
-            getOrdersData("", shopID, ownerId, staffId);
+            getOrdersData("", shopID, ownerId, staffId,deviceId);
         } else {
             recyclerView.setVisibility(View.GONE);
             imgNoProduct.setVisibility(View.VISIBLE);
@@ -119,11 +122,11 @@ public class OrdersActivity extends BaseActivity {
     }
 
 
-    public void getOrdersData(String searchText, String shopId, String ownerId, String staffId) {
+    public void getOrdersData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderList>> call;
-        call = apiInterface.getOrders(searchText, shopId, ownerId,staffId);
+        call = apiInterface.getOrders(searchText, shopId, ownerId,staffId,deviceId);
 
         call.enqueue(new Callback<List<OrderList>>() {
             @Override

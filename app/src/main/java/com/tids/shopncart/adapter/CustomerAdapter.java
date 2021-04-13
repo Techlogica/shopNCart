@@ -42,7 +42,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
     public CustomerAdapter(Context context, List<Customer> customerData) {
         this.context = context;
         this.customerData = customerData;
-        utils=new Utils();
+        utils = new Utils();
 
     }
 
@@ -73,10 +73,14 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
         holder.imgCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String phone = "tel:" + cell;
-                callIntent.setData(Uri.parse(phone));
-                context.startActivity(callIntent);
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    String phone = "tel:" + cell;
+                    callIntent.setData(Uri.parse(phone));
+                    context.startActivity(callIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -102,9 +106,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
                                     deleteCustomer(customer_id);
                                     customerData.remove(holder.getAdapterPosition());
                                     dialogBuilder.dismiss();
-                                }
-                                else
-                                {
+                                } else {
                                     dialogBuilder.dismiss();
                                     Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
                                 }
@@ -183,13 +185,9 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
                         Toasty.error(context, R.string.customer_deleted, Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
 
-                    }
-
-                    else if (value.equals(Constant.KEY_FAILURE)){
+                    } else if (value.equals(Constant.KEY_FAILURE)) {
                         Toasty.error(context, R.string.error, Toast.LENGTH_SHORT).show();
-                    }
-
-                    else {
+                    } else {
                         Toast.makeText(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
                     }
                 }

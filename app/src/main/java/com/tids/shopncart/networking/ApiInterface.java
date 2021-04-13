@@ -3,6 +3,7 @@ package com.tids.shopncart.networking;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.model.Category;
+import com.tids.shopncart.model.Clock;
 import com.tids.shopncart.model.Customer;
 import com.tids.shopncart.model.Device;
 import com.tids.shopncart.model.Expense;
@@ -69,7 +70,8 @@ public interface ApiInterface {
             @Query(Constant.SP_F_DATE) String fromDate,
             @Query(Constant.SP_T_DATE) String toDate,
             @Query(Constant.TIME1) String fromTime,
-            @Query(Constant.TIME2) String toTime
+            @Query(Constant.TIME2) String toTime,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
     );
 
@@ -80,7 +82,8 @@ public interface ApiInterface {
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String owner,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
 
     );
@@ -92,7 +95,8 @@ public interface ApiInterface {
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
     );
 
     //get customers data
@@ -109,7 +113,9 @@ public interface ApiInterface {
     @GET("get_product_by_id.php")
     Call<List<Product>> getProductById(
             @Query(Constant.PRODUCT_ID) String productId,
-            @Query(Constant.SHOP_ID) String shopId
+            @Query(Constant.SHOP_ID) String shopId,
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
     );
 
@@ -128,7 +134,8 @@ public interface ApiInterface {
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
     );
 
@@ -148,7 +155,9 @@ public interface ApiInterface {
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
+
     );
 
 
@@ -169,7 +178,8 @@ public interface ApiInterface {
     Call<List<MonthData>> getMonthlyExpense(
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
     );
 
@@ -179,7 +189,8 @@ public interface ApiInterface {
     Call<List<MonthData>> getMonthlySales(
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
 
     );
 
@@ -197,6 +208,15 @@ public interface ApiInterface {
     @GET("get_shop_D_count.php")
     Call<Device> getDeviceCount(
             @Query(Constant.SP_SHOP_ID) String shopId
+    );
+
+    @FormUrlEncoded
+    @POST("clock_time_in.php")
+    Call<Clock> getClockData(
+            @Field(Constant.SP_SHOP_ID) String shopId,
+            @Field(Constant.SP_OWNER_ID) String ownerId,
+            @Field(Constant.SP_STAFF_ID) String staffId,
+            @Field(Constant.IS_CLOCK_IN) Boolean isClockIn
     );
 
 
@@ -247,7 +267,8 @@ public interface ApiInterface {
             @Field(Constant.EXPENSE_TIME) String time,
             @Field(Constant.SP_SHOP_ID) String shopId,
             @Field(Constant.SP_OWNER_ID) String ownerId,
-            @Field(Constant.SP_STAFF_ID) String staffId
+            @Field(Constant.SP_STAFF_ID) String staffId,
+            @Field(Constant.SP_DEVICE_ID) String deviceId
 
             );
 
@@ -437,7 +458,8 @@ public interface ApiInterface {
             @Query(Constant.SEARCH_TEXT) String searchText,
             @Query(Constant.SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
-            @Query(Constant.SP_STAFF_ID) String staffId
+            @Query(Constant.SP_STAFF_ID) String staffId,
+            @Query(Constant.SP_DEVICE_ID) String deviceId
     );
 
 

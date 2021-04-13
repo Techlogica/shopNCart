@@ -21,8 +21,6 @@ public class Login {
     @SerializedName("user_type")
     private String userType;
 
-
-
     @SerializedName("password")
     private String password;
 
@@ -30,6 +28,9 @@ public class Login {
     private String value;
     @SerializedName("message")
     private String massage;
+
+    @SerializedName("clock_time")
+    private String clockTime;
 
     @SerializedName("shop_name")
     private String shopName;
@@ -61,12 +62,23 @@ public class Login {
     private String ownerID;
     @SerializedName("Taxid")
     private String tax_id;
+
+    @SerializedName("header_flag")
+    private String headerFlag;
+
+    @SerializedName("header_dis")
+    private String header_dis;
+
     @SerializedName("total_order_price")
     private String total_order_price;
     @SerializedName("total_discount")
     private String total_today_discount;
     @SerializedName("total_tax")
     private String total_today_tax;
+    @SerializedName("price_edit_flag")
+    private Boolean price_edit_flag;
+    @SerializedName("edit_value")
+    private String edit_value;
 
 
 
@@ -117,6 +129,14 @@ public class Login {
 
     public String getShopName() {
         return shopName;
+    }
+
+    public String getClockTime() {
+        return clockTime;
+    }
+
+    public void setClockTime(String clockTime) {
+        this.clockTime = clockTime;
     }
 
     public String getShopAddress() {
@@ -173,5 +193,21 @@ public class Login {
 
     public String getTotal_today_tax() {
         return total_today_tax;
+    }
+
+    public String getHeaderFlag() {
+        return headerFlag;
+    }
+
+    public String getHeader_dis() {
+        return header_dis;
+    }
+
+    public Boolean getPrice_edit_flag() {
+        return price_edit_flag;
+    }
+
+    public String getEdit_value() {
+        return edit_value;
     }
 }

@@ -34,7 +34,7 @@ public class AboutActivity extends AppCompatActivity {
         if(country.equals("INDIA")){
             logo.setBackground(getResources().getDrawable(R.drawable.kun_logo));
         }else{
-            logo.setBackground(getResources().getDrawable(R.drawable.tech_logo));
+            logo.setBackground(getResources().getDrawable(R.drawable.techlogica_logo));
         }
     }
 

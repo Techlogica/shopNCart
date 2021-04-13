@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,12 +22,16 @@ import androidx.annotation.NonNull;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.HomeActivity;
 import com.tids.shopncart.R;
+import com.tids.shopncart.database.DatabaseAccess;
+import com.tids.shopncart.helper.Device;
 import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Login;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
 import com.tids.shopncart.utils.BaseActivity;
 import com.tids.shopncart.utils.Utils;
+
+import java.util.HashMap;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -39,19 +45,22 @@ public class LoginActivity extends BaseActivity {
     ImageView logo, title;
     View line;
     double amnt = 0;
+    String deviceId = "";
     Animation topAnim, bottomAnim, sideAnim, fadeAnim;
     SharedPreferences sp;
     ProgressDialog loading;
     Utils utils;
     PrefManager pref;
+    DatabaseAccess databaseAccess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        pref=new PrefManager(this);
+        pref = new PrefManager(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().hide();
+        databaseAccess = DatabaseAccess.getInstance(this);
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_animation);
@@ -118,6 +127,26 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+        getDeviceId();
+
+
+    }
+
+    private String getDeviceId() {
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            deviceId = Settings.Secure.getString(
+                    this.getContentResolver(),
+                    Settings.Secure.ANDROID_ID);
+
+        } else {
+
+            deviceId = Device.getSerialNumber();
+
+        }
+        return deviceId;
+
 
     }
 
@@ -146,14 +175,14 @@ public class LoginActivity extends BaseActivity {
                     String staffId = response.body().getStaffId();
                     String staffName = response.body().getName();
                     String userType = response.body().getUserType();
-                    Log.e("staff----","--"+staffId);
-
-
                     String shopName = response.body().getShopName();
+                    String clockTime = response.body().getClockTime();
                     String shopAddress = response.body().getShopAddress();
                     String shopCountry = response.body().getShopCountry();
                     String shopContact = response.body().getShopContact();
                     String shopEmail = response.body().getShopEmail();
+                    String headerFlag = response.body().getHeaderFlag();
+                    String headerDiscount = response.body().getHeader_dis();
                     String taxId = response.body().getTax_id();
                     String tax = response.body().getTax();
                     String currencySymbol = response.body().getCurrencySymbol();
@@ -161,7 +190,20 @@ public class LoginActivity extends BaseActivity {
                     String todaySales = response.body().getTotal_order_price();
                     String todayDiscount = response.body().getTotal_today_discount();
                     String todayTax = response.body().getTotal_today_tax();
+                    Boolean editPrice = response.body().getPrice_edit_flag();
+                    String editPriceValue = response.body().getEdit_value();
                     double todaySalesData = 0, todayTax1 = 0, todayDic = 0;
+
+
+                    databaseAccess.open();
+                    HashMap<String, String> map = databaseAccess.getStaffClock();
+                    String dbStaffId = map.get("staff_id");
+                    if (dbStaffId != null) {
+                        if (!staffId.equals(dbStaffId)) {
+                            databaseAccess.open();
+                            databaseAccess.clearClock();
+                        }
+                    }
 
                     if (todaySales != null)
                         todaySalesData = Double.parseDouble(todaySales);
@@ -170,7 +212,7 @@ public class LoginActivity extends BaseActivity {
                     if (todayDiscount != null)
                         todayDic = Double.parseDouble(todayDiscount);
 
-                    amnt=(todaySalesData-todayDic)+todayTax1;
+                    amnt = (todaySalesData - todayDic) + todayTax1;
 
 
                     String shopId = response.body().getShopId();
@@ -186,6 +228,10 @@ public class LoginActivity extends BaseActivity {
                         } else if (value.equals(Constant.SUCCESS)) {
                             loading.dismiss();
                             pref.setKeyDevice("1");
+                            pref.setLogin(true);
+                            pref.setKeyDeviceId(getDeviceId());
+                            pref.setKeyEditFlag(editPrice);
+                            pref.setKeyEditValue(editPriceValue);
                             //Creating editor to store values to shared preferences
                             SharedPreferences.Editor editor = sp.edit();
                             //Adding values to editor
@@ -204,10 +250,13 @@ public class LoginActivity extends BaseActivity {
                             editor.putString(Constant.SP_SHOP_EMAIL, shopEmail);
                             editor.putString(Constant.SP_SHOP_CONTACT, shopContact);
                             editor.putString(Constant.SP_SHOP_STATUS, shopStatus);
+                            editor.putString(Constant.SP_CLOCK_TIME, clockTime);
                             editor.putString(Constant.SP_CURRENCY_SYMBOL, currencySymbol);
                             editor.putString(Constant.SP_SHOP_ID, shopId);
                             editor.putString(Constant.SP_TODAY_SALES, String.valueOf(amnt));
                             editor.putString(Constant.SP_OWNER_ID, ownerId);
+                            editor.putString(Constant.SP_HEADER_FLAG, headerFlag);
+                            editor.putString(Constant.SP_HEADER_DISCOUNT, headerDiscount);
                             editor.putString(Constant.SP_SHOP_TAX_ID, taxId);
 
 
