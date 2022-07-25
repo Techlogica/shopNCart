@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,13 +39,14 @@ public class ExpenseReportActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     TextView txtNoProducts, txtTotalPrice;
 
     private ShimmerFrameLayout mShimmerViewContainer;
     SharedPreferences sp;
     String currency,shopId,ownerId,staffId;
     DecimalFormat f;
+    Toolbar toolbar;
 
 
     @Override
@@ -67,9 +69,18 @@ public class ExpenseReportActivity extends BaseActivity {
         imgNoProduct.setVisibility(View.GONE);
         txtNoProducts.setVisibility(View.GONE);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.daily);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.daily);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         shopId = sp.getString(Constant.SP_SHOP_ID, "");
@@ -106,10 +117,10 @@ public class ExpenseReportActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                return true;
+//            case android.R.id.home:
+//                // app icon in action bar clicked; goto parent activity.
+//                this.finish();
+//                return true;
             case R.id.menu_all_sales:
                 getReport("all",shopId,ownerId,staffId);
                 return true;

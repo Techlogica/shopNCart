@@ -5,7 +5,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.R;
 import com.tids.shopncart.utils.BaseActivity;
@@ -25,14 +29,25 @@ public class EditProductScannerViewActivity extends BaseActivity implements ZXin
 
     int currentApiVersion = Build.VERSION.SDK_INT;
     private ZXingScannerView scannerView;
+    ImageView backBtn;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_product_scanner_view);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.qr_barcode_scanner);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.qr_barcode_scanner);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         if (currentApiVersion >= Build.VERSION_CODES.M) {
             requestCameraPermission();
@@ -110,13 +125,13 @@ public class EditProductScannerViewActivity extends BaseActivity implements ZXin
     }
 
 
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    //for back button
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

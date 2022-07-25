@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -45,12 +46,13 @@ public class ExpenseActivity extends BaseActivity {
     private RecyclerView recyclerView;
 
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     List<Expense> expenseList;
     PrefManager pref;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,11 +60,11 @@ public class ExpenseActivity extends BaseActivity {
         setContentView(R.layout.activity_expense);
         pref=new PrefManager(this);
 
-
         fabAdd = findViewById(R.id.fab_add);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_expense);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> onBackPressed());
 
         recyclerView = findViewById(R.id.product_recyclerview);
         imgNoProduct = findViewById(R.id.image_no_product);
@@ -89,7 +91,7 @@ public class ExpenseActivity extends BaseActivity {
         //swipe refresh listeners
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
-            if (utils.isNetworkAvailable(ExpenseActivity.this)) {
+            if (Utils.isNetworkAvailable(ExpenseActivity.this)) {
                 getExpenseData("", shopID, ownerId,staffId,deviceId);
             } else {
                 Toasty.error(ExpenseActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -101,7 +103,7 @@ public class ExpenseActivity extends BaseActivity {
         });
 
 
-        if (utils.isNetworkAvailable(ExpenseActivity.this)) {
+        if (Utils.isNetworkAvailable(ExpenseActivity.this)) {
             //Load data from server
             getExpenseData("", shopID, ownerId,staffId,deviceId);
         } else {
@@ -116,12 +118,9 @@ public class ExpenseActivity extends BaseActivity {
         }
 
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ExpenseActivity.this, AddExpenseActivity.class);
-                startActivity(intent);
-            }
+        fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(ExpenseActivity.this, AddExpenseActivity.class);
+            startActivity(intent);
         });
 
 
@@ -252,17 +251,6 @@ public class ExpenseActivity extends BaseActivity {
             }
 
         });
-        return true;
-    }
-
-    // home button click
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
         return true;
     }
 }

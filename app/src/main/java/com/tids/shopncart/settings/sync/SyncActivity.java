@@ -30,12 +30,14 @@ import com.tids.shopncart.model.Device;
 import com.tids.shopncart.model.Product;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 import es.dmoral.toasty.Toasty;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -45,11 +47,12 @@ import static com.tids.shopncart.utils.Utils.isNetworkAvailable;
 
 public class SyncActivity extends AppCompatActivity {
 
-
     String TAG = getClass().getSimpleName();
     private PrefManager pref;
+    DatabaseAccess databaseAccess;
 
     DatabaseAccess db;
+    Boolean isAddInvoiceSynced = false;
     Boolean isProductsSynced = false;
     Boolean isCategorySynced = false;
     Boolean isDeviceSynced = false;
@@ -58,17 +61,23 @@ public class SyncActivity extends AppCompatActivity {
     SaveCategoryTask saveCategoryTask = null;
     ProgressBar progressBar1, progressBar;
     LinearLayout layoutAction;
-    TextView txtProducts, txtCategory, textPercent, txtDevice;
+    TextView txtProducts, txtCategory, textPercent, txtDevice,txtAddInvoice;
     Button btnDone;
     String shopID = "";
     String ownerId = "";
     String staffId = "";
     String deviceId = "";
+    ApiInterface apiInterface;
+    ArrayList<HashMap<String, String>> cartArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         super.onCreate(savedInstanceState);
+
+        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
+        databaseAccess = DatabaseAccess.getInstance(SyncActivity.this);
+        databaseAccess.open();
 
         pref = new PrefManager(this);
         pref.setSynced(false);
@@ -83,11 +92,13 @@ public class SyncActivity extends AppCompatActivity {
             setContentView(R.layout.activity_sync);
             db = DatabaseAccess.getInstance(this);
 
+
             initViews();
             if (isNetworkAvailable(this)) {
                 getProductsData("", shopID, ownerId,staffId,deviceId);
                 getProductCategory(shopID, ownerId,staffId);
                 getDeviceCount(shopID);
+                uploadCartData();
 
             } else {
                 Toasty.error(this, getResources().getString(R.string.no_network_connection));
@@ -96,42 +107,35 @@ public class SyncActivity extends AppCompatActivity {
             gotoHome();
         }
 
-        txtProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable(SyncActivity.this))
-                    getProductsData("", shopID, ownerId,staffId,deviceId);
-                else
-                    Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
-            }
+        txtAddInvoice.setOnClickListener(view -> {
+            if (isNetworkAvailable(SyncActivity.this))
+                uploadCartData();
+            else
+                Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
         });
 
-        txtCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable(SyncActivity.this))
-                    getProductCategory(shopID, ownerId,staffId);
-                else
-                    Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
-            }
-        });
-        txtDevice.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isNetworkAvailable(SyncActivity.this))
-                    getDeviceCount(shopID);
-
-                else
-                    Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
-            }
+        txtProducts.setOnClickListener(view -> {
+            if (isNetworkAvailable(SyncActivity.this))
+                getProductsData("", shopID, ownerId,staffId,deviceId);
+            else
+                Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
         });
 
-        btnDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gotoHome();
-            }
+        txtCategory.setOnClickListener(view -> {
+            if (isNetworkAvailable(SyncActivity.this))
+                getProductCategory(shopID, ownerId,staffId);
+            else
+                Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
         });
+
+        txtDevice.setOnClickListener(view -> {
+            if (isNetworkAvailable(SyncActivity.this))
+                getDeviceCount(shopID);
+            else
+                Toasty.error(SyncActivity.this, getResources().getString(R.string.no_network_connection));
+        });
+
+        btnDone.setOnClickListener(view -> gotoHome());
 
     }
 
@@ -141,6 +145,7 @@ public class SyncActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         layoutAction = findViewById(R.id.layout_action);
 
+        txtAddInvoice = findViewById(R.id.txt_add_invoice);
         txtProducts = findViewById(R.id.txt_products);
         txtCategory = findViewById(R.id.txt_categories);
         textPercent = findViewById(R.id.text_percent);
@@ -150,22 +155,25 @@ public class SyncActivity extends AppCompatActivity {
         toggleTextView(txtProducts, isProductsSynced, false);
         toggleTextView(txtCategory, isCategorySynced, false);
         toggleTextView(txtDevice, isDeviceSynced, false);
+        toggleTextView(txtAddInvoice, isAddInvoiceSynced, false);
 
         validateAll();
     }
 
     private void validateAll() {
         int progress = 0;
-        int count = 3;//todo change appropraite
+        int count = 4;//todo change appropraite
         if (isProductsSynced)
             progress++;
         if (isCategorySynced)
             progress++;
         if (isDeviceSynced)
             progress++;
+        if (isAddInvoiceSynced)
+            progress++;
 
         setProgressBar(count, progress);
-        if (isProductsSynced && isCategorySynced && isDeviceSynced) {
+        if (isProductsSynced && isCategorySynced && isDeviceSynced && isAddInvoiceSynced) {
             pref.setSynced(true);
             layoutAction.setVisibility(View.VISIBLE);
         } else {
@@ -207,13 +215,11 @@ public class SyncActivity extends AppCompatActivity {
         textPercent.setText(String.format(Locale.ENGLISH, "%d%%", percent));
     }
 
-
     private void gotoHome() {
         Intent i = new Intent(this, HomeActivity.class);
         startActivity(i);// go to home page
         finish();
     }
-
 
     public void getProductsData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {
         toggleTextView(txtProducts, isProductsSynced, true);
@@ -243,7 +249,6 @@ public class SyncActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     public void getProductCategory(String shopId, String ownerId, String staffId) {
@@ -251,7 +256,6 @@ public class SyncActivity extends AppCompatActivity {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<List<Category>> call;
-
 
         call = apiInterface.getCategory(shopId, ownerId,staffId);
 
@@ -285,6 +289,7 @@ public class SyncActivity extends AppCompatActivity {
     }
 
     public void getDeviceCount(String shopId) {
+
         toggleTextView(txtDevice, isDeviceSynced, true);
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
@@ -306,7 +311,6 @@ public class SyncActivity extends AppCompatActivity {
                         pref.setKeyDevice(count);
                     }
                 }
-
             }
 
             @Override
@@ -317,7 +321,77 @@ public class SyncActivity extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void uploadCartData(){
+
+        cartArrayList.clear();
+        databaseAccess.open();
+        cartArrayList = databaseAccess.getSyncCart();
+
+        toggleTextView(txtAddInvoice, isAddInvoiceSynced, true);
+
+        if (cartArrayList.size() != 0){
+
+            databaseAccess.open();
+            int count = databaseAccess.invoiceTableCount();
+
+            for (int i=0;i<cartArrayList.size();++i) {
+
+                try {
+
+                    String cart_json_object = cartArrayList.get(i).get("cart_json_object");
+                    RequestBody body2 = RequestBody.create(MediaType.
+                            parse("application/json; charset=utf-8"), cart_json_object);
+
+//                    Call<String> call = apiInterface.submitOrders(body2);
+//                    call.enqueue(new Callback<String>() {
+//                        @Override
+//                        public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+//
+//
+//
+//                            isAddInvoiceSynced = true;
+//                            toggleTextView(txtAddInvoice, isAddInvoiceSynced, false);
+//                            validateAll();
+////                        if (response.isSuccessful()) {
+////                            Toasty.success(SyncActivity.this, R.string.order_successfully_done, Toast.LENGTH_SHORT).show();
+////                        } else {
+////                            Toasty.error(SyncActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+////                            Log.d("error", response.toString());
+////
+////                        }
+//                        }
+//
+//                        @Override
+//                        public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+//
+//                            Log.d("onFailure", t.toString());
+//                            isAddInvoiceSynced = true;
+//                            toggleTextView(txtAddInvoice, isAddInvoiceSynced, false);
+//                            validateAll();
+//                        }
+//                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (i == count){
+                    databaseAccess.open();
+                    databaseAccess.emptySyncCart();
+                }
+            }
+
+        }else {
+
+            databaseAccess.open();
+            databaseAccess.emptySyncCart();
+
+            isAddInvoiceSynced = true;
+            toggleTextView(txtAddInvoice, isAddInvoiceSynced, false);
+            validateAll();
+        }
     }
 
     // show dialog to confirm exit
@@ -353,7 +427,6 @@ public class SyncActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
     @Override
@@ -364,7 +437,6 @@ public class SyncActivity extends AppCompatActivity {
             saveCategoryTask.cancel(true);
         super.onDestroy();
     }
-
 
     class SaveProductsTask extends AsyncTask<Void, Integer, Void> {
         Context context;
@@ -403,7 +475,6 @@ public class SyncActivity extends AppCompatActivity {
                     }
                     isProductsSynced = true;
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -485,6 +556,5 @@ public class SyncActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

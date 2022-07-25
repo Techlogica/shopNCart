@@ -7,13 +7,17 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.PopupMenu;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -49,6 +53,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -92,8 +97,10 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_new);
+
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         pref = new PrefManager(this);
+
         cardCustomers = findViewById(R.id.card_customers);
         cardSupplier = findViewById(R.id.card_suppliers);
         cardProducts = findViewById(R.id.card_products);
@@ -126,7 +133,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         deviceID = pref.getKeyDeviceId();
         clockTime = sp.getString(Constant.SP_CLOCK_TIME, "");
 
-
         txtShopName.setText(shopName);
         txtSubText.setText("Hi " + staffName);
 
@@ -142,17 +148,12 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         clockText();
         counterSetiings();
 
-
-        findViewById(R.id.menu_bar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(HomeActivity.this, view);
-                popupMenu.setOnMenuItemClickListener(HomeActivity.this);
-                popupMenu.inflate(R.menu.home_menu);
-                popupMenu.show();
-            }
+        findViewById(R.id.menu_bar).setOnClickListener(view -> {
+            PopupMenu popupMenu = new PopupMenu(HomeActivity.this, view);
+            popupMenu.setOnMenuItemClickListener(HomeActivity.this);
+            popupMenu.inflate(R.menu.home_menu);
+            popupMenu.show();
         });
-
 
         if (Build.VERSION.SDK_INT >= 23) //Android MarshMellow Version or above
         {
@@ -160,139 +161,96 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
 
         }
 
-
         //        Admob initialization
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
             }
         });
+
         adView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
 
+        cardCustomers.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, CustomersActivity.class);
+            startActivity(intent);
+        });
 
-        cardCustomers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, CustomersActivity.class);
+        cardSupplier.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, SuppliersActivity.class);
+            startActivity(intent);
+        });
+
+        cardProducts.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ProductActivity.class);
+            startActivity(intent);
+        });
+
+        cardPos.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, PosActivity.class);
+            startActivityForResult(intent, 1);
+        });
+
+        cardOrderList.setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, OrdersActivity.class);
+            startActivity(intent);
+        });
+
+        cardReport.setOnClickListener(v -> {
+
+//            if (userType.equals(Constant.ADMIN) || userType.equals(Constant.MANAGER)) {
+                Intent intent = new Intent(HomeActivity.this, ReportActivity.class);
+                startActivity(intent);
+//            } else {
+//                Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
+//            }
+
+        });
+
+        cardClockInOut.setOnClickListener(v -> {
+
+            Intent intent = new Intent(HomeActivity.this, ClockInClockOutActivity.class);
+            startActivityForResult(intent, 2);
+
+        });
+
+        cardExpense.setOnClickListener(v -> {
+
+                Intent intent = new Intent(HomeActivity.this, ExpenseActivity.class);
                 startActivity(intent);
 
-
-            }
         });
 
-        cardSupplier.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SuppliersActivity.class);
+        cardSettings.setOnClickListener(v -> {
+
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
                 startActivity(intent);
 
-
-            }
         });
 
-        cardProducts.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, ProductActivity.class);
-                startActivity(intent);
+        findViewById(R.id.home_cart).setOnClickListener(v -> {
 
+            Intent intent = new Intent(HomeActivity.this, ProductCart.class);
+            startActivityForResult(intent, 1);
 
-            }
         });
 
-        cardPos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, PosActivity.class);
-                startActivityForResult(intent, 1);
-
-
-            }
-        });
-
-        cardOrderList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, OrdersActivity.class);
-                startActivity(intent);
-
-
-            }
-        });
-
-        cardReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (userType.equals(Constant.ADMIN) || userType.equals(Constant.MANAGER)) {
-                    Intent intent = new Intent(HomeActivity.this, ReportActivity.class);
-                    startActivity(intent);
-                } else {
-                    Toasty.error(HomeActivity.this, R.string.you_dont_have_permission_to_access_this_page, Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-        cardClockInOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent intent = new Intent(HomeActivity.this, ClockInClockOutActivity.class);
-                startActivityForResult(intent, 2);
-
-
-            }
-        });
-
-        cardExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                    Intent intent = new Intent(HomeActivity.this, ExpenseActivity.class);
-                    startActivity(intent);
-
-            }
-        });
-
-        cardSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                    startActivity(intent);
-
-            }
-        });
-
-        findViewById(R.id.home_cart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, ProductCart.class);
-                startActivityForResult(intent, 1);
-            }
-        });
-
-
-
-
-        /*cardAbout.setOnClickListener(new View.OnClickListener() {
+        /*
+        cardAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, AboutActivity.class);
                 startActivity(intent);
-
             }
-        });*/
+        });
+        */
 
 
-/*
+        /*
         cardLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(HomeActivity.this);
                 dialogBuilder
@@ -326,13 +284,11 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                             }
                         })
                         .show();
-
-
             }
         });
 */
-    }
 
+    }
 
     //double back press to exit
     @Override
@@ -347,7 +303,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         }
         backPressed = System.currentTimeMillis();
     }
-
 
     private void requestPermission() {
         Dexter.withActivity(this)
@@ -367,10 +322,8 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                         // check for permanent denial of any permission
                         if (report.isAnyPermissionPermanentlyDenied()) {
                             // show alert dialog navigating to Settings
-
                         }
                     }
-
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
@@ -393,11 +346,11 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                 startActivity(intent2);
                 return true;
             case R.id.item_settings:
-
-                    Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                    startActivity(intent);
-
-
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.set_invoice:
+                setInvoiceNumber();
                 return true;
             case R.id.item_logout:
 
@@ -438,6 +391,35 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
         }
         return true;
 
+    }
+
+    private void setInvoiceNumber() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(HomeActivity.this);
+        alertDialogBuilder.setCancelable(true);
+        LayoutInflater layoutInflater = LayoutInflater.from(HomeActivity.this);
+        View popupInputDialogView = layoutInflater.inflate(R.layout.row_invoice_number_layout, null);
+        alertDialogBuilder.setView(popupInputDialogView);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        EditText etxt_invoice_number = popupInputDialogView.findViewById(R.id.etxt_invoice_number);
+        String invNo = pref.getInvNo().toString();
+        if (!invNo.equalsIgnoreCase("")) {
+            String[] no = invNo.split("-");
+            etxt_invoice_number.setText(no[1]);
+        }
+        AppCompatButton bt_invoice_number = popupInputDialogView.findViewById(R.id.btYes);
+
+        bt_invoice_number.setOnClickListener(view -> {
+            String number = etxt_invoice_number.getText().toString().trim();
+            if (!number.isEmpty()){
+                int num = Integer.parseInt(number);
+                pref.setInvNo(shopID+ownerId+deviceID+"-"+number);
+                databaseAccess.open();
+                databaseAccess.updateInvoice(num);
+                alertDialog.cancel();
+            }
+        });
     }
 
     @Override
@@ -510,20 +492,15 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
             @Override
             public void onResponse(@NonNull Call<List<SalesReport>> call, @NonNull Response<List<SalesReport>> response) {
 
-
                 if (response.isSuccessful() && response.body() != null) {
                     List<SalesReport> salesReport;
                     salesReport = response.body();
 
-
                     if (salesReport.isEmpty()) {
-
 
                         Log.d("Data", "Empty");
 
-
                     } else {
-
 
                         String totalOrderPrice = salesReport.get(0).getTotalOrderPrice();
                         String totalTax = salesReport.get(0).getTotalTax();
@@ -559,7 +536,6 @@ public class HomeActivity extends BaseActivity implements PopupMenu.OnMenuItemCl
                 Log.d("Error : ", t.toString());
             }
         });
-
 
     }
 

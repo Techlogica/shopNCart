@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,12 +44,13 @@ public class OrdersActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     TextView txtNoProducts;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     List<OrderList> orderList;
     PrefManager pref;
+    Toolbar toolbar;
 
 
     @Override
@@ -69,9 +71,12 @@ public class OrdersActivity extends BaseActivity {
         imgNoProduct.setVisibility(View.GONE);
         txtNoProducts.setVisibility(View.GONE);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.order_history);
+        Log.e("","Activity: OrdersActivity");
+
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> onBackPressed());
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         String shopID = sp.getString(Constant.SP_SHOP_ID, "");
@@ -92,7 +97,7 @@ public class OrdersActivity extends BaseActivity {
         //swipe refresh listeners
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
-            if (utils.isNetworkAvailable(OrdersActivity.this)) {
+            if (Utils.isNetworkAvailable(OrdersActivity.this)) {
                 getOrdersData("", shopID, ownerId,staffId,deviceId);
             } else {
                 Toasty.error(OrdersActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -104,7 +109,7 @@ public class OrdersActivity extends BaseActivity {
         });
 
 
-        if (utils.isNetworkAvailable(OrdersActivity.this)) {
+        if (Utils.isNetworkAvailable(OrdersActivity.this)) {
             //Load data from server
             getOrdersData("", shopID, ownerId, staffId,deviceId);
         } else {
@@ -247,17 +252,6 @@ public class OrdersActivity extends BaseActivity {
             }
 
         });
-        return true;
-    }
-
-    // home button click
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
         return true;
     }
 }

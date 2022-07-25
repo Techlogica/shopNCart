@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -50,15 +52,26 @@ public class ExpenseGraphActivity extends BaseActivity {
     SharedPreferences sp;
     PrefManager pref;
     String currency;
+    ImageView backBtn;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense_graph);
         pref = new PrefManager(this);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.monthly_expense_in_graph);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.monthly_expense_in_graph);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
 
@@ -204,12 +217,12 @@ public class ExpenseGraphActivity extends BaseActivity {
 
 
     //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

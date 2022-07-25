@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -58,12 +59,12 @@ public class ProductActivity extends BaseActivity {
     ProductAdapter productAdapter;
     ProductApiAdapter productApiAdapter;
     DatabaseAccess databaseAccess;
-    ImageView imgNoProduct;
+    ImageView imgNoProduct,backBtn;
     SaveProducts saveProductsTask = null;
     ArrayList<HashMap<String, String>> productsList = new ArrayList<>();
     List<Product> productsApiList = new ArrayList<>();
     PrefManager pref;
-
+    Toolbar toolbar;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -80,9 +81,18 @@ public class ProductActivity extends BaseActivity {
         databaseAccess = DatabaseAccess.getInstance(this);
         pref = new PrefManager(this);
         fabAdd = findViewById(R.id.fab_add);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.products);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.products);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         mSwipeRefreshLayout = findViewById(R.id.swipeToRefresh);
@@ -213,15 +223,15 @@ public class ProductActivity extends BaseActivity {
     }
 
     // home button click
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//                break;
+//        }
+//        return true;
+//    }
 
 
     public void getProductsData(String searchText, String shopId, String ownerId, String staffId, String deviceId) {

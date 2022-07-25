@@ -1,5 +1,6 @@
 package com.tids.shopncart.pos;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,7 +10,6 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,13 +42,12 @@ import com.tids.shopncart.networking.ApiInterface;
 import com.tids.shopncart.utils.BaseActivity;
 import com.bumptech.glide.Glide;
 import com.facebook.shimmer.ShimmerFrameLayout;
-import com.tids.shopncart.utils.InputFilterMinMax;
-import com.tids.shopncart.utils.MinMaxTextWatcher;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -60,7 +59,6 @@ import static com.tids.shopncart.utils.Utils.isNetworkAvailable;
 
 public class PosActivity extends BaseActivity {
 
-
     private RecyclerView recyclerView, categoryRecyclerView;
     PosProductAdapter productAdapter;
     ProductApiAdapter productApiAdapter;
@@ -68,15 +66,16 @@ public class PosActivity extends BaseActivity {
     static ImageView RlCartHold;
     ImageView txtReset;
     PrefManager pref;
+    @SuppressLint("StaticFieldLeak")
     static TextView txtCounterText, txtCounterHoldText;
     ProductCategoryAdapter categoryAdapter;
     static List<HashMap<String, String>> cartProductListCounter;
     SaveProducts saveProductsTask = null;
     ImageView imgNoProduct, imgScanner, imgBack;
+    @SuppressLint("StaticFieldLeak")
     public static EditText etxtSearch;
     DatabaseAccess databaseAccess;
     List<HashMap<String, String>> cartProductList;
-    static TextView cartBadge;
     static int cartCount = 0;
     String shopID = "";
     String deviceID = "";
@@ -86,25 +85,24 @@ public class PosActivity extends BaseActivity {
     String headerDiscount = "";
     static Boolean editPriceFlag = false;
     static String editPriceValue = "";
-    private FirebaseAnalytics mFirebaseAnalytics;
     public static Resources mResources;
     ArrayList<HashMap<String, String>> productsList = new ArrayList<>();
     List<Product> productsApiList = new ArrayList<>();
     ArrayList<HashMap<String, String>> categoryList = new ArrayList<>();
-
-
     private ShimmerFrameLayout mShimmerViewContainer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pos);
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         mResources = getResources();
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         databaseAccess = DatabaseAccess.getInstance(this);
         pref = new PrefManager(this);
+
         etxtSearch = findViewById(R.id.etxt_search);
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
@@ -116,7 +114,6 @@ public class PosActivity extends BaseActivity {
         categoryRecyclerView = findViewById(R.id.category_recyclerview);
         txtReset = findViewById(R.id.txt_reset);
         RlCartHold = findViewById(R.id.home_cart_hold);
-
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
 
         SharedPreferences sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -130,25 +127,17 @@ public class PosActivity extends BaseActivity {
         editPriceValue = pref.getKeyEditValue();
         Log.e("device_id", "-----" + deviceID);
 
-
         counterSetiings();
         counterSetiingsHold();
-        imgBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResult(RESULT_OK);
-                finish();
-            }
+        imgBack.setOnClickListener(v -> {
+            setResult(RESULT_OK);
+            finish();
         });
 
-        findViewById(R.id.home_cart).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PosActivity.this, ProductCart.class);
-                startActivityForResult(intent, 1);
-            }
+        findViewById(R.id.home_cart).setOnClickListener(v -> {
+            Intent intent = new Intent(PosActivity.this, ProductCart.class);
+            startActivityForResult(intent, 1);
         });
-
 
         imgScanner.setOnClickListener(v -> {
             Intent intent = new Intent(PosActivity.this, ScannerActivity.class);
@@ -158,18 +147,10 @@ public class PosActivity extends BaseActivity {
         imgNoProduct.setVisibility(View.GONE);
         txtNoProducts.setVisibility(View.GONE);
 
-//        getProductCategory(shopID, ownerId);
-
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getApplicationContext(), 2);
         recyclerView.setLayoutManager(gridLayoutManager); // set LayoutManager to RecyclerView
         recyclerView.setHasFixedSize(true);
-
-
-        //Load data from server
-//        getProductsData("", shopID, ownerId);
-//        databaseAccess.open();
-//        productsList = databaseAccess.getProducts();
 
         if (!pref.getKeyDevice().equals("")) {
             if (Double.parseDouble(pref.getKeyDevice()) > 1) {
@@ -187,72 +168,62 @@ public class PosActivity extends BaseActivity {
             }
         }
 
-//        setUpRecyclerView(productsList);
+        txtReset.setOnClickListener(v -> {
+            if (!pref.getKeyDevice().equals("")) {
+                if (Double.parseDouble(pref.getKeyDevice()) > 1) {
+                    if (isNetworkAvailable(PosActivity.this)) {
+                        getProductsData("", shopID, ownerId, staffId, deviceID);
 
-
-        txtReset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                getProductsData("", shopID, ownerId);
-                if (!pref.getKeyDevice().equals("")) {
-                    if (Double.parseDouble(pref.getKeyDevice()) > 1) {
-                        if (isNetworkAvailable(PosActivity.this)) {
-                            getProductsData("", shopID, ownerId, staffId, deviceID);
-
-                        } else {
-                            Toasty.error(PosActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
-                        }
                     } else {
-                        saveProductsTask = new SaveProducts(PosActivity.this);
-                        saveProductsTask.execute();
+                        Toasty.error(PosActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    saveProductsTask = new SaveProducts(PosActivity.this);
+                    saveProductsTask.execute();
                 }
             }
         });
 
-        RlCartHold.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        RlCartHold.setOnClickListener(v -> {
 
-                databaseAccess.open();
-                cartProductList = databaseAccess.getCartProduct();
+            databaseAccess.open();
+            cartProductList = databaseAccess.getCartProduct();
 
-                if (cartProductList != null) {
+            if (cartProductList != null) {
 
-                    if (cartProductList.size() > 0) {
-                        Toasty.info(PosActivity.this, "cart is not empty", Toast.LENGTH_SHORT).show();
+                if (cartProductList.size() > 0) {
+                    Toasty.info(PosActivity.this, "cart is not empty", Toast.LENGTH_SHORT).show();
 
-                    }
-                    if (cartProductList.size() == 0) {
-                        databaseAccess.open();
-                        //get data from local database
-                        List<HashMap<String, String>> cartProductListHold;
-                        cartProductListHold = databaseAccess.getCartProductTemp();
-                        if (cartProductListHold != null && cartProductListHold.size() != 0) {
+                }
+                if (cartProductList.size() == 0) {
+                    databaseAccess.open();
+                    //get data from local database
+                    List<HashMap<String, String>> cartProductListHold;
+                    cartProductListHold = databaseAccess.getCartProductTemp();
+                    if (cartProductListHold != null && cartProductListHold.size() != 0) {
 
-                            for (int i = 0; i < cartProductListHold.size(); i++) {
-                                databaseAccess.open();
-                                databaseAccess.addToCart(cartProductListHold.get(i).get("product_id"), cartProductListHold.get(i).get("product_name"), cartProductListHold.get(i).get("product_weight"), cartProductListHold.get(i).get("product_weight_unit"),
-                                        cartProductListHold.get(i).get("product_price"), Double.valueOf(cartProductListHold.get(i).get("product_qty")), cartProductListHold.get(i).get("product_image"),
-                                        cartProductListHold.get(i).get("product_stock"), Double.valueOf(cartProductListHold.get(i).get("cgst")), Double.valueOf(cartProductListHold.get(i).get("sgst")),
-                                        Double.valueOf(cartProductListHold.get(i).get("cess")), Double.valueOf(cartProductListHold.get(i).get("product_discount")), cartProductListHold.get(i).get("product_cegst_percent"),
-                                        cartProductListHold.get(i).get("product_sgst_percent"), cartProductListHold.get(i).get("product_cess_percent"), Double.valueOf(cartProductListHold.get(i).get("product_discounted_total")),
-                                        Double.valueOf(cartProductListHold.get(i).get("product_line_total")), cartProductListHold.get(i).get("editable"));
-
-                            }
+                        for (int i = 0; i < cartProductListHold.size(); i++) {
                             databaseAccess.open();
-                            databaseAccess.emptyCartHold();
-                            counterSetiings();
-                            counterSetiingsHold();
+                            databaseAccess.addToCart(cartProductListHold.get(i).get("product_id"), cartProductListHold.get(i).get("product_name"), cartProductListHold.get(i).get("product_weight"), cartProductListHold.get(i).get("product_weight_unit"),
+                                    cartProductListHold.get(i).get("product_price"), Double.valueOf(cartProductListHold.get(i).get("product_qty")), cartProductListHold.get(i).get("product_image"),
+                                    cartProductListHold.get(i).get("product_stock"), Double.parseDouble(cartProductListHold.get(i).get("cgst")), Double.parseDouble(cartProductListHold.get(i).get("sgst")),
+                                    Double.parseDouble(cartProductListHold.get(i).get("cess")), Double.parseDouble(cartProductListHold.get(i).get("product_discount")), cartProductListHold.get(i).get("product_cegst_percent"),
+                                    cartProductListHold.get(i).get("product_sgst_percent"), cartProductListHold.get(i).get("product_cess_percent"), Double.parseDouble(cartProductListHold.get(i).get("product_discounted_total")),
+                                    Double.parseDouble(cartProductListHold.get(i).get("product_line_total")), cartProductListHold.get(i).get("editable"));
 
                         }
+                        databaseAccess.open();
+                        databaseAccess.emptyCartHold();
+                        counterSetiings();
+                        counterSetiingsHold();
 
                     }
-
 
                 }
 
+
             }
+
         });
 
 
@@ -283,23 +254,13 @@ public class PosActivity extends BaseActivity {
                         filterList1(s.toString());
                     }
                 }
-
-//                ArrayList<HashMap<String, String>> searchResultList;
-//                databaseAccess.open();
-//                searchResultList = databaseAccess.searchProducts(s.toString());
-//                setUpRecyclerView(searchResultList);
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 Log.d("data", s.toString());
-
             }
-
-
         });
-
-
     }
 
     @Override
@@ -439,6 +400,7 @@ public class PosActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     private void counterSetiings() {
         databaseAccess.open();
         //get data from local database
@@ -499,16 +461,16 @@ public class PosActivity extends BaseActivity {
                 boolean filter = false;
                 databaseAccess.open();
                 if (productsList.get(i).get("product_code") != null)
-                    if (productsList.get(i).get("product_code").toLowerCase().contains(query)) {
+                    if (Objects.requireNonNull(productsList.get(i).get("product_code")).toLowerCase().contains(query)) {
                         filter = true;
                     }
                 if (productsList.get(i).get("product_name") != null)
-                    if (productsList.get(i).get("product_name").toLowerCase().contains(query)) {
+                    if (Objects.requireNonNull(productsList.get(i).get("product_name")).toLowerCase().contains(query)) {
                         filter = true;
                     }
 
                 if (productsList.get(i).get("product_category_name") != null)
-                    if (productsList.get(i).get("product_category_name").toLowerCase().contains(query)) {
+                    if (Objects.requireNonNull(productsList.get(i).get("product_category_name")).toLowerCase().contains(query)) {
                         filter = true;
                     }
                 if (filter) {
@@ -565,7 +527,7 @@ public class PosActivity extends BaseActivity {
         }
     }
 
-
+    @SuppressLint("StaticFieldLeak")
     class SaveProducts extends AsyncTask<Void, Integer, Void> {
         Context context;
 
@@ -623,7 +585,6 @@ public class PosActivity extends BaseActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
@@ -676,13 +637,13 @@ public class PosActivity extends BaseActivity {
 
     public static class PosProductAdapter extends RecyclerView.Adapter<PosProductAdapter.MyViewHolder> {
 
-        private ArrayList<HashMap<String, String>> productData;
-        private Context context;
+        private final ArrayList<HashMap<String, String>> productData;
+        private final Context context;
         MediaPlayer player;
         DatabaseAccess databaseAccess;
         SharedPreferences sp;
         String currency;
-        String country = "";
+        String country;
         DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
 
@@ -707,6 +668,7 @@ public class PosActivity extends BaseActivity {
         }
 
 
+        @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
             holder.cardView.startAnimation(AnimationUtils.loadAnimation(context, R.anim.recycler_view_animation));
@@ -723,16 +685,8 @@ public class PosActivity extends BaseActivity {
             String sgst = productData.get(position).get("sgst");
             String cess = productData.get(position).get("cess");
             String editable = productData.get(position).get("editable");
-//            String todaySales = productData.get(position).getTotal_order_price();
-//            String todayDiscount = productData.get(position).getTotal_today_discount();
-//            String todayTax = productData.get(position).getTotal_today_tax();
             String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
-//            double amnt=Double.parseDouble(todaySales)-Double.parseDouble(todayDiscount)+Double.parseDouble(todayTax);
-//            String todaySalesTotal = String.valueOf(amnt);
-
-//            SharedPreferences.Editor editor = sp.edit();
-//            editor.putString(Constant.SP_TODAY_SALES, todaySalesTotal);
-//            editor.apply();Lo
+            assert productName != null;
             Log.e("length", "-----" + productName.trim().length());
 
             if (productName.trim().length() < 13) {
@@ -787,15 +741,6 @@ public class PosActivity extends BaseActivity {
                     holder.txtCGST.setVisibility(View.INVISIBLE);
                     holder.txtHintCGST.setVisibility(View.INVISIBLE);
                 }
-        /*    if (sgstAmount != 0) {
-                holder.txtSGST.setVisibility(View.VISIBLE);
-                holder.txtHintSGST.setVisibility(View.VISIBLE);
-                holder.txtHintSGST.setText("VAT 2");
-                holder.txtSGST.setText(currency +sgstAmount+" ("+sgst+"%)");
-            } else {
-                holder.txtSGST.setVisibility(View.GONE);
-                holder.txtHintSGST.setVisibility(View.GONE);
-            }*/
                 holder.txtSGST.setVisibility(View.GONE);
                 holder.txtHintSGST.setVisibility(View.GONE);
                 holder.txtCESS.setVisibility(View.GONE);
@@ -842,7 +787,7 @@ public class PosActivity extends BaseActivity {
 
             }
             //Low stock marked as RED color
-            Double getStock = Double.parseDouble(productStock);
+            double getStock = Double.parseDouble(productStock);
             if (getStock > 5) {
                 holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
                 holder.txtStockStatus.setVisibility(View.GONE);
@@ -868,122 +813,113 @@ public class PosActivity extends BaseActivity {
                 holder.txtPrice.setEnabled(true);
             }
 
-            holder.imgCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    etxtSearch.getText().clear();
+            holder.imgCart.setOnClickListener(v -> {
+                etxtSearch.getText().clear();
 
-                    player.start();
+                player.start();
 
-                    databaseAccess.open();
-                    //get data from local database
+                databaseAccess.open();
+                //get data from local database
 
-                    cartProductListCounter = databaseAccess.getCartProduct();
-                    if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
-                        cartCount = cartProductListCounter.size();
-                    } else {
-                        cartCount = 0;
-                    }
+                cartProductListCounter = databaseAccess.getCartProduct();
+                if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
+                    cartCount = cartProductListCounter.size();
+                } else {
+                    cartCount = 0;
+                }
 
-                    if (cartCount == 0) {
-                        txtCounterText.setVisibility(View.INVISIBLE);
-                    } else {
-                        txtCounterText.setVisibility(View.VISIBLE);
-                        txtCounterText.setText(String.valueOf(cartCount));
-                    }
-//                Intent intent=new Intent(context, EditProductActivity.class);
-//                intent.putExtra("product_id",productId);
-//                context.startActivity(intent);
+                if (cartCount == 0) {
+                    txtCounterText.setVisibility(View.INVISIBLE);
+                } else {
+                    txtCounterText.setVisibility(View.VISIBLE);
+                    txtCounterText.setText(String.valueOf(cartCount));
+                }
 
-                    if (getStock <= 0) {
+                if (getStock <= 0) {
 
-                        Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (cartProductListCounter.size() == 0) {
+                    Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
+                } else {
+                    cartProductListCounter.size();
 
-                        }
+                    String productPrice1 = holder.txtPrice.getText().toString();
 
-                        String productPrice = holder.txtPrice.getText().toString();
+                    if (!productPrice1.equals("")) {
+                        if (!editPriceValue.equals("0")) {
+                            double value = itemPrice * Double.parseDouble(editPriceValue) / 100;
+                            double max = itemPrice + value;
+                            double min = itemPrice - value;
 
-                        if (!productPrice.equals("")) {
-                            if (!editPriceValue.equals("0")) {
-                                double value = itemPrice * Double.valueOf(editPriceValue) / 100;
-                                double max = itemPrice + value;
-                                double min = itemPrice - value;
-
-                                double n = 0;
-                                try {
-                                    n = Double.parseDouble(productPrice);
-                                    if (n < min) {
-                                        holder.txtPrice.setText(String.valueOf(min));
-                                        Toast.makeText(context, "Minimum allowed is " + min, Toast.LENGTH_SHORT).show();
-                                    } else if (n > max) {
-                                        holder.txtPrice.setText(String.valueOf(max));
-                                        Toast.makeText(context, "Maximum allowed is " + max, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        databaseAccess.open();
-                                        int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
-                                        if (check == 1) {
-                                            Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
-                                            player.start();
-                                            cartCount = cartCount + 1;
-                                            if (cartCount == 0) {
-                                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
-                                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
-                                                txtCounterText.setVisibility(View.INVISIBLE);
-                                            } else {
-                                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
-                                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
-                                                txtCounterText.setVisibility(View.VISIBLE);
-                                                txtCounterText.setText(String.valueOf(cartCount));
-                                            }
-                                        } else if (check == 2) {
-                                            Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
-                                        } else {
-
-                                            Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
-
-                                        }
-                                    }
-                                } catch (NumberFormatException nfe) {
-                                    holder.txtPrice.setText("" + itemPrice);
-                                    Toast.makeText(context, "Bad format for number!" + max, Toast.LENGTH_SHORT).show();
-                                }
-
-
-                            } else {
-                                databaseAccess.open();
-                                int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
-                                if (check == 1) {
-                                    Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
-                                    player.start();
-                                    cartCount = cartCount + 1;
-                                    if (cartCount == 0) {
-                                        RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
-                                        txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
-                                        txtCounterText.setVisibility(View.INVISIBLE);
-                                    } else {
-                                        RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
-                                        txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
-                                        txtCounterText.setVisibility(View.VISIBLE);
-                                        txtCounterText.setText(String.valueOf(cartCount));
-                                    }
-                                } else if (check == 2) {
-                                    Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                            double n = 0;
+                            try {
+                                n = Double.parseDouble(productPrice1);
+                                if (n < min) {
+                                    holder.txtPrice.setText(String.valueOf(min));
+                                    Toast.makeText(context, "Minimum allowed is " + min, Toast.LENGTH_SHORT).show();
+                                } else if (n > max) {
+                                    holder.txtPrice.setText(String.valueOf(max));
+                                    Toast.makeText(context, "Maximum allowed is " + max, Toast.LENGTH_SHORT).show();
                                 } else {
+                                    databaseAccess.open();
+                                    int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice1, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
+                                    if (check == 1) {
+                                        Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
+                                        player.start();
+                                        cartCount = cartCount + 1;
+                                        if (cartCount == 0) {
+                                            RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
+                                            txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
+                                            txtCounterText.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
+                                            txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
+                                            txtCounterText.setVisibility(View.VISIBLE);
+                                            txtCounterText.setText(String.valueOf(cartCount));
+                                        }
+                                    } else if (check == 2) {
+                                        Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                                    } else {
 
-                                    Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
+                                        Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
 
+                                    }
                                 }
+                            } catch (NumberFormatException nfe) {
+                                holder.txtPrice.setText("" + itemPrice);
+                                Toast.makeText(context, "Bad format for number!" + max, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } else {
+                            databaseAccess.open();
+                            int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice1, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
+                            if (check == 1) {
+                                Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
+                                player.start();
+                                cartCount = cartCount + 1;
+                                if (cartCount == 0) {
+                                    RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
+                                    txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
+                                    txtCounterText.setVisibility(View.INVISIBLE);
+                                } else {
+                                    RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
+                                    txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
+                                    txtCounterText.setVisibility(View.VISIBLE);
+                                    txtCounterText.setText(String.valueOf(cartCount));
+                                }
+                            } else if (check == 2) {
+                                Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
 
                             }
-                        } else {
-                            Toast.makeText(context, "Product price should not empty", Toast.LENGTH_SHORT).show();
+
                         }
+                    } else {
+                        Toast.makeText(context, "Product price should not empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
 
 
             if (productImage != null) {
@@ -1015,15 +951,16 @@ public class PosActivity extends BaseActivity {
             return position;
         }
 
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        public static class MyViewHolder extends RecyclerView.ViewHolder {
 
             CardView cardProduct;
             CardView cardView;
-            LinearLayout layoutPrice,imgCart;
+            LinearLayout layoutPrice, imgCart;
             EditText txtPrice;
             TextView txtProductName, txtCurrency, txtWeight, txtStock, txtStockStatus, txtCGST, txtSGST, txtCESS, txtLabelCESS, txtHintCGST, txtHintSGST;
             ImageView productImage;
 
+            @SuppressLint("CutPasteId")
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
 
@@ -1056,13 +993,13 @@ public class PosActivity extends BaseActivity {
 
     public static class ProductApiAdapter extends RecyclerView.Adapter<ProductApiAdapter.MyViewHolder> {
 
-        private List<Product> productData;
-        private Context context;
+        private final List<Product> productData;
+        private final Context context;
         MediaPlayer player;
         DatabaseAccess databaseAccess;
         SharedPreferences sp;
         String currency;
-        String country = "";
+        String country;
         DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
 
 
@@ -1087,6 +1024,7 @@ public class PosActivity extends BaseActivity {
         }
 
 
+        @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
         @Override
         public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
@@ -1108,19 +1046,7 @@ public class PosActivity extends BaseActivity {
             String editable = obj.getEditable();
             String imageUrl = Constant.PRODUCT_IMAGE_URL + productImage;
 
-
             holder.txtProductName.setText(productName);
-
-//            String todaySales = productData.get(position).getTotal_order_price();
-//            String todayDiscount = productData.get(position).getTotal_today_discount();
-//            String todayTax = productData.get(position).getTotal_today_tax();
-//            double amnt=Double.parseDouble(todaySales)-Double.parseDouble(todayDiscount)+Double.parseDouble(todayTax);
-//            String todaySalesTotal = String.valueOf(amnt);
-
-//            SharedPreferences.Editor editor = sp.edit();
-//            editor.putString(Constant.SP_TODAY_SALES, todaySalesTotal);
-//            editor.apply();
-
 
             if (productName.trim().length() < 13) {
                 holder.txtProductName.setTextSize(16);
@@ -1174,15 +1100,6 @@ public class PosActivity extends BaseActivity {
                     holder.txtCGST.setVisibility(View.INVISIBLE);
                     holder.txtHintCGST.setVisibility(View.INVISIBLE);
                 }
-        /*    if (sgstAmount != 0) {
-                holder.txtSGST.setVisibility(View.VISIBLE);
-                holder.txtHintSGST.setVisibility(View.VISIBLE);
-                holder.txtHintSGST.setText("VAT 2");
-                holder.txtSGST.setText(currency +sgstAmount+" ("+sgst+"%)");
-            } else {
-                holder.txtSGST.setVisibility(View.GONE);
-                holder.txtHintSGST.setVisibility(View.GONE);
-            }*/
                 holder.txtSGST.setVisibility(View.GONE);
                 holder.txtHintSGST.setVisibility(View.GONE);
                 holder.txtCESS.setVisibility(View.GONE);
@@ -1229,7 +1146,7 @@ public class PosActivity extends BaseActivity {
 
             }
             //Low stock marked as RED color
-            Double getStock = Double.parseDouble(productStock);
+            double getStock = Double.parseDouble(productStock);
             if (getStock > 5) {
                 holder.txtStock.setText(context.getString(R.string.stock) + " : " + productStock);
                 holder.txtStockStatus.setVisibility(View.GONE);
@@ -1256,118 +1173,115 @@ public class PosActivity extends BaseActivity {
                 holder.txtPrice.setEnabled(true);
             }
 
-            holder.imgCart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    etxtSearch.getText().clear();
+            holder.imgCart.setOnClickListener(v -> {
+                etxtSearch.getText().clear();
 
-                    player.start();
+                player.start();
 
-                    databaseAccess.open();
-                    //get data from local database
+                databaseAccess.open();
+                //get data from local database
 
-                    cartProductListCounter = databaseAccess.getCartProduct();
-                    if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
-                        cartCount = cartProductListCounter.size();
-                    } else {
-                        cartCount = 0;
-                    }
+                cartProductListCounter = databaseAccess.getCartProduct();
+                if (cartProductListCounter != null && cartProductListCounter.size() != 0) {
+                    cartCount = cartProductListCounter.size();
+                } else {
+                    cartCount = 0;
+                }
 
-                    if (cartCount == 0) {
-                        txtCounterText.setVisibility(View.INVISIBLE);
-                    } else {
-                        txtCounterText.setVisibility(View.VISIBLE);
-                        txtCounterText.setText(String.valueOf(cartCount));
-                    }
+                if (cartCount == 0) {
+                    txtCounterText.setVisibility(View.INVISIBLE);
+                } else {
+                    txtCounterText.setVisibility(View.VISIBLE);
+                    txtCounterText.setText(String.valueOf(cartCount));
+                }
 //                Intent intent=new Intent(context, EditProductActivity.class);
 //                intent.putExtra("product_id",productId);
 //                context.startActivity(intent);
 
-                    if (getStock <= 0) {
+                if (getStock <= 0) {
 
-                        Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (cartProductListCounter.size() == 0) {
+                    Toasty.warning(context, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
+                } else {
+                    if (cartProductListCounter.size() == 0) {
 
-                        }
+                    }
 
-                        String productPrice = holder.txtPrice.getText().toString();
+                    String productPrice1 = holder.txtPrice.getText().toString();
 
-                        if (!productPrice.equals("")) {
-                            if (!editPriceValue.equals("0")) {
-                                double value = itemPrice * Double.valueOf(editPriceValue) / 100;
-                                double max = itemPrice + value;
-                                double min = itemPrice - value;
+                    if (!productPrice1.equals("")) {
+                        if (!editPriceValue.equals("0")) {
+                            double value = itemPrice * Double.parseDouble(editPriceValue) / 100;
+                            double max = itemPrice + value;
+                            double min = itemPrice - value;
 
-                                double n = 0;
-                                try {
-                                    n = Double.parseDouble(productPrice);
-                                    if (n < min) {
-                                        holder.txtPrice.setText(String.valueOf(min));
-                                        Toast.makeText(context, "Minimum allowed is " + min, Toast.LENGTH_SHORT).show();
-                                    } else if (n > max) {
-                                        holder.txtPrice.setText(String.valueOf(max));
-                                        Toast.makeText(context, "Maximum allowed is " + max, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        databaseAccess.open();
-                                        int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
-                                        if (check == 1) {
-                                            Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
-                                            player.start();
-                                            cartCount = cartCount + 1;
-                                            if (cartCount == 0) {
-                                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
-                                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
-                                                txtCounterText.setVisibility(View.INVISIBLE);
-                                            } else {
-                                                RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
-                                                txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
-                                                txtCounterText.setVisibility(View.VISIBLE);
-                                                txtCounterText.setText(String.valueOf(cartCount));
-                                            }
-                                        } else if (check == 2) {
-                                            Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
-                                        } else {
-
-                                            Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
-
-                                        }
-                                    }
-                                } catch (NumberFormatException nfe) {
-                                    holder.txtPrice.setText("" + itemPrice);
-                                    Toast.makeText(context, "Bad format for number!" + max, Toast.LENGTH_SHORT).show();
-                                }
-
-
-                            } else {
-                                databaseAccess.open();
-                                int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
-                                if (check == 1) {
-                                    Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
-                                    player.start();
-                                    cartCount = cartCount + 1;
-                                    if (cartCount == 0) {
-                                        RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
-                                        txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
-                                        txtCounterText.setVisibility(View.INVISIBLE);
-                                    } else {
-                                        RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
-                                        txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
-                                        txtCounterText.setVisibility(View.VISIBLE);
-                                        txtCounterText.setText(String.valueOf(cartCount));
-                                    }
-                                } else if (check == 2) {
-                                    Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                            double n = 0.0;
+                            try {
+                                n = Double.parseDouble(productPrice1);
+                                if (n < min) {
+                                    holder.txtPrice.setText(String.valueOf(min));
+                                    Toast.makeText(context, "Minimum allowed is " + min, Toast.LENGTH_SHORT).show();
+                                } else if (n > max) {
+                                    holder.txtPrice.setText(String.valueOf(max));
+                                    Toast.makeText(context, "Maximum allowed is " + max, Toast.LENGTH_SHORT).show();
                                 } else {
+                                    databaseAccess.open();
+                                    int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice1, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
+                                    if (check == 1) {
+                                        Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
+                                        player.start();
+                                        cartCount = cartCount + 1;
+                                        if (cartCount == 0) {
+                                            RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
+                                            txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
+                                            txtCounterText.setVisibility(View.INVISIBLE);
+                                        } else {
+                                            RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
+                                            txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
+                                            txtCounterText.setVisibility(View.VISIBLE);
+                                            txtCounterText.setText(String.valueOf(cartCount));
+                                        }
+                                    } else if (check == 2) {
+                                        Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                                    } else {
 
-                                    Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
+                                        Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
 
+                                    }
                                 }
+                            } catch (NumberFormatException nfe) {
+                                holder.txtPrice.setText("" + itemPrice);
+                                Toast.makeText(context, "Bad format for number!" + max, Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        } else {
+                            databaseAccess.open();
+                            int check = databaseAccess.addToCart(productId, productName, productWeight, weightUnit, productPrice1, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
+                            if (check == 1) {
+                                Toasty.success(context, R.string.product_added_to_cart, Toast.LENGTH_SHORT).show();
+                                player.start();
+                                cartCount = cartCount + 1;
+                                if (cartCount == 0) {
+                                    RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order));
+                                    txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter));
+                                    txtCounterText.setVisibility(View.INVISIBLE);
+                                } else {
+                                    RlCartHold.setBackground(mResources.getDrawable(R.drawable.ic_pause_cart_order_tint));
+                                    txtCounterHoldText.setBackground(mResources.getDrawable(R.drawable.cart_counter_tint));
+                                    txtCounterText.setVisibility(View.VISIBLE);
+                                    txtCounterText.setText(String.valueOf(cartCount));
+                                }
+                            } else if (check == 2) {
+                                Toasty.info(context, R.string.product_already_added_to_cart, Toast.LENGTH_SHORT).show();
+                            } else {
+
+                                Toasty.error(context, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
 
                             }
-                        } else {
-                            Toast.makeText(context, "Product price should not empty", Toast.LENGTH_SHORT).show();
+
                         }
+                    } else {
+                        Toast.makeText(context, "Product price should not empty", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -1402,14 +1316,15 @@ public class PosActivity extends BaseActivity {
             return position;
         }
 
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-            CardView cardView;;
+            CardView cardView;
             CardView cardProduct;
             LinearLayout imgCart;
             TextView txtProductName, txtWeight, txtPrice, txtStock, txtStockStatus, txtCGST, txtSGST, txtCESS, txtLabelCESS, txtHintCGST, txtHintSGST;
             ImageView productImage;
 
+            @SuppressLint("CutPasteId")
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
 

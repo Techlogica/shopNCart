@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,11 +41,12 @@ public class CategoriesActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     private ShimmerFrameLayout mShimmerViewContainer;
     FloatingActionButton fabAdd;
     String shopID = "", ownerId = "", staffId = "";
     CategoryAdapter categoryAdapter;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +54,18 @@ public class CategoriesActivity extends BaseActivity {
         setContentView(R.layout.activity_categories);
 
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.categories);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.categories);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         recyclerView = findViewById(R.id.recycler_view);
         imgNoProduct = findViewById(R.id.image_no_product);
@@ -199,14 +210,14 @@ public class CategoriesActivity extends BaseActivity {
 
 
     //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {

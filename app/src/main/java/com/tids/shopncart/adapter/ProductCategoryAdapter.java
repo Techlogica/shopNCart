@@ -22,17 +22,17 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategoryAdapter.MyViewHolder> {
 
 
     MediaPlayer player;
-    private ArrayList<HashMap<String, String>> categoryData;
-    private Context context;
+    private final ArrayList<HashMap<String, String>> categoryData;
+    private final Context context;
     RecyclerView recyclerView;
     ImageView imgNoProduct;
     TextView txtNoProducts;
-    private ShimmerFrameLayout mShimmerViewContainer;
     DatabaseAccess databaseAccess;
     ArrayList<HashMap<String, String>> productsList;
     List<Product> productsApiList;
@@ -48,7 +48,6 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
 
         this.imgNoProduct = imgNoProduct;
         this.txtNoProducts = txtNoProducts;
-        this.mShimmerViewContainer = mShimmerViewContainer;
 
     }
 
@@ -69,22 +68,19 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
         pref = new PrefManager(context);
 
         holder.txtCategoryName.setText(categoryName);
-        holder.cardCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.cardCategory.setOnClickListener(v -> {
 
-                player.start();
-                if (!pref.getKeyDevice().equals("")) {
-                    if (Double.parseDouble(pref.getKeyDevice()) > 1) {
-                        filterListApi(categoryName);
+            player.start();
+            if (!pref.getKeyDevice().equals("")) {
+                if (Double.parseDouble(pref.getKeyDevice()) > 1) {
+                    filterListApi(categoryName);
 
-                    } else {
-                        filterList1(categoryName);
-                    }
+                } else {
+                    filterList1(categoryName);
                 }
-
-
             }
+
+
         });
 
 
@@ -128,7 +124,7 @@ public class ProductCategoryAdapter extends RecyclerView.Adapter<ProductCategory
                 boolean filter = false;
                 databaseAccess.open();
                 if (productsList.get(i).get("product_category_name") != null)
-                    if (productsList.get(i).get("product_category_name").toLowerCase().contains(query)) {
+                    if (Objects.requireNonNull(productsList.get(i).get("product_category_name")).toLowerCase().contains(query)) {
                         filter = true;
                     }
                 if (filter) {

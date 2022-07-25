@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -61,7 +62,7 @@ public class AddProductActivity extends BaseActivity {
     public static EditText etxtProductCode;
     EditText etxtProductName, etxtProductStock, etxtCGST, etxtSGST, etxtCESS, etxtProductCategory, etxtProductDescription, etxtProductSellPrice, etxtProductSupplier, etxtProdcutWeightUnit, etxtProductWeight, etxtProductCostPrice;
     TextView txtAddProdcut, txtChooseImage, textViewcgst, textViewsgst, textViewcess;
-    ImageView imgProduct, imgScanCode;
+    ImageView imgProduct, imgScanCode, backBtn;
     List<Category> productCategory;
     List<Suppliers> productSuppliers;
     List<WeightUnit> weightUnits;
@@ -71,7 +72,7 @@ public class AddProductActivity extends BaseActivity {
     CheckBox checkBox;
     String isEditable = "";
     String supplierName, weightUnitName, categoryName;
-
+    Toolbar toolbar;
     String selectedCategoryID, selectedSupplierID = "0", selectedWeightUnitID, mediaPath = "";
 
 
@@ -81,9 +82,18 @@ public class AddProductActivity extends BaseActivity {
         setContentView(R.layout.activity_add_product);
         db = DatabaseAccess.getInstance(this);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.add_product);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.add_product);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               finish();
+            }
+        });
 
         etxtProductName = findViewById(R.id.etxt_product_name);
         etxtProductCode = findViewById(R.id.etxt_product_code);
@@ -491,15 +501,15 @@ public class AddProductActivity extends BaseActivity {
     }
 
 
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {// app icon in action bar clicked; goto parent activity.
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    //for back button
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {// app icon in action bar clicked; goto parent activity.
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     // Uploading Image/Video

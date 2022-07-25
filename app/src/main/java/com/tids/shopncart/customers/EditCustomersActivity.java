@@ -5,13 +5,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -32,15 +33,18 @@ public class EditCustomersActivity extends BaseActivity {
     EditText etxtCustomerName, etxtAddress, etxtCustomerCell, etxtCustomerEmail;
     TextView txtEditCustomer, txtUpdateInformation;
     String getCustomerId, getCustomerName, getCustomerCell, getCustomerEmail, getCustomerAddress;
+    ImageView backBtn;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_customers);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.edit_customer);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> finish());
 
 
         etxtCustomerName = findViewById(R.id.etxt_customer_name);
@@ -72,58 +76,51 @@ public class EditCustomersActivity extends BaseActivity {
         txtUpdateInformation.setVisibility(View.INVISIBLE);
 
 
-        txtEditCustomer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtEditCustomer.setOnClickListener(v -> {
 
-                etxtCustomerName.setEnabled(true);
-                etxtCustomerCell.setEnabled(true);
-                etxtCustomerEmail.setEnabled(true);
-                etxtAddress.setEnabled(true);
+            etxtCustomerName.setEnabled(true);
+            etxtCustomerCell.setEnabled(true);
+            etxtCustomerEmail.setEnabled(true);
+            etxtAddress.setEnabled(true);
 
-                etxtCustomerName.setTextColor(Color.RED);
-                etxtCustomerCell.setTextColor(Color.RED);
-                etxtCustomerEmail.setTextColor(Color.RED);
-                etxtAddress.setTextColor(Color.RED);
-                txtUpdateInformation.setVisibility(View.VISIBLE);
+            etxtCustomerName.setTextColor(Color.RED);
+            etxtCustomerCell.setTextColor(Color.RED);
+            etxtCustomerEmail.setTextColor(Color.RED);
+            etxtAddress.setTextColor(Color.RED);
+            txtUpdateInformation.setVisibility(View.VISIBLE);
 
-                txtEditCustomer.setVisibility(View.GONE);
+            txtEditCustomer.setVisibility(View.GONE);
 
-            }
         });
 
 
-        txtUpdateInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtUpdateInformation.setOnClickListener(v -> {
 
 
-                String customerName = etxtCustomerName.getText().toString().trim();
-                String customerCell = etxtCustomerCell.getText().toString().trim();
-                String customerEmail = etxtCustomerEmail.getText().toString().trim();
-                String customerAddress = etxtAddress.getText().toString().trim();
+            String customerName = etxtCustomerName.getText().toString().trim();
+            String customerCell = etxtCustomerCell.getText().toString().trim();
+            String customerEmail = etxtCustomerEmail.getText().toString().trim();
+            String customerAddress = etxtAddress.getText().toString().trim();
 
-                if (customerName.isEmpty()) {
-                    etxtCustomerName.setError(getString(R.string.enter_customer_name));
-                    etxtCustomerName.requestFocus();
-                } else if (customerCell.isEmpty()) {
-                    etxtCustomerCell.setError(getString(R.string.enter_customer_cell));
-                    etxtCustomerCell.requestFocus();
-                } else if (customerEmail.isEmpty() || !customerEmail.contains("@") || !customerEmail.contains(".")) {
-                    etxtCustomerEmail.setError(getString(R.string.enter_valid_email));
-                    etxtCustomerEmail.requestFocus();
-                } else if (customerAddress.isEmpty()) {
-                    etxtAddress.setError(getString(R.string.enter_customer_address));
-                    etxtAddress.requestFocus();
-                } else {
-
-
-                    updateCustomer(getCustomerId, customerName, customerCell, customerEmail, customerAddress);
+            if (customerName.isEmpty()) {
+                etxtCustomerName.setError(getString(R.string.enter_customer_name));
+                etxtCustomerName.requestFocus();
+            } else if (customerCell.isEmpty()) {
+                etxtCustomerCell.setError(getString(R.string.enter_customer_cell));
+                etxtCustomerCell.requestFocus();
+            } else if (customerEmail.isEmpty() || !customerEmail.contains("@") || !customerEmail.contains(".")) {
+                etxtCustomerEmail.setError(getString(R.string.enter_valid_email));
+                etxtCustomerEmail.requestFocus();
+            } else if (customerAddress.isEmpty()) {
+                etxtAddress.setError(getString(R.string.enter_customer_address));
+                etxtAddress.requestFocus();
+            } else {
 
 
-                }
+                updateCustomer(getCustomerId, customerName, customerCell, customerEmail, customerAddress);
+
+
             }
-
         });
 
 
@@ -182,16 +179,5 @@ public class EditCustomersActivity extends BaseActivity {
                 Toasty.error(EditCustomersActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

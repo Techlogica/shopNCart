@@ -26,8 +26,8 @@
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:scaleType="fitCenter"
-                app:srcCompat="@drawable/applogo"
                 tools:ignore="MissingConstraints" />
+<!--            app:srcCompat="@drawable/applogo"-->
 
             <ImageView
                 android:id="@+id/appName"

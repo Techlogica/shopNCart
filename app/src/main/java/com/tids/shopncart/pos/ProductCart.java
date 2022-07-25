@@ -1,5 +1,6 @@
 package com.tids.shopncart.pos;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -39,11 +41,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ahmedelsayed.sunmiprinterutill.PrintMe;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tids.shopncart.Constant;
+import com.tids.shopncart.HomeActivity;
 import com.tids.shopncart.R;
 import com.tids.shopncart.database.DatabaseAccess;
 import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Customer;
 import com.tids.shopncart.model.OrderDetails;
+import com.tids.shopncart.model.ProductCartSubmit;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
 import com.tids.shopncart.utils.BaseActivity;
@@ -70,12 +74,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.tids.shopncart.utils.Utils.isNetworkAvailable;
 import static java.lang.Math.round;
 
 public class ProductCart extends BaseActivity {
 
     CartAdapter productCartAdapter;
-    ImageView imgNoProduct, imgScanner;
+    ImageView imgNoProduct, imgScanner, backBtn;
     public static EditText etxtSearch;
     CardView cardView;
     Button btnSubmitOrder;
@@ -128,7 +133,6 @@ public class ProductCart extends BaseActivity {
     List<Customer> customerData;
     ArrayAdapter<String> customerAdapter, orderTypeAdapter, paymentMethodAdapter;
     SharedPreferences sp;
-    private FirebaseAnalytics mFirebaseAnalytics;
     SharedPreferences.Editor editor;
     String userType;
     String servedBy, staffId, shopTax, currency, shopID, ownerId;
@@ -142,6 +146,8 @@ public class ProductCart extends BaseActivity {
     DecimalFormat f;
     String invoiceNumber = "";
     ArrayList<HashMap<String, String>> productsList = new ArrayList<>();
+    Toolbar toolbar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,16 +155,24 @@ public class ProductCart extends BaseActivity {
         setContentView(R.layout.activity_product_cart);
         printMe = new PrintMe(this);
         pref = new PrefManager(this);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        @SuppressLint("MissingPermission")
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mResources = getResources();
         databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
         databaseAccess.open();
         productsList = databaseAccess.getProducts();
         player = MediaPlayer.create(this, R.raw.delete_sound);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.product_cart);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(ProductCart.this, HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            setResult(RESULT_OK);//send result to previous activity
+            finish();
+        });
         f = new DecimalFormat("#,###,##0.00");
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
@@ -190,9 +204,9 @@ public class ProductCart extends BaseActivity {
         etxtSearch = findViewById(R.id.etxt_search);
         cardView = findViewById(R.id.cardview);
 
-        txtDiscCurrency = findViewById(R.id.currency_discount);
         txtTotalPrice = findViewById(R.id.txt_total_price);
         totalDisocuntLayout = findViewById(R.id.disc_layout);
+        txtDiscCurrency = findViewById(R.id.currency_discount);
         txtTotalDiscount = findViewById(R.id.txt_total_discount);
         txtTotalCgst = findViewById(R.id.txt_total_cgst);
         txtTotalSgst = findViewById(R.id.txt_total_sgst);
@@ -225,7 +239,6 @@ public class ProductCart extends BaseActivity {
         databaseAccess.open();
         allTax = databaseAccess.getTotalTax();
 
-
         etxtSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -243,16 +256,12 @@ public class ProductCart extends BaseActivity {
             }
         });
 
-
 //        btnSubmitOrder.setOnClickListener(v -> dialog());
-        btnSubmitOrder.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isZero) {
-                    Toasty.error(ProductCart.this, R.string.quantity_empty, Toast.LENGTH_SHORT).show();
-                } else {
-                    dialog();
-                }
+        btnSubmitOrder.setOnClickListener(view -> {
+            if (isZero) {
+                Toasty.error(ProductCart.this, R.string.quantity_empty, Toast.LENGTH_SHORT).show();
+            } else {
+                dialog();
             }
         });
 
@@ -300,12 +309,11 @@ public class ProductCart extends BaseActivity {
         }
     }
 
-
     public void proceedOrder(String type, String paymentMethod, String customerName, String custId, double tax, String discount, double price, String cash, String credit, String paypal, boolean shopDiscPercent, boolean isHeaderDiscount) {
 
         databaseAccess = DatabaseAccess.getInstance(ProductCart.this);
-        databaseAccess.open();
 
+        databaseAccess.open();
         int itemCount = databaseAccess.getCartItemCount();
 
         databaseAccess.open();
@@ -323,6 +331,19 @@ public class ProductCart extends BaseActivity {
                 Toasty.error(ProductCart.this, R.string.no_product_found, Toast.LENGTH_SHORT).show();
             } else {
 
+                databaseAccess.open();
+                int count = databaseAccess.invoiceNumberTableCount();
+                int last_invoice = 0;
+                if (count != 0){
+                    databaseAccess.open();
+                    last_invoice = databaseAccess.getInvoice();
+                }
+                Log.e("invoice number::",last_invoice+"*");
+
+                last_invoice++;
+                databaseAccess.open();
+                databaseAccess.updateInvoice(last_invoice);
+
                 //get current timestamp
                 String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(new Date());
                 String currentYear = new SimpleDateFormat("yyyy", Locale.ENGLISH).format(new Date());
@@ -331,11 +352,23 @@ public class ProductCart extends BaseActivity {
                 dateTime = currentDate + " " + currentTime;
 
                 //timestamp use for invoice id for unique
-                Long tsLong = System.currentTimeMillis() / 1000;
-                String timeStamp = tsLong.toString();
-                Log.d("Time", timeStamp);
+//                Long tsLong = System.currentTimeMillis() / 1000;
+//                String timeStamp = tsLong.toString();
+//                Log.d("Time", timeStamp);
                 //Invoice number=INV+StaffID+CurrentYear+timestamp
-                invoiceNumber = "INV" + staffId + currentYear + timeStamp;
+//                invoiceNumber = "INV" + staffId + last_invoice;
+                if (!pref.getInvNo().equalsIgnoreCase("")) {
+                    String Number = pref.getInvNo().toString();
+                    Log.d("staffId:::", staffId.toString());
+                    String[] no = Number.split("-");
+                    int invoice = Integer.parseInt(no[1]) + 1;
+                    invoiceNumber = no[0] + "-" + invoice;
+                    pref.setInvNo(invoiceNumber);
+                }else {
+                   int no = last_invoice + 1;
+                   invoiceNumber = shopID+ownerId+deviceId+"-"+no;
+                   pref.setInvNo(invoiceNumber);
+                }
                 JSONArray payMethods = new JSONArray();
                 final JSONObject obj = new JSONObject();
                 try {
@@ -413,7 +446,7 @@ public class ProductCart extends BaseActivity {
                     e.printStackTrace();
                 }
 
-                calculatedTotalCostPrint = (Double.valueOf(orderPrice) - Double.valueOf(discount1)) + Double.valueOf(getTax);
+                calculatedTotalCostPrint = (orderPrice - Double.parseDouble(discount1)) + getTax;
 
                 for (int i = 0; i < paymentMethodNamesMultiValues.size(); i++) {
                     if (!paymentMethodNamesMultiValues.get(i).equals("")) {
@@ -422,25 +455,26 @@ public class ProductCart extends BaseActivity {
                     }
                 }
 
-                Utils utils = new Utils();
 
                 if (paymentMethod.toLowerCase().equals("multi")) {
                     if (Utils.round(total, 1) == Utils.round(calculatedTotalCostPrint, 1)) {
 
-                        if (utils.isNetworkAvailable(ProductCart.this)) {
+                        if (isNetworkAvailable(ProductCart.this)) {
                             orderSubmit(obj);
                         } else {
-                            Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+//                            Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                            loadLocally(String.valueOf(obj));
                         }
                     } else {
                         Toasty.error(ProductCart.this, R.string.amount_mismatch, Toast.LENGTH_SHORT).show();
                     }
                 } else {
 
-                    if (utils.isNetworkAvailable(ProductCart.this)) {
+                    if (isNetworkAvailable(ProductCart.this)) {
                         orderSubmit(obj);
                     } else {
-                        Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+//                        Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        loadLocally(String.valueOf(obj));
                     }
                 }
 
@@ -452,12 +486,32 @@ public class ProductCart extends BaseActivity {
         }
     }
 
+    private void loadLocally(String obj){
+
+        Toasty.success(ProductCart.this, R.string.order_successfully_done, Toast.LENGTH_SHORT).show();
+        for (int i = 0; i < lines.size(); i++) {
+            String productId = lines.get(i).get("product_id");
+            String productStock = lines.get(i).get("product_stock");
+            String qty = lines.get(i).get("product_qty");
+            Double finalStock = Double.parseDouble(productStock) - Double.parseDouble(qty);
+            databaseAccess.open();
+            databaseAccess.updateStock(productId, String.valueOf(finalStock));
+        }
+
+        databaseAccess.open();
+        databaseAccess.addSyncCart(obj);
+
+//        databaseAccess.open();
+//        databaseAccess.emptyCart();
+//        productsList.clear();
+
+        dialogSuccess();
+
+    }
 
     private void orderSubmit(final JSONObject obj) {
 
         Log.d("Json", obj.toString());
-
-
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -465,35 +519,29 @@ public class ProductCart extends BaseActivity {
         progressDialog.show();
 
         RequestBody body2 = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), String.valueOf(obj));
-
-
+        Log.d("Product Cart","Body--:::"+body2.toString());
         Call<String> call = apiInterface.submitOrders(body2);
 
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-
-
                 if (response.isSuccessful()) {
-
                     progressDialog.dismiss();
+                    Log.d("response::",response.toString());
                     Toasty.success(ProductCart.this, R.string.order_successfully_done, Toast.LENGTH_SHORT).show();
                     for (int i = 0; i < lines.size(); i++) {
                         String productId = lines.get(i).get("product_id");
                         String productStock = lines.get(i).get("product_stock");
                         String qty = lines.get(i).get("product_qty");
-                        Double finalStock = Double.valueOf(productStock) - Double.valueOf(qty);
+                        Double finalStock = Double.parseDouble(productStock) - Double.parseDouble(qty);
                         databaseAccess.open();
                         databaseAccess.updateStock(productId, String.valueOf(finalStock));
-
-
                     }
 
                     databaseAccess.open();
                     databaseAccess.emptyCart();
                     productsList.clear();
                     dialogSuccess();
-
 
                 } else {
 
@@ -503,14 +551,16 @@ public class ProductCart extends BaseActivity {
                     Log.d("error", response.toString());
 
                 }
-
-
             }
 
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
 
+                progressDialog.dismiss();
                 Log.d("onFailure", t.toString());
+                Log.d("Product Cart","response Failed");
+
+                loadLocally(String.valueOf(obj));
 
             }
         });
@@ -518,7 +568,7 @@ public class ProductCart extends BaseActivity {
 
     }
 
-
+    @SuppressLint("SetTextI18n")
     public void dialogSuccess() {
 
 
@@ -547,9 +597,7 @@ public class ProductCart extends BaseActivity {
         TextView txtSCgst = dialogView.findViewById(R.id.txt_cgst);
         TextView txtSCess = dialogView.findViewById(R.id.txt_cess);
 
-        TextView txtHintSgst = dialogView.findViewById(R.id.hint_sgst);
         TextView txtHintCgst = dialogView.findViewById(R.id.hint_cgst);
-        TextView txtHintCess = dialogView.findViewById(R.id.hint_cess);
         TextView labelDiscount = dialogView.findViewById(R.id.label_discount);
 
         LinearLayout layoutSgst = dialogView.findViewById(R.id.sgst_layout);
@@ -564,17 +612,12 @@ public class ProductCart extends BaseActivity {
         recyclerViewDialog.setLayoutManager(layoutManager);
         recyclerViewDialog.setHasFixedSize(true);
 
-        databaseAccess.open();
-        final List<HashMap<String, String>> lines;
-        lines = databaseAccess.getCartProduct();
-
-
         userType = sp.getString(Constant.SP_USER_TYPE, "");
         shopName = sp.getString(Constant.SP_SHOP_NAME, "");
         address = sp.getString(Constant.SP_SHOP_ADDRESS, "");
         email = sp.getString(Constant.SP_EMAIL, "");
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
-        calculatedTotalCostPrint = (Double.valueOf(orderPrice) - Double.valueOf(discount1)) + Double.valueOf(getTax);
+        calculatedTotalCostPrint = (orderPrice - Double.parseDouble(discount1)) + getTax;
 
         txtShopName.setText(shopName);
         txtShopAddress.setText(address);
@@ -597,7 +640,7 @@ public class ProductCart extends BaseActivity {
             txtCustomerTaxId.setVisibility(View.GONE);
         }
 
-        txtSubTotal.setText(String.valueOf(decimn.format(orderPrice)));
+        txtSubTotal.setText(decimn.format(orderPrice));
 
         if (country.equals("UAE")) {
             layoutCess.setVisibility(View.GONE);
@@ -610,15 +653,6 @@ public class ProductCart extends BaseActivity {
             } else {
                 layoutCgst.setVisibility(View.GONE);
             }
-
-            /*if (getSgst != 0) {
-                txtHintSgst.setText("VAT 2");
-                layoutSgst.setVisibility(View.VISIBLE);
-                txtSSgst.setText(decimn.format(Double.valueOf(getSgst)));
-            } else {
-                layoutSgst.setVisibility(View.GONE);
-            }*/
-
 
         } else {
 
@@ -645,7 +679,7 @@ public class ProductCart extends BaseActivity {
 
         }
 
-        if (Double.valueOf(discount1) != 0) {
+        if (Double.parseDouble(discount1) != 0) {
 
             layoutDisc.setVisibility(View.VISIBLE);
             if (isHeaderDiscount) {
@@ -659,14 +693,11 @@ public class ProductCart extends BaseActivity {
             layoutDisc.setVisibility(View.GONE);
         }
 
-        txtSTotalTax.setText(String.valueOf(decimn.format(getTax)));
-        totalPrice.setText(currency + " " + String.valueOf(decimn.format(Utils.round(calculatedTotalCostPrint, 1))));
+        txtSTotalTax.setText(decimn.format(getTax));
+        totalPrice.setText(currency + " " + decimn.format(Utils.round(calculatedTotalCostPrint, 1)));
 
-        getProductsData(invoiceNumber, recyclerViewDialog);
-
-        CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderDetails);
-        recyclerViewDialog.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        Log.e("invoice::",invoiceNumber);
+            getProductsData(invoiceNumber, recyclerViewDialog);
 
         AlertDialog alertDialogSuccess = dialog.create();
         dialogBtnCloseDialog.setOnClickListener(v -> {
@@ -679,25 +710,20 @@ public class ProductCart extends BaseActivity {
 
 
         dialogBtnPrint.setOnClickListener(v -> {
-
-//            alertDialogSuccess.dismiss();
             printLayout(orderDetails);
-
         });
 
         alertDialogSuccess.show();
-
-
     }
 
     //print operation text setup
+    @SuppressLint("SetTextI18n")
     public void printLayout(List<OrderDetails> orderDetails) {
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.print_reciept, null);
 
         TextView txtShopName = dialogView.findViewById(R.id.shop_name);
         TextView txtShopAddress = dialogView.findViewById(R.id.address);
-        TextView txtShopEmail = dialogView.findViewById(R.id.email);
         TextView txtShopContact = dialogView.findViewById(R.id.contact);
         TextView txtInvoiceId = dialogView.findViewById(R.id.invoice_id);
         TextView txtOrderDate = dialogView.findViewById(R.id.order_date);
@@ -706,14 +732,11 @@ public class ProductCart extends BaseActivity {
         TextView txtCustomerName = dialogView.findViewById(R.id.customer_name);
         TextView txtCustomerTaxId = dialogView.findViewById(R.id.customer_tax_id);
         TextView txtSubTotal = dialogView.findViewById(R.id.sub_total);
-        TextView txtSTotalTax = dialogView.findViewById(R.id.total_tax);
         TextView txtSSgst = dialogView.findViewById(R.id.txt_sgst);
         TextView txtSCgst = dialogView.findViewById(R.id.txt_cgst);
         TextView txtSCess = dialogView.findViewById(R.id.txt_cess);
 
-        TextView txtHintSgst = dialogView.findViewById(R.id.hint_sgst);
         TextView txtHintCgst = dialogView.findViewById(R.id.hint_cgst);
-        TextView txtHintCess = dialogView.findViewById(R.id.hint_cess);
         TextView labelDiscount = dialogView.findViewById(R.id.label_discount);
 
         TextView discount = dialogView.findViewById(R.id.discount);
@@ -730,7 +753,7 @@ public class ProductCart extends BaseActivity {
 
         txtShopName.setText(shopName);
         txtShopAddress.setText(address);
-        txtShopEmail.setText("Email: " + email);
+//        txtShopEmail.setText("Email: " + email);
         txtShopContact.setText("Contact: " + contact);
         txtInvoiceId.setText("Invoice iD: " + invoiceNumber);
         if (taxId != null && !taxId.equals("")) {
@@ -739,7 +762,7 @@ public class ProductCart extends BaseActivity {
         } else {
             txtTaxId.setVisibility(View.GONE);
         }
-        txtOrderDate.setText("Order Date: " + dateTime);
+        txtOrderDate.setText("Invoice Date: " + dateTime);
         txtServedBy.setText("Served By: " + servedBy);
         txtCustomerName.setText("Customer Name: " + customerName);
         if (custTaxId != null && !taxId.equals("")) {
@@ -749,8 +772,7 @@ public class ProductCart extends BaseActivity {
             txtCustomerTaxId.setVisibility(View.GONE);
         }
 
-        txtSubTotal.setText(String.valueOf(decimn.format(orderPrice)));
-//        txtSTotalTax.setText(String.valueOf(decimn.format(getTax)));
+        txtSubTotal.setText(decimn.format(orderPrice));
 
         if (country.equals("UAE")) {
             layoutCess.setVisibility(View.GONE);
@@ -765,14 +787,6 @@ public class ProductCart extends BaseActivity {
 
             }
 
-          /*  if (getSgst != 0) {
-                txtHintSgst.setText("VAT 2");
-                layoutSgst.setVisibility(View.VISIBLE);
-                txtSSgst.setText(decimn.format(Double.valueOf(getSgst)));
-            } else {
-                layoutSgst.setVisibility(View.GONE);
-            }*/
-
         } else {
             if (getSgst != 0) {
                 layoutCgst.setVisibility(View.VISIBLE);
@@ -797,7 +811,7 @@ public class ProductCart extends BaseActivity {
 
         }
 
-        if (Double.valueOf(discount1) != 0) {
+        if (Double.parseDouble(discount1) != 0) {
             layoutDisc.setVisibility(View.VISIBLE);
             if (isHeaderDiscount) {
                 labelDiscount.setText("Header discount (-)");
@@ -812,13 +826,15 @@ public class ProductCart extends BaseActivity {
         totalPrice.setText(currency + " " + String.valueOf(decimn.format(Utils.round(calculatedTotalCostPrint, 1))));
 
 
+        for (int i=0; i < orderDetails.size(); i++){
+            Log.e("name--", orderDetails.get(i).getProductName().toString());
+        }
         CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderDetails);
         recyclerViewDialog.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
         printMe.sendViewToPrinter(dialogView);
     }
-
 
     class CartPrintItemListAdapter extends RecyclerView.Adapter<CartPrintItemListAdapter.MyViewHolder> {
 
@@ -843,8 +859,12 @@ public class ProductCart extends BaseActivity {
 
             holder.txtItem.setText(reportViewArrayList.get(position).getProductName() + (" ") + reportViewArrayList.get(position).getProductWeight() + ("-") + "( " + reportViewArrayList.get(position).getProductQuantity() + " X " + reportViewArrayList.get(position).getProductPrice() + " )");
 
-            holder.txtPrice.setText(String.valueOf(decimn.format(Double.parseDouble(reportViewArrayList.get(position).getProductQuantity()) * Double.parseDouble(reportViewArrayList.get(position).getProductPrice()))));
-
+            if (reportViewArrayList.get(position).getProductPrice().contains(",")){
+                String convertedPrice = reportViewArrayList.get(position).getProductPrice().replace(",","");
+                holder.txtPrice.setText(String.valueOf(decimn.format(Double.parseDouble(reportViewArrayList.get(position).getProductQuantity()) * Double.parseDouble(convertedPrice))));
+            }else {
+                holder.txtPrice.setText(String.valueOf(decimn.format(Double.parseDouble(reportViewArrayList.get(position).getProductQuantity()) * Double.parseDouble(reportViewArrayList.get(position).getProductPrice()))));
+            }
         }
 
         @Override
@@ -883,7 +903,6 @@ public class ProductCart extends BaseActivity {
         databaseAccess.open();
         discountAll = databaseAccess.getTotalProductDiscount();
 
-
         String shopCurrency = currency;
         // String tax = shopTax;
 
@@ -894,7 +913,6 @@ public class ProductCart extends BaseActivity {
         getCess = totalCESS;
 
         //Toast.makeText(this, ""+getTax, Toast.LENGTH_SHORT).show();
-
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(ProductCart.this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_payment, null);
@@ -1129,7 +1147,6 @@ public class ProductCart extends BaseActivity {
                     recyclerView.setVisibility(View.VISIBLE);
                     dialogLayoutPay.setVisibility(View.GONE);
 
-
                     PaymentMethodListAdapter mAdapter = new PaymentMethodListAdapter(paymentMethodNamesMulti);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
@@ -1304,7 +1321,6 @@ public class ProductCart extends BaseActivity {
 
             proceedOrder(orderType1, orderPaymentMethod, customerName, custId, getTax, discount1, calculatedTotalCostDialog, cash, credit, paypal, shopDiscPercent, isHeaderDiscount);
 
-
             alertDialog.dismiss();
         });
 
@@ -1349,7 +1365,6 @@ public class ProductCart extends BaseActivity {
 
             @Override
             public void onFailure(@NonNull Call<List<Customer>> call, @NonNull Throwable t) {
-
                 //write own action
             }
         });
@@ -1358,7 +1373,7 @@ public class ProductCart extends BaseActivity {
     }
 
     public void getProductsData(String invoiceId, RecyclerView recyclerViewDialog) {
-
+        Log.e("invoice No::",invoiceId.toString());
 
         loading = new ProgressDialog(ProductCart.this);
         loading.setCancelable(false);
@@ -1372,25 +1387,24 @@ public class ProductCart extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<List<OrderDetails>> call, @NonNull Response<List<OrderDetails>> response) {
 
-
                 if (response.isSuccessful() && response.body() != null) {
-
                     orderDetails = response.body();
                     loading.dismiss();
+                    Log.e("resp::",orderDetails+"");
+                    for (int i=0; i< orderDetails.size();i++){
+                        Log.e("Details:::","productName:"+orderDetails.get(i).getProductName().toString()+","+
+                                "Invoice Id:"+orderDetails.get(i).getInvoiceId()+","+
+                                        "Order Details Id:"+orderDetails.get(i).getOrderDetailsId());
+                    }
 
 
                     if (orderDetails.isEmpty()) {
-
-
                         Toasty.warning(ProductCart.this, R.string.no_product_found, Toast.LENGTH_SHORT).show();
-
-
                     } else {
 
                         CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderDetails);
                         recyclerViewDialog.setAdapter(mAdapter);
                         mAdapter.notifyDataSetChanged();
-
 
                     }
 
@@ -1401,8 +1415,35 @@ public class ProductCart extends BaseActivity {
             public void onFailure(@NonNull Call<List<OrderDetails>> call, @NonNull Throwable t) {
 
                 loading.dismiss();
-                Toast.makeText(ProductCart.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ProductCart.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                 Log.d("Error : ", t.toString());
+
+                databaseAccess.open();
+                final List<HashMap<String, String>> cartlines;
+                cartlines = databaseAccess.getCartProduct();
+
+                if (cartlines.isEmpty()) {
+                    Toasty.warning(ProductCart.this, R.string.no_product_found, Toast.LENGTH_SHORT).show();
+                } else {
+                    ArrayList<OrderDetails> orderModelArrayList = new ArrayList<>();
+                    CartPrintItemListAdapter mAdapter = new CartPrintItemListAdapter(orderModelArrayList);
+                    recyclerViewDialog.setAdapter(mAdapter);
+
+                    for (int i =0; i<cartlines.size();i++){
+                        String product_name = cartlines.get(i).get(Constant.PRODUCT_NAME);
+                        String product_qty = cartlines.get(i).get(Constant.PRODUCT_QTY);
+                        String product_weight = cartlines.get(i).get(Constant.PRODUCT_WEIGHT);
+                        String product_price = cartlines.get(i).get(Constant.PRODUCT_PRICE);
+
+                        OrderDetails orderDetails = new OrderDetails(product_name,product_qty,product_weight,product_price);
+                        orderModelArrayList.add(orderDetails);
+                    }
+                    mAdapter.notifyDataSetChanged();
+
+                    databaseAccess.open();
+                    databaseAccess.emptyCart();
+                    productsList.clear();
+                }
             }
         });
 
@@ -1426,7 +1467,6 @@ public class ProductCart extends BaseActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1474,20 +1514,37 @@ public class ProductCart extends BaseActivity {
         return true;
     }
 
+    // home button click
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                Intent intent = new Intent(ProductCart.this, HomeActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                startActivity(intent);
+//                setResult(RESULT_OK);//send result to previous activity
+//                finish();
+//                return true;
+//
+//            default:
+//                return super.onOptionsItemSelected(item);
+//
+//        }
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                setResult(RESULT_CART);
-                finish();
-                this.finish();
-                break;
-
-        }
-        return true;
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                setResult(RESULT_CART);
+//                finish();
+//                this.finish();
+//                break;
+//
+//        }
+//        return true;
+//    }
 
     @Override
     public void onBackPressed() {
@@ -1558,7 +1615,6 @@ public class ProductCart extends BaseActivity {
                         Toasty.warning(ProductCart.this, R.string.stock_not_available_please_update_stock, Toast.LENGTH_SHORT).show();
                     } else {
 
-
                         databaseAccess.open();
                         int check = databaseAccess.addScannedItem(productId, productName, productWeight, weightUnit, productPrice, 1.0, productImage, productStock, cgstAmount, sgstAmount, cessAmount, 0, cgst, sgst, cess, 0, 0, editable);
 
@@ -1567,7 +1623,60 @@ public class ProductCart extends BaseActivity {
                             player.start();
                         } else {
 
-                            Toasty.error(ProductCart.this, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
+                            databaseAccess.open();
+                            String cart_id = databaseAccess.getProductCartid(productId);
+
+                            if (cart_id.equalsIgnoreCase("")){
+
+                                Toasty.error(ProductCart.this, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
+
+                            }else {
+
+                                databaseAccess.open();
+                                String qty = databaseAccess.getProductQty(cart_id);
+
+                                if (qty.equalsIgnoreCase("")){
+                                    Toasty.error(ProductCart.this, R.string.product_added_to_cart_failed_try_again, Toast.LENGTH_SHORT).show();
+                                }else {
+
+                                    double cartQty = Double.parseDouble(qty);
+                                    cartQty++;
+
+                                    databaseAccess.open();
+                                    databaseAccess.updateProductQty(cart_id, "" + cartQty);
+
+                                    databaseAccess.open();
+                                    totalPrice = databaseAccess.getTotalPrice();
+
+
+                                    double cost = Double.parseDouble(productPrice) * cartQty;
+                                    double itemCgst = cost * Double.valueOf(cgst) / 100;
+                                    double itemSgst = cost * Double.valueOf(sgst) / 100;
+                                    double itemCess = cost * Double.valueOf(cess) / 100;
+
+                                    double lineTotalTax = itemCgst + itemSgst + itemCess;
+                                    double lineTotal = Double.valueOf(cost) + lineTotalTax;
+
+                                    databaseAccess.open();
+                                    databaseAccess.updateLineTotal(cart_id, "" + lineTotal);
+
+                                    int discount = 0;
+                                    databaseAccess.open();
+                                    databaseAccess.updateProductDiscount(cart_id, "" + discount);
+
+                                    //updates discounted tax to db
+                                    databaseAccess.open();
+                                    databaseAccess.updatecgst(cart_id, "" + itemCgst);
+                                    databaseAccess.open();
+                                    databaseAccess.updatesgst(cart_id, "" + itemSgst);
+                                    databaseAccess.open();
+                                    databaseAccess.updatecess(cart_id, "" + itemCess);
+
+                                    onRestart();
+
+                                }
+
+                            }
 
                         }
                     }
@@ -1583,6 +1692,14 @@ public class ProductCart extends BaseActivity {
 //        setUpRecyclerView(arrayList);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        //to refresh an Activity from within itself
+        finish();
+        startActivity(getIntent());
+    }
 
     class PaymentMethodListAdapter extends RecyclerView.Adapter<PaymentMethodListAdapter.MyViewHolder> {
 
@@ -1603,7 +1720,7 @@ public class ProductCart extends BaseActivity {
         }
 
         @Override
-        public void onBindViewHolder(final MyViewHolder holder, final int position) {
+        public void onBindViewHolder(final MyViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
             holder.txtItem.setText(paymentViewArrayList.get(position));
 
@@ -1659,7 +1776,6 @@ public class ProductCart extends BaseActivity {
 
 
     }
-
 
     public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> {
 
@@ -1740,6 +1856,7 @@ public class ProductCart extends BaseActivity {
 //            final String cgst = cartProduct.get(position).get("cgst");
 //            final String sgst = cartProduct.get(position).get("sgst");
 //            final String cess = cartProduct.get(position).get("cess");
+
             final String editable = cartProduct.get(position).get("editable");
             Log.e("editable", "-----" + editable);
 
@@ -1752,7 +1869,6 @@ public class ProductCart extends BaseActivity {
                     holder.imgProduct.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 } else {
 
-
                     Glide.with(context)
                             .load(imageUrl)
                             .placeholder(R.drawable.loading)
@@ -1761,9 +1877,16 @@ public class ProductCart extends BaseActivity {
 
                 }
             }
+            String prdPrice = "";
+            double productPrice;
+            if(price.contains(",")){
+                String convertedPrice = price.replace(",","");
+                prdPrice = convertedPrice;
+            }else {
+                prdPrice = price;
+            }
 
-            final double getPrice = Double.parseDouble(price) * Double.parseDouble(qty);
-
+            final double getPrice = Double.parseDouble(prdPrice) * Double.parseDouble(qty);
 
             holder.txtItemName.setText(productName);
             holder.txtPrice.setText(currency + f.format(getPrice));
@@ -1775,7 +1898,7 @@ public class ProductCart extends BaseActivity {
                 holder.edtDisc.setText(productDiscount);
             }
             double getQty = Double.parseDouble("0" + qty);
-            double cost = Double.parseDouble(price) * getQty;
+            double cost = Double.parseDouble(prdPrice) * getQty;
 
             double getcgst = cost * Double.valueOf(cgstPercent) / 100;
             double getsgst = cost * Double.valueOf(sgstPercent) / 100;
@@ -1812,36 +1935,37 @@ public class ProductCart extends BaseActivity {
 
             }
 
-            databaseAccess.open();
-            totalPrice = databaseAccess.getTotalPrice();
-
-            databaseAccess.open();
-            allTax = databaseAccess.getTotalTax();
-            databaseAccess.open();
-            allCgst = databaseAccess.getTotalCGST();
-            databaseAccess.open();
-            allSgst = databaseAccess.getTotalSGST();
-            databaseAccess.open();
-            allCess = databaseAccess.getTotalCESS();
-
-            allDiscount = 0.0;
-            //getting total discount from db
-            databaseAccess.open();
-            allDiscount = databaseAccess.getTotalProductDiscount();
+//            databaseAccess.open();
+//            totalPrice = databaseAccess.getTotalPrice();
+//
+//            databaseAccess.open();
+//            allTax = databaseAccess.getTotalTax();
+//            databaseAccess.open();
+//            allCgst = databaseAccess.getTotalCGST();
+//            databaseAccess.open();
+//            allSgst = databaseAccess.getTotalSGST();
+//            databaseAccess.open();
+//            allCess = databaseAccess.getTotalCESS();
+//
+//            allDiscount = 0.0;
+//            //getting total discount from db
+//            databaseAccess.open();
+//            allDiscount = databaseAccess.getTotalProductDiscount();
 
        /* databaseAccess.open();
         finalTotal= databaseAccess.getFinalTotalPrice();*/
 
-            finalTotal = (totalPrice - allDiscount) + allTax;
-            Log.e("Price-dscnt+tax=ft", "---" + totalPrice + "-" + allDiscount + "+" + allTax + "=" + finalTotal);
+//            finalTotal = (totalPrice - allDiscount) + allTax;
+//            Log.e("Price-dscnt+tax=ft", "---" + totalPrice + "-" + allDiscount + "+" + allTax + "=" + finalTotal);
+//
+//            txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+//
+//            //setting total discount
+//            txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + ": " + currency + " " + f.format(allDiscount));
 
+//            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(Utils.round(finalTotal, 1)));
 
-            txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
-
-            //setting total discount
-            txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + ": " + currency + " " + f.format(allDiscount));
-
-            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(Utils.round(finalTotal, 1)));
+            addTotalPrice();
 
             if (country.equals("UAE")) {
                 txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allCgst));
@@ -1879,37 +2003,39 @@ public class ProductCart extends BaseActivity {
                         Toasty.success(context, context.getString(R.string.product_removed_from_cart), Toast.LENGTH_SHORT).show();
 
                         // Calculate Cart's Total Price Again
-                        player.start();
+//                        player.start();
 
                         removeAt(cartProduct, holder.getAdapterPosition());
+//                        cartProduct.remove(holder.getAdapterPosition());
                         cartProduct.clear();
                         databaseAccess.open();
                         cartProduct = databaseAccess.getCartProduct();
                         populateCartList(cartProduct);
 
-                        databaseAccess.open();
-                        totalPrice = databaseAccess.getTotalPrice();
-
-                        databaseAccess.open();
-                        allTax = databaseAccess.getTotalTax();
-                        databaseAccess.open();
-                        allCgst = databaseAccess.getTotalCGST();
-                        databaseAccess.open();
-                        allSgst = databaseAccess.getTotalSGST();
-                        databaseAccess.open();
-                        allCess = databaseAccess.getTotalCESS();
-
-                        allDiscount = 0.0;
-
-                        //getting total discount from db
-                        databaseAccess.open();
-                        allDiscount = databaseAccess.getTotalProductDiscount();
-
-                        double priceWithTax = (totalPrice - allDiscount) + allTax;
-                        txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
-
-                        //setting total discount
-                        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + " " + currency + " " + f.format(allDiscount));
+//                        databaseAccess.open();
+//                        totalPrice = databaseAccess.getTotalPrice();
+//
+//                        databaseAccess.open();
+//                        allTax = databaseAccess.getTotalTax();
+//                        databaseAccess.open();
+//                        allCgst = databaseAccess.getTotalCGST();
+//                        databaseAccess.open();
+//                        allSgst = databaseAccess.getTotalSGST();
+//                        databaseAccess.open();
+//                        allCess = databaseAccess.getTotalCESS();
+//
+//                        allDiscount = 0.0;
+//
+//                        //getting total discount from db
+//                        databaseAccess.open();
+//                        allDiscount = databaseAccess.getTotalProductDiscount();
+//
+//                        double priceWithTax = (totalPrice - allDiscount) + allTax;
+//                        txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+//
+//                        //setting total discount
+//                        txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + " " + currency + " " + f.format(allDiscount));a
+                        addTotalPrice();
 
                         if (country.equals("UAE")) {
                             txtTotalCgst.setText("Total Vat " + "(+)" + ": " + currency + " " + f.format(allCgst));
@@ -1940,12 +2066,12 @@ public class ProductCart extends BaseActivity {
 
                         }
 
-                        if (Double.valueOf(priceWithTax) != 0) {
-                            txtFinalTotal.setVisibility(View.VISIBLE);
-                            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(Utils.round(priceWithTax, 1)));
-                        } else {
-                            txtFinalTotal.setVisibility(View.GONE);
-                        }
+//                        if (Double.valueOf(priceWithTax) != 0) {
+//                            txtFinalTotal.setVisibility(View.VISIBLE);
+//                            txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(Utils.round(priceWithTax, 1)));
+//                        } else {
+//                            txtFinalTotal.setVisibility(View.GONE);
+//                        }
 
                     } else {
                         Toasty.error(context, context.getString(R.string.failed), Toast.LENGTH_SHORT).show();
@@ -2640,11 +2766,46 @@ public class ProductCart extends BaseActivity {
 
         }
 
+
         public void removeAt(List<HashMap<String, String>> cartProduct, int position) {
             cartProduct.remove(position);
             notifyItemRemoved(position);
             notifyItemRangeChanged(position, cartProduct.size());
             notifyDataSetChanged();
+        }
+
+        public void addTotalPrice(){
+            databaseAccess.open();
+            totalPrice = databaseAccess.getTotalPrice();
+
+            databaseAccess.open();
+            allTax = databaseAccess.getTotalTax();
+            databaseAccess.open();
+            allCgst = databaseAccess.getTotalCGST();
+            databaseAccess.open();
+            allSgst = databaseAccess.getTotalSGST();
+            databaseAccess.open();
+            allCess = databaseAccess.getTotalCESS();
+
+            allDiscount = 0.0;
+            //getting total discount from db
+            databaseAccess.open();
+            allDiscount = databaseAccess.getTotalProductDiscount();
+
+            finalTotal = (totalPrice - allDiscount) + allTax;
+            Log.e("Price-dscnt+tax=ft", "---" + totalPrice + "-" + allDiscount + "+" + allTax + "=" + finalTotal);
+
+            txtTotalPrice.setText(context.getString(R.string.total_price) + currency + " " + f.format(totalPrice));
+
+            //setting total discount
+            txtTotalDiscount.setText(context.getString(R.string.total_product_discount) + "(-)" + ": " + currency + " " + f.format(allDiscount));
+
+            if (Double.valueOf(finalTotal) != 0) {
+                txtFinalTotal.setVisibility(View.VISIBLE);
+                txtFinalTotal.setText(context.getString(R.string.grand_total) + currency + " " + f.format(Utils.round(finalTotal, 1)));
+            } else {
+                txtFinalTotal.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -2688,8 +2849,6 @@ public class ProductCart extends BaseActivity {
 
 
     }
-
-
 
 }
 

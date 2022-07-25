@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,8 +35,8 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHolder> {
 
 
-    private List<Expense> expenseData;
-    private Context context;
+    private final List<Expense> expenseData;
+    private final Context context;
     Utils utils;
 
     SharedPreferences sp;
@@ -62,6 +63,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ExpenseAdapter.MyViewHolder holder, int position) {
 
@@ -80,49 +82,37 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
         holder.txtExpenseNote.setText(context.getString(R.string.note) + expenseNote);
 
 
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.imgDelete.setOnClickListener(v -> {
 
 
-                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
-                dialogBuilder
-                        .withTitle(context.getString(R.string.delete))
-                        .withMessage(context.getString(R.string.want_to_delete_expense))
-                        .withEffect(Slidetop)
-                        .withDialogColor("#2979ff") //use color code for dialog
-                        .withButton1Text(context.getString(R.string.yes))
-                        .withButton2Text(context.getString(R.string.cancel))
-                        .setButton1Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+            NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+            dialogBuilder
+                    .withTitle(context.getString(R.string.delete))
+                    .withMessage(context.getString(R.string.want_to_delete_expense))
+                    .withEffect(Slidetop)
+                    .withDialogColor("#2979ff") //use color code for dialog
+                    .withButton1Text(context.getString(R.string.yes))
+                    .withButton2Text(context.getString(R.string.cancel))
+                    .setButton1Click(v12 -> {
 
 
-                                if (utils.isNetworkAvailable(context)) {
-                                    deleteExpense(expenseId);
-                                    expenseData.remove(holder.getAdapterPosition());
-                                    dialogBuilder.dismiss();
-                                }
-                                else
-                                {
-                                    dialogBuilder.dismiss();
-                                    Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
-                                }
+                        if (Utils.isNetworkAvailable(context)) {
+                            deleteExpense(expenseId);
+                            expenseData.remove(holder.getAdapterPosition());
+                            dialogBuilder.dismiss();
+                        }
+                        else
+                        {
+                            dialogBuilder.dismiss();
+                            Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        }
 
 
-                            }
-                        })
-                        .setButton2Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .show();
+                    })
+                    .setButton2Click(v1 -> dialogBuilder.dismiss())
+                    .show();
 
 
-            }
         });
 
     }
@@ -173,6 +163,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
 
         Call<Expense> call = apiInterface.deleteExpense(expenseId);
         call.enqueue(new Callback<Expense>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<Expense> call, @NonNull Response<Expense> response) {
 
@@ -198,8 +189,8 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.MyViewHo
             }
 
             @Override
-            public void onFailure(@NonNull Call<Expense> call, Throwable t) {
-                Toast.makeText(context, "Error! " + t.toString(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Expense> call, @NonNull Throwable t) {
+                Toast.makeText(context, "Error! " + t, Toast.LENGTH_SHORT).show();
             }
         });
     }

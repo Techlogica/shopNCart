@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/sailec_regular"
             android:gravity="end"
+            android:inputType="numberDecimal"
             android:padding="15dp"
             android:textSize="14sp" />
 

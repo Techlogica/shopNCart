@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
+import com.tids.shopncart.database.DatabaseAccess;
 import com.tids.shopncart.model.OrderDetails;
 import com.bumptech.glide.Glide;
 
@@ -22,22 +24,19 @@ import java.util.List;
 
 public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapter.MyViewHolder> {
 
-
     Context context;
-    private List<OrderDetails> orderData;
+    private final List<OrderDetails> orderData;
     public static double subTotalPrice=0;
     SharedPreferences sp;
     String currency;
+    DatabaseAccess databaseAccess;
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
-
-
 
     public OrderDetailsAdapter(Context context, List<OrderDetails> orderData) {
         this.context = context;
         this.orderData = orderData;
         sp = context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
         currency = sp.getString(Constant.SP_CURRENCY_SYMBOL, "");
-
 
     }
 
@@ -48,8 +47,11 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         return new MyViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final MyViewHolder holder, final int position) {
+
+        databaseAccess = DatabaseAccess.getInstance(context);
 
         holder.txtProductName.setText(orderData.get(position).getProductName());
 
@@ -61,18 +63,21 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         String productImage = orderData.get(position).getProductImage();
         String imageUrl= Constant.PRODUCT_IMAGE_URL+productImage;
 
-
-
-        String unitPrice = orderData.get(position).getProductPrice();
+        String unitPrice ;
+        if (orderData.get(position).getProductPrice().contains(",")){
+            String convertedPrice = orderData.get(position).getProductPrice().replace(",","");
+            unitPrice = convertedPrice;
+        }else {
+            unitPrice = orderData.get(position).getProductPrice();
+        }
         String qty = orderData.get(position).getProductQuantity();
         double price = Double.parseDouble(unitPrice);
         double quantity = Double.parseDouble(qty);
         double cost = quantity * price;
 
         subTotalPrice=subTotalPrice+cost;
+
         Log.d("sub_total",""+subTotalPrice);
-
-
 
         holder.txtTotalCost.setText(currency + decimn.format(price) + " x " + qty + " = " + currency + decimn.format(cost));
 
@@ -81,7 +86,6 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
                 holder.imgProduct.setImageResource(R.drawable.image_placeholder);
                 holder.imgProduct.setScaleType(ImageView.ScaleType.FIT_CENTER);
             } else {
-
 
                 Glide.with(context)
                         .load(imageUrl)
@@ -103,7 +107,6 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
         TextView txtProductName, txtProductPrice, txtProductQty, txtProductWeight, txtTotalCost;
         ImageView imgProduct;
 
-
         public MyViewHolder(View itemView) {
             super(itemView);
 
@@ -114,11 +117,8 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
             imgProduct = itemView.findViewById(R.id.img_product);
             txtTotalCost = itemView.findViewById(R.id.txt_total_cost);
 
-
         }
 
-
     }
-
 
 }

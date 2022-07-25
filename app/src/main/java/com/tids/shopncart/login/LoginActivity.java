@@ -1,5 +1,6 @@
 package com.tids.shopncart.login;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.HomeActivity;
 import com.tids.shopncart.R;
@@ -32,6 +34,7 @@ import com.tids.shopncart.utils.BaseActivity;
 import com.tids.shopncart.utils.Utils;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -43,6 +46,7 @@ public class LoginActivity extends BaseActivity {
     EditText etxtEmail, etxtPassword;
     TextView txtLogin, login;
     ImageView logo, title;
+    String imageUrl = "";
     View line;
     double amnt = 0;
     String deviceId = "";
@@ -59,7 +63,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         pref = new PrefManager(this);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        getSupportActionBar().hide();
+//        getSupportActionBar().hide();
         databaseAccess = DatabaseAccess.getInstance(this);
 
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
@@ -76,6 +80,13 @@ public class LoginActivity extends BaseActivity {
         line = findViewById(R.id.line);
         utils = new Utils();
 
+        if (!pref.getImageUrl().isEmpty() ) {
+            Glide.with(getApplicationContext())
+                    .load(pref.getImageUrl())
+                    .into(logo);
+        }else {
+            Glide.with(getApplicationContext()).load(R.drawable.applogo).into(logo);
+        }
         logo.setAnimation(topAnim);
         title.setAnimation(topAnim);
         login.setAnimation(fadeAnim);
@@ -83,9 +94,6 @@ public class LoginActivity extends BaseActivity {
         etxtPassword.setAnimation(sideAnim);
         txtLogin.setAnimation(bottomAnim);
         line.setAnimation(fadeAnim);
-
-
-        utils = new Utils();
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
@@ -98,7 +106,7 @@ public class LoginActivity extends BaseActivity {
 
 
         if (email.length() >= 3 && password.length() >= 3) {
-            if (utils.isNetworkAvailable(LoginActivity.this)) {
+            if (Utils.isNetworkAvailable(LoginActivity.this)) {
                 login(email, password);
             } else {
                 Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -119,7 +127,7 @@ public class LoginActivity extends BaseActivity {
             } else {
 
 
-                if (utils.isNetworkAvailable(LoginActivity.this)) {
+                if (Utils.isNetworkAvailable(LoginActivity.this)) {
                     login(email1, password1);
                 } else {
                     Toasty.error(LoginActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
@@ -132,6 +140,7 @@ public class LoginActivity extends BaseActivity {
 
     }
 
+    @SuppressLint("HardwareIds")
     private String getDeviceId() {
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -162,7 +171,7 @@ public class LoginActivity extends BaseActivity {
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         Call<Login> call = apiInterface.login(email, password);
-        Log.d("TEMP_TAG", "req url: " + call.request().toString());
+        Log.d("TEMP_TAG", "req url: " + call.request());
         call.enqueue(new Callback<Login>() {
             @Override
             public void onResponse(@NonNull Call<Login> call, @NonNull Response<Login> response) {
@@ -284,7 +293,7 @@ public class LoginActivity extends BaseActivity {
 
                 loading.dismiss();
                 Log.e("error", "------" + t.getMessage());
-                Toasty.error(LoginActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toasty.error(LoginActivity.this, Objects.requireNonNull(t.getMessage()), Toast.LENGTH_SHORT).show();
 
             }
         });

@@ -8,10 +8,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -32,6 +34,8 @@ public class CatagoryAddActivity extends BaseActivity {
     EditText etxtCategory;
     TextView txtAddCategory;
     DatabaseAccess db;
+    ImageView backBtn;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,9 +43,18 @@ public class CatagoryAddActivity extends BaseActivity {
         setContentView(R.layout.activity_add_catagory);
         db = DatabaseAccess.getInstance(this);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.add_catagory);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.add_catagory);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         etxtCategory = findViewById(R.id.etxt_payment_method_name);
         txtAddCategory = findViewById(R.id.txt_add_payment_method);
@@ -132,13 +145,13 @@ public class CatagoryAddActivity extends BaseActivity {
 
 
     //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
 }

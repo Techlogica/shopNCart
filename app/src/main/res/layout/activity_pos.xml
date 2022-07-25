@@ -22,8 +22,8 @@
             android:layout_height="wrap_content">
             <ImageView
                 android:id="@+id/menu_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:src="@drawable/ic_baseline_arrow_back_24"/>
@@ -98,8 +98,8 @@
 
                 <ImageView
                     android:id="@+id/home_cart"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:background="@drawable/image_cart_button"
                     android:clickable="true"
                     />

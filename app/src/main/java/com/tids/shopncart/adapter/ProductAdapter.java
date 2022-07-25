@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -39,8 +40,8 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHolder> {
 
 
-    private ArrayList<HashMap<String, String>> productData;
-    private Context context;
+    private final ArrayList<HashMap<String, String>> productData;
+    private final Context context;
     Utils utils;
     SharedPreferences sp;
     String currency;
@@ -67,6 +68,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final ProductAdapter.MyViewHolder holder, int position) {
 
@@ -103,45 +105,33 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         }
 
 
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.imgDelete.setOnClickListener(v -> {
 
 
-                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
-                dialogBuilder
-                        .withTitle(context.getString(R.string.delete))
-                        .withMessage(context.getString(R.string.want_to_delete_product))
-                        .withEffect(Slidetop)
-                        .withDialogColor("#2979ff") //use color code for dialog
-                        .withButton1Text(context.getString(R.string.yes))
-                        .withButton2Text(context.getString(R.string.cancel))
-                        .setButton1Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+            NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+            dialogBuilder
+                    .withTitle(context.getString(R.string.delete))
+                    .withMessage(context.getString(R.string.want_to_delete_product))
+                    .withEffect(Slidetop)
+                    .withDialogColor("#2979ff") //use color code for dialog
+                    .withButton1Text(context.getString(R.string.yes))
+                    .withButton2Text(context.getString(R.string.cancel))
+                    .setButton1Click(v12 -> {
 
-                                if (utils.isNetworkAvailable(context)) {
-                                    deleteProduct(product_id);
-                                    productData.remove(holder.getAdapterPosition());
-                                    dialogBuilder.dismiss();
-                                } else {
-                                    dialogBuilder.dismiss();
-                                    Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
-                                }
+                        if (Utils.isNetworkAvailable(context)) {
+                            deleteProduct(product_id);
+                            productData.remove(holder.getAdapterPosition());
+                            dialogBuilder.dismiss();
+                        } else {
+                            dialogBuilder.dismiss();
+                            Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        }
 
 
-                            }
-                        })
-                        .setButton2Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                    })
+                    .setButton2Click(v1 -> dialogBuilder.dismiss())
+                    .show();
 
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .show();
-
-            }
         });
 
     }
@@ -196,6 +186,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
         Call<Product> call = apiInterface.deleteProduct(productId);
         call.enqueue(new Callback<Product>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<Product> call, @NonNull Response<Product> response) {
 
@@ -217,8 +208,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             }
 
             @Override
-            public void onFailure(@NonNull Call<Product> call, Throwable t) {
-                Toast.makeText(context, "Error! " + t.toString(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Product> call, @NonNull Throwable t) {
+                Toast.makeText(context, "Error! " + t, Toast.LENGTH_SHORT).show();
             }
         });
     }

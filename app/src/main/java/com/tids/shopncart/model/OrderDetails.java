@@ -4,8 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 public class OrderDetails {
 
-
-
     @SerializedName("order_details_id")
     private String orderDetailsId;
 
@@ -32,6 +30,12 @@ public class OrderDetails {
     @SerializedName("product_image")
     private String productImage;
 
+    public OrderDetails(String productName, String productQuantity, String productWeight, String productPrice) {
+        this.productName = productName;
+        this.productQuantity = productQuantity;
+        this.productWeight = productWeight;
+        this.productPrice = productPrice;
+    }
 
     public String getInvoiceId() {
         return invoiceId;
@@ -72,9 +76,6 @@ public class OrderDetails {
     public String getOrderDetailsId() {
         return orderDetailsId;
     }
-
-
-
 
 
 }

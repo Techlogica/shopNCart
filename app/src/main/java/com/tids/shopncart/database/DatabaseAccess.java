@@ -153,9 +153,44 @@ public class DatabaseAccess {
 
     }
 
+    // get last invoice number
+    public int getInvoice(){
+
+        Cursor cursor = database.rawQuery("SELECT invoice_number FROM invoice ORDER BY id DESC LIMIT 1",null);
+        cursor.moveToFirst();
+        int rslt = cursor.getInt(0);
+
+        cursor.close();
+        database.close();
+
+        return rslt;
+    }
+
+    //update invoice number
+    public void updateInvoice(int number) {
+
+        ContentValues values = new ContentValues();
+        values.put(Constant.INVOICE_NUMBER, number);
+
+        database.update("invoice", values, null,null);
+
+    }
+
+    // table row count
+    public int invoiceNumberTableCount(){
+
+        String countQuery = "SELECT  * FROM invoice";
+        Cursor cursor = database.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        database.close();
+
+        return count;
+    }
+
+
     //Add product into cart
     public int addCategory(String categoryId, String categoryName) {
-
 
         Cursor result = database.rawQuery("SELECT * FROM category WHERE product_category_id='" + categoryId + "'", null);
         if (result.getCount() >= 1) {
@@ -559,6 +594,67 @@ public class DatabaseAccess {
         return map;
     }
 
+    //get sync cart table datas
+    public ArrayList<HashMap<String, String>> getSyncCart() {
+
+        ArrayList<HashMap<String, String>> product = new ArrayList<>();
+        Cursor cursor = database.rawQuery("SELECT * FROM sync_cart", null);
+        if (cursor.moveToFirst()) {
+            do {
+                HashMap<String, String> map = new HashMap<>();
+                map.put(Constant.CART_JSON_OBJECT, cursor.getString(cursor.getColumnIndex("cart_json_object")));
+//                map.put(Constant.SYNC_PRODUCT_ID, cursor.getString(cursor.getColumnIndex("product_id")));
+//                map.put(Constant.SYNC_FINAL_STOCK, cursor.getString(cursor.getColumnIndex("final_stock")));
+                product.add(map);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        database.close();
+        return product;
+    }
+
+    // invoices table row count
+    public int invoiceTableCount(){
+
+        String countQuery = "SELECT  * FROM " + Constant.syncCart;
+        Cursor cursor = database.rawQuery(countQuery, null);
+        int count = cursor.getCount();
+        cursor.close();
+        database.close();
+
+        return count;
+    }
+
+
+    //add sync cart table
+    public boolean addSyncCart(String cart_json_object) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(Constant.CART_JSON_OBJECT, cart_json_object);
+//        values.put(Constant.SYNC_PRODUCT_ID, product_id);
+//        values.put(Constant.SYNC_FINAL_STOCK, final_stock);
+
+        long check = database.insert(Constant.syncCart, null, values);
+        database.close();
+
+        //if data insert success, its return 1, if failed return -1
+        if (check == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //clear products
+    public void clearCartInvoice() {
+
+        database.delete(Constant.syncCart, null, null);
+        database.close();
+    }
+
+
     public ArrayList<HashMap<String, String>> getCartProductTemp() {
         ArrayList<HashMap<String, String>> product = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT * FROM product_cart_hold ORDER BY cart_id DESC", null);
@@ -627,6 +723,13 @@ public class DatabaseAccess {
         database.close();
     }
 
+    //empty syncart
+    public void emptySyncCart() {
+
+        database.delete(Constant.syncCart, null, null);
+        database.close();
+    }
+
     //empty cart
     public void emptyCartHold() {
 
@@ -661,6 +764,7 @@ public class DatabaseAccess {
         cursor.close();
         database.close();
         return itemCount;
+
     }
 
     //delete product from cart
@@ -672,6 +776,35 @@ public class DatabaseAccess {
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
 
+    }
+
+    //get product qty from cart
+    public String getProductQty(String id){
+
+        String qty = "";
+
+        String query = "SELECT product_qty FROM product_cart WHERE cart_id =" + id ;
+        Cursor  cursor = database.rawQuery(query,null);
+        if (cursor.moveToFirst()) {
+            qty =  cursor.getString(cursor.getColumnIndex(Constant.PRODUCT_QTY));
+        }
+
+        return qty;
+
+    }
+
+    //get product cartId from cart
+    public String getProductCartid(String id){
+
+        String cartId = "";
+
+        String query = "SELECT cart_id FROM product_cart WHERE product_id =" + id ;
+        Cursor  cursor = database.rawQuery(query,null);
+        if (cursor.moveToFirst()) {
+            cartId =  cursor.getString(cursor.getColumnIndex(Constant.CART_ID));
+        }
+
+        return cartId;
 
     }
 
@@ -696,7 +829,6 @@ public class DatabaseAccess {
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
 
-
     }
 
 
@@ -709,7 +841,6 @@ public class DatabaseAccess {
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
 
-
     }
 
     public void updatesgst(String id, String sgst) {
@@ -720,7 +851,6 @@ public class DatabaseAccess {
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
 
-
     }
 
     public void updatecess(String id, String cess) {
@@ -730,7 +860,6 @@ public class DatabaseAccess {
         values.put("cess", cess);
 
         database.update("product_cart", values, "cart_id=?", new String[]{id});
-
 
     }
 
@@ -762,7 +891,6 @@ public class DatabaseAccess {
             } while (cursor.moveToNext());
         }
 
-
         cursor.close();
         database.close();
         return currency;
@@ -771,14 +899,19 @@ public class DatabaseAccess {
     //calculate total price of product
     public double getTotalPrice() {
 
-
         double totalPrice = 0;
 
         Cursor cursor = database.rawQuery("SELECT * FROM product_cart", null);
         if (cursor.moveToFirst()) {
             do {
-
-                double price = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_price")));
+                double price;
+                String prdPrice = cursor.getString(cursor.getColumnIndex("product_price"));
+                if (prdPrice.contains(",")){
+                    String convertedPrice = prdPrice.replace(",","");
+                    price = Double.parseDouble(convertedPrice);
+                }else {
+                    price = Double.parseDouble(prdPrice);
+                }
                 double qty = Double.parseDouble(cursor.getString(cursor.getColumnIndex("product_qty")));
                 double subTotal = price * qty;
                 totalPrice = totalPrice + subTotal;
@@ -795,7 +928,6 @@ public class DatabaseAccess {
 
     //calculate total price of product
     public double getFinalTotalPrice() {
-
 
         double totalPrice = 0;
 
@@ -847,7 +979,6 @@ public class DatabaseAccess {
 
     //calculate total CGST
     public double getTotalCGST() {
-
 
         double totalCGST = 0;
 
@@ -1295,7 +1426,6 @@ public class DatabaseAccess {
         return customer;
     }
 
-
     //get shop information
     public ArrayList<HashMap<String, String>> getShopInformation() {
         ArrayList<HashMap<String, String>> shopInfo = new ArrayList<>();
@@ -1320,7 +1450,6 @@ public class DatabaseAccess {
         database.close();
         return shopInfo;
     }
-
 
     //get product data
     public ArrayList<HashMap<String, String>> getProductsInfo(String productId) {
@@ -1350,7 +1479,6 @@ public class DatabaseAccess {
         return product;
     }
 
-
     //get product data
     public ArrayList<HashMap<String, String>> getAllExpense() {
         ArrayList<HashMap<String, String>> product = new ArrayList<>();
@@ -1376,7 +1504,6 @@ public class DatabaseAccess {
         return product;
     }
 
-
     //get product category data
     public ArrayList<HashMap<String, String>> getProductCategory() {
         ArrayList<HashMap<String, String>> productCategory = new ArrayList<>();
@@ -1398,7 +1525,6 @@ public class DatabaseAccess {
 
         return productCategory;
     }
-
 
     //get user data
     public ArrayList<HashMap<String, String>> getUsers() {
@@ -1424,7 +1550,6 @@ public class DatabaseAccess {
 
         return users;
     }
-
 
     //get product category data
     public ArrayList<HashMap<String, String>> searchProductCategory(String s) {

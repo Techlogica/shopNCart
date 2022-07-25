@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -61,7 +62,7 @@ public class EditProductActivity extends BaseActivity {
     public static EditText etxtProductCode;
     EditText etxtProductName, etxtProductStock, etxtCGST, etxtSGST, etxtCESS, etxtProductCategory, etxtProductDescription, etxtProductSellPrice, etxtProductSupplier, etxtProdcutWeightUnit, etxtProductWeight, etxtProductCostPrice;
     TextView txtUpdate, txtChooseImage, txtEditProduct, textViewcgst, textViewsgst, textViewcess;
-    ImageView imgProduct, imgScanCode;
+    ImageView imgProduct, imgScanCode, backBtn;
     DatabaseAccess db;
     String mediaPath = "na", encodedImage = "N/A";
     ArrayAdapter<String> categoryAdapter, supplierAdapter, weightUnitAdapter;
@@ -75,7 +76,7 @@ public class EditProductActivity extends BaseActivity {
     CheckBox checkBox;
     String isEditable = "";
     PrefManager pref;
-
+    Toolbar toolbar;
     String selectedCategoryID, selectedSupplierID, selectedWeightUnitID, productID;
 
     @Override
@@ -84,9 +85,19 @@ public class EditProductActivity extends BaseActivity {
         setContentView(R.layout.activity_edit_product);
         db = DatabaseAccess.getInstance(this);
         pref = new PrefManager(this);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.product_details);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.product_details);
+
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 
@@ -920,13 +931,13 @@ public class EditProductActivity extends BaseActivity {
         });
     }
 
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    //for back button
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (item.getItemId() == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 }

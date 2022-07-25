@@ -1,16 +1,17 @@
 package com.tids.shopncart.clockinclockout;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.tids.shopncart.Constant;
@@ -20,10 +21,14 @@ import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.Clock;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
-import com.tids.shopncart.pos.ProductCart;
 import com.tids.shopncart.utils.BaseActivity;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -36,20 +41,31 @@ public class ClockInClockOutActivity extends BaseActivity {
 
     SharedPreferences sp;
     String staffName, staffId, shopID, ownerId;
-    ImageView clockButton;
+    ImageView clockButton, backBtn;
     TextView timeIn, timeOut, dateIn, dateOut, txtTotalTime, userName, txtButton, clockedText;
     Boolean isClockIn = false;
     DatabaseAccess databaseAccess;
-    private FirebaseAnalytics mFirebaseAnalytics;
+    PrefManager pref;
+    int repeatCounter = 1;//incrementing for every 60 sec
+    CountDownTimer tripTimeCounter;
+    String text = "";
+    Toolbar toolbar;
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock_in_out);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.clock_in_clock_out);
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> {
+            setResult(RESULT_OK);
+        finish();
+        });
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         databaseAccess = DatabaseAccess.getInstance(this);
+        pref = new PrefManager(this);
         clockButton = findViewById(R.id.img_btn_clk);
         timeIn = findViewById(R.id.txt_clock_in_time);
         timeOut = findViewById(R.id.txt_clock_out_time);
@@ -69,6 +85,7 @@ public class ClockInClockOutActivity extends BaseActivity {
         databaseAccess.open();
         HashMap<String, String> map = databaseAccess.getStaffClock();
 
+
         String dbStaffId = map.get("staff_id");
         String dbclockInDate = map.get("c_in_date");
         String dbclockOutDate = map.get("c_o_date");
@@ -86,10 +103,16 @@ public class ClockInClockOutActivity extends BaseActivity {
                     txtButton.setText("Clock Out");
                     clockedText.setText("You Are Clocked In");
                     isClockIn = false;
+                    long endTime = System.currentTimeMillis();
+                    Log.e("endTime","----"+endTime);
+                    startTimeCounter(endTime);
+
+
                 } else if (status.equals("1")) {
                     txtButton.setText("Clock In");
                     clockedText.setText("You Are Clocked Out");
                     isClockIn = true;
+
                 }
             }
         }
@@ -99,14 +122,11 @@ public class ClockInClockOutActivity extends BaseActivity {
         dateOut.setText(dbclockOutDate);
         txtTotalTime.setText(totalTime);
 
-        clockButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.e("CLOCK","---"+isClockIn);
-                getDataFromServer(isClockIn);
+        clockButton.setOnClickListener(view -> {
+            Log.e("CLOCK", "---" + isClockIn);
 
+            getDataFromServer(isClockIn);
 
-            }
         });
     }
 
@@ -117,6 +137,34 @@ public class ClockInClockOutActivity extends BaseActivity {
         } else {
             Toasty.error(ClockInClockOutActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void startTimeCounter(long endTime) {
+        tripTimeCounter = new CountDownTimer(60 * 1000, 1000) {
+
+            @Override
+            public void onFinish() {
+                // TODO Auto-generated method stub
+                repeatCounter = repeatCounter + 1;
+                startTimeCounter(endTime);//follow the recursion on finish of the limit of 60 seconds & increment the repeat counter
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                // TODO Auto-generated method stub
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
+                formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+                long time = 0;
+                if (endTime != 0) {
+                    time = endTime - pref.getTime();
+
+                }
+                text = formatter.format(new Date(time + ((repeatCounter * 60L) * 1000) - millisUntilFinished));
+
+                txtTotalTime.setText(text);
+            }
+
+        }.start();
     }
 
     @Override
@@ -133,6 +181,7 @@ public class ClockInClockOutActivity extends BaseActivity {
         Call<Clock> call;
         call = apiInterface.getClockData(shopID, ownerId, staffId, isClockDataIn);
         call.enqueue(new Callback<Clock>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(@NonNull Call<Clock> call, @NonNull Response<Clock> response) {
 
@@ -151,11 +200,23 @@ public class ClockInClockOutActivity extends BaseActivity {
                         clockedText.setText("You Are Clocked Out");
                         databaseAccess.open();
                         isClockIn = true;
+                        txtTotalTime.setText(totalTime);
+                        pref.setTime(0);
+                        repeatCounter = 1;
+                        if (tripTimeCounter != null) {
+                            tripTimeCounter.cancel();
+                            tripTimeCounter = null;
+                        }
+
+                        txtTotalTime.setText(text);
                         databaseAccess.updateClockData(staffId, clockInDate, clockOutDate, clockInTime, clockOutTime, totalTime, isClockIn, clockID);
 
                     } else {
                         txtButton.setText("Clock Out");
                         clockedText.setText("You Are Clocked In");
+                        long startTime = System.currentTimeMillis();
+                        pref.setTime(startTime);
+                        startTimeCounter(0);
                         databaseAccess.open();
                         isClockIn = false;
                         databaseAccess.addClockData(staffId, clockInDate, clockOutDate, clockInTime, clockOutTime, totalTime, isClockIn, clockID);
@@ -168,7 +229,6 @@ public class ClockInClockOutActivity extends BaseActivity {
                     timeOut.setText(clockOutTime);
                     dateIn.setText(clockInDate);
                     dateOut.setText(clockOutDate);
-                    txtTotalTime.setText(totalTime);
 
 
                 }
@@ -184,17 +244,6 @@ public class ClockInClockOutActivity extends BaseActivity {
         });
 
 
-    }
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            setResult(RESULT_OK);
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
 

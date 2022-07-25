@@ -16,8 +16,10 @@ import android.print.PrintManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 
 import com.tids.shopncart.R;
@@ -36,6 +38,8 @@ public class ViewPDFActivity extends BaseActivity {
 
     private File file;
     private Context primaryBaseActivity;//THIS WILL KEEP ORIGINAL INSTANCE
+    Toolbar toolbar;
+    ImageView backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +48,10 @@ public class ViewPDFActivity extends BaseActivity {
 
         PDFView pdfView = findViewById(R.id.pdfView);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.order_receipt);
-
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> finish());
 
         Bundle bundle = getIntent().getExtras();
 
@@ -102,10 +106,10 @@ public class ViewPDFActivity extends BaseActivity {
 
             printPDf();
 
-        } else if (id == android.R.id.home) {
-            // app icon in action bar clicked; goto parent activity.
-            this.finish();
-            return true;
+//        } else if (id == android.R.id.home) {
+//            // app icon in action bar clicked; goto parent activity.
+//            this.finish();
+//            return true;
 
         }
 

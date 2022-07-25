@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -32,6 +32,8 @@ public class AddCustomersActivity extends BaseActivity {
     ProgressDialog loading;
     EditText etxtCustomerName, etxtAddress, etxtCustomerCell, etxtCustomerEmail;
     TextView txtAddCustomer;
+    ImageView backBtn;
+    Toolbar toolbar;
 
 
     @Override
@@ -39,9 +41,10 @@ public class AddCustomersActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_customers);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.add_customer);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> finish());
 
 
         etxtCustomerName = findViewById(R.id.etxt_customer_name);
@@ -58,59 +61,39 @@ public class AddCustomersActivity extends BaseActivity {
 
 
 
-        txtAddCustomer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtAddCustomer.setOnClickListener(v -> {
 
-                String customerName = etxtCustomerName.getText().toString().trim();
-                String customerCell = etxtCustomerCell.getText().toString().trim();
-                String customerEmail = etxtCustomerEmail.getText().toString().trim();
-                String customerAddress = etxtAddress.getText().toString().trim();
+            String customerName = etxtCustomerName.getText().toString().trim();
+            String customerCell = etxtCustomerCell.getText().toString().trim();
+            String customerEmail = etxtCustomerEmail.getText().toString().trim();
+            String customerAddress = etxtAddress.getText().toString().trim();
 
 
-                if (customerName.isEmpty()) {
-                    etxtCustomerName.setError(getString(R.string.enter_customer_name));
-                    etxtCustomerName.requestFocus();
-                } else if (customerCell.isEmpty()) {
-                    etxtCustomerCell.setError(getString(R.string.enter_customer_cell));
-                    etxtCustomerCell.requestFocus();
-                } else if (customerEmail.isEmpty() || !customerEmail.contains("@") || !customerEmail.contains(".")) {
-                    etxtCustomerEmail.setError(getString(R.string.enter_valid_email));
-                    etxtCustomerEmail.requestFocus();
-                } else if (customerAddress.isEmpty()) {
-                    etxtAddress.setError(getString(R.string.enter_customer_address));
-                    etxtAddress.requestFocus();
-                } else {
+            if (customerName.isEmpty()) {
+                etxtCustomerName.setError(getString(R.string.enter_customer_name));
+                etxtCustomerName.requestFocus();
+            } else if (customerCell.isEmpty()) {
+                etxtCustomerCell.setError(getString(R.string.enter_customer_cell));
+                etxtCustomerCell.requestFocus();
+            } else if (customerEmail.isEmpty() || !customerEmail.contains("@") || !customerEmail.contains(".")) {
+                etxtCustomerEmail.setError(getString(R.string.enter_valid_email));
+                etxtCustomerEmail.requestFocus();
+            } else if (customerAddress.isEmpty()) {
+                etxtAddress.setError(getString(R.string.enter_customer_address));
+                etxtAddress.requestFocus();
+            } else {
 
 
 
-                     addCustomer(customerName, customerCell, customerEmail, customerAddress,shopID,ownerId,staffId);
-
-
-                }
+                 addCustomer(customerName, customerCell, customerEmail, customerAddress,shopID,ownerId,staffId);
 
 
             }
+
+
         });
 
     }
-
-
-
-
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {// app icon in action bar clicked; goto parent activity.
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
 
     private void addCustomer(String name,String cell,String email, String address,String shopId,String ownerId,String staffId) {
 

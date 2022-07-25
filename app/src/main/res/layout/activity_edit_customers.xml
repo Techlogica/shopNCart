@@ -6,6 +6,46 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:id="@+id/appbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_height="?attr/actionBarSize">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <com.balysv.materialripple.MaterialRippleLayout
+                style="@style/RippleStyleWhite"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/menu_back"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:src="@drawable/ic_baseline_arrow_back_24"/>
+            </com.balysv.materialripple.MaterialRippleLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_anchor="@id/appbar"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/edit_customer"/>
+
+        </LinearLayout>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -80,6 +120,52 @@
                 android:background="@drawable/round_border"
                 android:fontFamily="@font/sailec_regular"
                 android:hint="@string/customer_email"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:fontFamily="@font/sailec_regular"
+                android:padding="5dp"
+                android:text="@string/vat_number" />
+
+            <EditText
+                android:id="@+id/etxt_vat_no"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="35dp"
+                android:background="@drawable/round_border"
+                android:fontFamily="@font/sailec_regular"
+                android:hint="@string/vat_number"
+                android:inputType="text"
+                android:padding="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:fontFamily="@font/sailec_regular"
+                android:padding="5dp"
+                android:text="@string/customer_code" />
+
+            <EditText
+                android:id="@+id/etxt_customer_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="35dp"
+                android:background="@drawable/round_border"
+                android:fontFamily="@font/sailec_regular"
+                android:hint="@string/customer_code"
                 android:inputType="text"
                 android:padding="16dp"
                 android:textColor="@color/colorPrimary"

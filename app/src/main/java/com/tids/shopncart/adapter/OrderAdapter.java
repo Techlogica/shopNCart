@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -37,7 +39,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
 
     Context context;
-    private List<OrderList> orderData;
+    private final List<OrderList> orderData;
     Utils utils;
 
 
@@ -56,8 +58,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         return new MyViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
 
 
 
@@ -70,13 +73,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
         String orderNote = orderData.get(position).getOrderNote();
 
 
-        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat myFormat = new SimpleDateFormat("MMMM dd, yyyy", Locale.US);
 
         String reformattedDate = "";
         try {
 
-            reformattedDate = myFormat.format(fromUser.parse(orderDate));
+            reformattedDate = myFormat.format(Objects.requireNonNull(fromUser.parse(orderDate)));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -95,47 +98,35 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
             holder.txtOrderNote.setText(context.getString(R.string.table_number) + " :" + orderNote);
             holder.imgOrderImage.setImageResource(R.drawable.table_booking);
         }
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.imgDelete.setOnClickListener(v -> {
 
 
-                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
-                dialogBuilder
-                        .withTitle(context.getString(R.string.delete))
-                        .withMessage(context.getString(R.string.want_to_delete_order))
-                        .withEffect(Slidetop)
-                        .withDialogColor("#2979ff") //use color code for dialog
-                        .withButton1Text(context.getString(R.string.yes))
-                        .withButton2Text(context.getString(R.string.cancel))
-                        .setButton1Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+            NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+            dialogBuilder
+                    .withTitle(context.getString(R.string.delete))
+                    .withMessage(context.getString(R.string.want_to_delete_order))
+                    .withEffect(Slidetop)
+                    .withDialogColor("#2979ff") //use color code for dialog
+                    .withButton1Text(context.getString(R.string.yes))
+                    .withButton2Text(context.getString(R.string.cancel))
+                    .setButton1Click(v12 -> {
 
 
-                                if (utils.isNetworkAvailable(context)) {
-                                    deleteOrder(invoiceId);
-                                    orderData.remove(holder.getAdapterPosition());
-                                    dialogBuilder.dismiss();
-                                } else {
-                                    dialogBuilder.dismiss();
-                                    Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
-                                }
+                        if (Utils.isNetworkAvailable(context)) {
+                            deleteOrder(invoiceId);
+                            orderData.remove(holder.getAdapterPosition());
+                            dialogBuilder.dismiss();
+                        } else {
+                            dialogBuilder.dismiss();
+                            Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        }
 
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .setButton2Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .show();
+                        dialogBuilder.dismiss();
+                    })
+                    .setButton2Click(v1 -> dialogBuilder.dismiss())
+                    .show();
 
 
-            }
         });
 
 
@@ -188,6 +179,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
         Call<OrderList> call = apiInterface.deleteOrder(invoiceId);
         call.enqueue(new Callback<OrderList>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<OrderList> call, @NonNull Response<OrderList> response) {
 
@@ -210,7 +202,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.MyViewHolder
 
             @Override
             public void onFailure(@NonNull Call<OrderList> call, @NonNull Throwable t) {
-                Toast.makeText(context, "Error! " + t.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Error! " + t, Toast.LENGTH_SHORT).show();
             }
         });
     }

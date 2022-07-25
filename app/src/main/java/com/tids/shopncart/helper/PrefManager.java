@@ -20,6 +20,10 @@ public class PrefManager {
     private static final String KEY_DEVICE_KEY = "device_key";
     private static final String KEY_EDIT_FLAG = "edit_flag";
     private static final String KEY_EDIT_VALUE = "edit_value";
+    private static final String KEY_TIME = "time";
+    private static final String KEY_INV_NO = "invoice_no";
+    private static final String KEY_IMAGE_URL = "image_url";
+    private static final String KEY_WEB_URL = "web_url";
 
 
     // Shared Preferences
@@ -59,6 +63,26 @@ public class PrefManager {
         editor.commit();
     }
 
+    public String getImageUrl() {
+        return pref.getString(KEY_IMAGE_URL, "");
+
+    }
+
+    public void setImageUrl(String imageUrl) {
+        editor.putString(KEY_IMAGE_URL, imageUrl);
+        editor.commit();
+    }
+
+    public String getWebUrl() {
+        return pref.getString(KEY_WEB_URL, "");
+
+    }
+
+    public void setWebUrl(String url) {
+        editor.putString(KEY_WEB_URL, url);
+        editor.commit();
+    }
+
     public String getKeyDeviceId() {
         return pref.getString(KEY_DEVICE_KEY, "");
 
@@ -84,6 +108,25 @@ public class PrefManager {
 
     public void setKeyEditValue(String count) {
         editor.putString(KEY_EDIT_VALUE, count);
+        editor.commit();
+    }
+
+    public  String getInvNo(){
+        return pref.getString(KEY_INV_NO, "");
+    }
+
+    public void setInvNo(String no){
+        editor.putString(KEY_INV_NO, no);
+        editor.commit();
+    }
+
+    public long getTime() {
+        return pref.getLong(KEY_TIME,0);
+
+    }
+
+    public void setTime(long time) {
+        editor.putLong(KEY_TIME, time);
         editor.commit();
     }
 

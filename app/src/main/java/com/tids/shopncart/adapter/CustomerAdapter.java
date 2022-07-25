@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,8 +35,8 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyViewHolder> {
 
 
-    private List<Customer> customerData;
-    private Context context;
+    private final List<Customer> customerData;
+    private final Context context;
     Utils utils;
 
 
@@ -70,59 +71,44 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
         holder.txtAddress.setText(address);
 
 
-        holder.imgCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                    String phone = "tel:" + cell;
-                    callIntent.setData(Uri.parse(phone));
-                    context.startActivity(callIntent);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        holder.imgCall.setOnClickListener(v -> {
+            try {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                String phone = "tel:" + cell;
+                callIntent.setData(Uri.parse(phone));
+                context.startActivity(callIntent);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.imgDelete.setOnClickListener(v -> {
 
 
-                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
-                dialogBuilder
-                        .withTitle(context.getString(R.string.delete))
-                        .withMessage(context.getString(R.string.want_to_delete_customer))
-                        .withEffect(Slidetop)
-                        .withDialogColor("#2979ff") //use color code for dialog
-                        .withButton1Text(context.getString(R.string.yes))
-                        .withButton2Text(context.getString(R.string.cancel))
-                        .setButton1Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+            NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+            dialogBuilder
+                    .withTitle(context.getString(R.string.delete))
+                    .withMessage(context.getString(R.string.want_to_delete_customer))
+                    .withEffect(Slidetop)
+                    .withDialogColor("#2979ff") //use color code for dialog
+                    .withButton1Text(context.getString(R.string.yes))
+                    .withButton2Text(context.getString(R.string.cancel))
+                    .setButton1Click(v1 -> {
 
 
-                                if (utils.isNetworkAvailable(context)) {
-                                    deleteCustomer(customer_id);
-                                    customerData.remove(holder.getAdapterPosition());
-                                    dialogBuilder.dismiss();
-                                } else {
-                                    dialogBuilder.dismiss();
-                                    Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        })
-                        .setButton2Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .show();
+                        if (Utils.isNetworkAvailable(context)) {
+                            deleteCustomer(customer_id);
+                            customerData.remove(holder.getAdapterPosition());
+                            dialogBuilder.dismiss();
+                        } else {
+                            dialogBuilder.dismiss();
+                            Toasty.error(context, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setButton2Click(v12 -> dialogBuilder.dismiss())
+                    .show();
 
 
-            }
         });
 
     }
@@ -173,6 +159,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
 
         Call<Customer> call = apiInterface.deleteCustomer(customerId);
         call.enqueue(new Callback<Customer>() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(@NonNull Call<Customer> call, @NonNull Response<Customer> response) {
 
@@ -194,8 +181,8 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
             }
 
             @Override
-            public void onFailure(@NonNull Call<Customer> call, Throwable t) {
-                Toast.makeText(context, "Error! " + t.toString(), Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<Customer> call, @NonNull Throwable t) {
+                Toast.makeText(context, "Error! " + t, Toast.LENGTH_SHORT).show();
             }
         });
     }

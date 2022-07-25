@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -43,12 +44,13 @@ public class CustomersActivity extends BaseActivity {
 
 
     private RecyclerView recyclerView;
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     SharedPreferences sp;
     List<Customer> customerList;
+    Toolbar toolbar;
 
 
     @Override
@@ -56,10 +58,10 @@ public class CustomersActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customers);
 
-
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_customer);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> onBackPressed());
 
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         mSwipeRefreshLayout =findViewById(R.id.swipeToRefresh);
@@ -88,7 +90,7 @@ public class CustomersActivity extends BaseActivity {
         //swipe refresh listeners
         mSwipeRefreshLayout.setOnRefreshListener(() -> {
 
-            if (utils.isNetworkAvailable(CustomersActivity.this))
+            if (Utils.isNetworkAvailable(CustomersActivity.this))
             {
                 getCustomerData("",shopID,ownerId,staffId);
             }
@@ -103,7 +105,7 @@ public class CustomersActivity extends BaseActivity {
         });
 
 
-        if (utils.isNetworkAvailable(CustomersActivity.this))
+        if (Utils.isNetworkAvailable(CustomersActivity.this))
         {
             //Load data from server
             getCustomerData("",shopID,ownerId,staffId);
@@ -121,12 +123,9 @@ public class CustomersActivity extends BaseActivity {
         }
 
 
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CustomersActivity.this, AddCustomersActivity.class);
-                startActivity(intent);
-            }
+        fabAdd.setOnClickListener(v -> {
+            Intent intent = new Intent(CustomersActivity.this, AddCustomersActivity.class);
+            startActivity(intent);
         });
 
 
@@ -260,17 +259,4 @@ public class CustomersActivity extends BaseActivity {
         });
         return true;
     }
-
-    // home button click
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return true;
-    }
-
-
 }

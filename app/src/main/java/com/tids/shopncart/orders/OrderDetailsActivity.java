@@ -1,12 +1,12 @@
 package com.tids.shopncart.orders;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,17 +43,17 @@ import retrofit2.Response;
 public class OrderDetailsActivity extends BaseActivity {
 
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     TextView txtNoProducts, txtSubTotalPrice, txtTax, txtDiscount, txtTotalCost;
     String invoiceId,shopName, orderDate,orderTime, orderPrice, customerName, tax, discount,shopAddress,shopEmail,shopContact;
-    double totalPrice, calculatedTotalPrice;
+    double calculatedTotalPrice;
 
     Button btnPdfReceipt;
     List<OrderDetails> orderDetails;
 
     //how many headers or column you need, add here by using ,
     //headers and get clients para meter must be equal
-    private String[] header = {"Description", "Price"};
+    private final String[] header = {"Description", "Price"};
 
 
     String longText, shortText, userName;
@@ -64,8 +65,10 @@ public class OrderDetailsActivity extends BaseActivity {
     ProgressDialog loading;
     RecyclerView recyclerView;
     DecimalFormat f;
+    Toolbar toolbar;
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +82,8 @@ public class OrderDetailsActivity extends BaseActivity {
         txtTotalCost = findViewById(R.id.txt_total_cost);
         btnPdfReceipt = findViewById(R.id.btn_pdf_receipt);
         txtNoProducts = findViewById(R.id.txt_no_products);
+
+        Log.e("","Activity: OrdersDetailsActivity");
 
         sp = getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
@@ -111,9 +116,11 @@ public class OrderDetailsActivity extends BaseActivity {
         imgNoProduct.setVisibility(View.GONE);
         txtNoProducts.setVisibility(View.GONE);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.order_details);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> finish());
+
 
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
@@ -126,7 +133,9 @@ public class OrderDetailsActivity extends BaseActivity {
         double getTax=Double.parseDouble(tax);
         double getOrderPrice=Double.parseDouble(orderPrice);
 
+
         txtSubTotalPrice.setText(getString(R.string.sub_total)+": "+currency+f.format(getOrderPrice));
+        Log.e("","Total Sub Price : "+f.format(getOrderPrice));
         txtTax.setText(getString(R.string.total_tax) + " : " + currency + f.format(getTax));
         txtDiscount.setText(getString(R.string.discount) + " : " + currency+  f.format(Double.parseDouble(discount)));
 
@@ -147,25 +156,22 @@ public class OrderDetailsActivity extends BaseActivity {
         }
 
 
-        btnPdfReceipt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnPdfReceipt.setOnClickListener(v -> {
 
-                templatePDF.openDocument();
-                templatePDF.addMetaData(Constant.ORDER_RECEIPT, Constant.ORDER_RECEIPT, "Smart POS");
-                templatePDF.addTitle(shopName, shopAddress+ "\n Email: " + shopEmail + "\nContact: " + shopContact + "\nInvoice ID:" + invoiceId, orderDate + " " + orderTime+"\nServed By: "+userName);
-                templatePDF.addParagraph(shortText);
+            templatePDF.openDocument();
+            templatePDF.addMetaData(Constant.ORDER_RECEIPT, Constant.ORDER_RECEIPT, "Smart POS");
+            templatePDF.addTitle(shopName, shopAddress+ "\n Email: " + shopEmail + "\nContact: " + shopContact + "\nInvoice ID:" + invoiceId, orderDate + " " + orderTime+"\nServed By: "+userName);
+            templatePDF.addParagraph(shortText);
 
-                templatePDF.createTable(header, getPDFReceipt());
-                templatePDF.addImage(bm);
+            templatePDF.createTable(header, getPDFReceipt());
+            templatePDF.addImage(bm);
 
-                templatePDF.addRightParagraph(longText);
+            templatePDF.addRightParagraph(longText);
 
-                templatePDF.closeDocument();
-                templatePDF.viewPDF();
+            templatePDF.closeDocument();
+            templatePDF.viewPDF();
 
 
-            }
         });
 
 
@@ -212,7 +218,6 @@ public class OrderDetailsActivity extends BaseActivity {
 
 
     public void getProductsData(String invoiceId) {
-
 
         loading=new ProgressDialog(OrderDetailsActivity.this);
         loading.setCancelable(false);
@@ -264,21 +269,5 @@ public class OrderDetailsActivity extends BaseActivity {
 
 
     }
-
-
-
-
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }
 

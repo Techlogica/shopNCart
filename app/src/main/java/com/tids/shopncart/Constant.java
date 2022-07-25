@@ -177,12 +177,13 @@ public class Constant {
     public static String orderList="order_list";
     public static String orderDetails="order_details";
     public static String clockInOut="clock_in_out";
+    public static String syncCart = "sync_cart";
 
 
 
-
-
-
+    public static final String CART_JSON_OBJECT = "cart_json_object";
+    public static final String SYNC_PRODUCT_ID = "product_id";
+    public static final String SYNC_FINAL_STOCK = "final_stock";
 
     public static final String SP_USERNAME = "username";
     public static final String SP_ID = "id";
@@ -201,7 +202,6 @@ public class Constant {
     public static final String PRODUCT_CATEGORY_ID = "product_category_id";
     public static final String IS_CLOCK_IN = "is_checked_in";
 
-
     public static final String SP_IS_FIRST_TIME = "is_first_time";
     public static final String SP_COUNTRY_CODE = "country_code";
 
@@ -210,8 +210,6 @@ public class Constant {
 
     public static final String SP_LOCATION_LAT = "location_lat";
     public static final String SP_LOCATION_LON = "location_lon";
-
-
 
     public static final String CURRENCY_SYMBOL= "৳ ";
 
@@ -227,10 +225,10 @@ public class Constant {
     public static final String KEY_SUCCESS= "success";
     public static final String KEY_FAILURE= "failure";
 
-
     public static final String SP_VERIFICATION_CODE = "verification_code";
 
 
+    public static final String INVOICE_NUMBER = "invoice_number";
 
 
 }

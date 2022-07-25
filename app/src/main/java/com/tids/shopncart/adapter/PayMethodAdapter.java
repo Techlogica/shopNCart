@@ -1,5 +1,6 @@
 package com.tids.shopncart.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,12 @@ import java.util.List;
 public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyViewHolder> {
 
 
-    private List<PayMethod> payMethodData;
-    private Context context;
-    private String currency;
-    private TextView tExpense;
-    private TextView tReturn;
-    private TextView tTotal;
+    private final List<PayMethod> payMethodData;
+    private final Context context;
+    private final String currency;
+    private final TextView tExpense;
+    private final TextView tReturn;
+    private final TextView tTotal;
     Utils utils;
     DecimalFormat decimn = new DecimalFormat("#,###,##0.00");
     Double payValue = 0.0;
@@ -50,6 +51,7 @@ public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyVi
     }
 
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull final PayMethodAdapter.MyViewHolder holder, int position) {
 
@@ -58,7 +60,7 @@ public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyVi
         if (value != null && !value.equals("")) {
             payValue = Double.valueOf(value);
         }
-        holder.txtPayMethod.setText(payName + ": " + currency + " " + String.valueOf(decimn.format(payValue)));
+        holder.txtPayMethod.setText(payName + ": " + currency + " " + decimn.format(payValue));
 
         String totalSales = payMethodData.get(position).getTotalSales();
         String totalExpense = payMethodData.get(position).getTotalExpense();
@@ -82,7 +84,7 @@ public class PayMethodAdapter extends RecyclerView.Adapter<PayMethodAdapter.MyVi
         return payMethodData.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtPayMethod;
 

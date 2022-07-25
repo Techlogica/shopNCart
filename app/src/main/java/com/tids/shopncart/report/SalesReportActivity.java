@@ -1,5 +1,6 @@
 package com.tids.shopncart.report;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +31,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Objects;
 
 import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
@@ -37,9 +40,8 @@ import retrofit2.Response;
 
 public class SalesReportActivity extends BaseActivity {
 
-
     private RecyclerView recyclerView;
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     LinearLayout layoutSummary;
     TextView txtNoProducts, txtTotalPrice, txtTotalTax, txtTotalDiscount, txtNetSales;
     private ShimmerFrameLayout mShimmerViewContainer;
@@ -47,13 +49,16 @@ public class SalesReportActivity extends BaseActivity {
     String currency, shopID, ownerId, staffId,deviceId="";
     DecimalFormat f;
     PrefManager pref;
+    Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales_report);
+
         pref=new PrefManager(this);
+
         recyclerView = findViewById(R.id.recycler);
         imgNoProduct = findViewById(R.id.image_no_product);
         f = new DecimalFormat("#,###,##0.00");
@@ -77,11 +82,15 @@ public class SalesReportActivity extends BaseActivity {
         staffId = sp.getString(Constant.SP_STAFF_ID, "");
         deviceId = pref.getKeyDeviceId();
 
-
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.daily);
-
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(SalesReportActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -89,15 +98,12 @@ public class SalesReportActivity extends BaseActivity {
 
         recyclerView.setHasFixedSize(true);
 
-
         //sum of all transaction
         getSalesReport("Today", shopID, ownerId, staffId,deviceId);
         //to view all sales data
         getReport("Today", shopID, ownerId, staffId,deviceId);
 
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,16 +112,12 @@ public class SalesReportActivity extends BaseActivity {
         return true;
     }
 
-
     //for back button
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
-            case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
-                this.finish();
-                return true;
             case R.id.menu_all_sales:
                 getReport("all", shopID, ownerId, staffId,deviceId);
                 return true;
@@ -132,11 +134,9 @@ public class SalesReportActivity extends BaseActivity {
 
                 return true;
 
-
             case R.id.menu_monthly:
                 getReport("monthly", shopID, ownerId, staffId,deviceId);
-                getSupportActionBar().setTitle(R.string.monthly);
-
+                Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.monthly);
 
                 return true;
 
@@ -144,9 +144,7 @@ public class SalesReportActivity extends BaseActivity {
                 getReport("yearly", shopID, ownerId, staffId,deviceId);
                 getSupportActionBar().setTitle(R.string.yearly);
 
-
                 return true;
-
 
             default:
                 return super.onOptionsItemSelected(item);
@@ -162,9 +160,7 @@ public class SalesReportActivity extends BaseActivity {
         mShimmerViewContainer.startShimmer();
         mShimmerViewContainer.setVisibility(View.VISIBLE);
 
-
     }
-
 
     public void getSalesReport(String type, String shopId, String ownerId, String staffId, String deviceId) {
 
@@ -173,31 +169,29 @@ public class SalesReportActivity extends BaseActivity {
         call = apiInterface.getSalesReport(type, shopId, ownerId, staffId,deviceId);
 
         call.enqueue(new Callback<List<SalesReport>>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onResponse(@NonNull Call<List<SalesReport>> call, @NonNull Response<List<SalesReport>> response) {
-
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<SalesReport> salesReport;
                     salesReport = response.body();
 
-
                     if (salesReport.isEmpty()) {
-
 
                         Log.d("Data", "Empty");
 
-
                     } else {
-
-
+                        Log.d("discount::",salesReport.get(0).getTotalDiscount());
+                        Log.d("tax::",salesReport.get(0).getTotalTax());
+                        Log.d("price::",salesReport.get(0).getTotalOrderPrice());
                         String totalOrderPrice = salesReport.get(0).getTotalOrderPrice();
                         String totalTax = salesReport.get(0).getTotalTax();
                         String totalDiscount = salesReport.get(0).getTotalDiscount();
 
-                        Double orderPrice = 0.0;
-                        Double getTax = 0.0;
-                        Double getDiscount = 0.0;
+                        double orderPrice = 0.0;
+                        double getTax = 0.0;
+                        double getDiscount = 0.0;
                         if (totalOrderPrice != null) {
                             orderPrice = Double.parseDouble(totalOrderPrice);
                             txtTotalPrice.setVisibility(View.VISIBLE);
@@ -240,12 +234,10 @@ public class SalesReportActivity extends BaseActivity {
             }
         });
 
-
     }
 
 
     public void getReportList(String type, String shopId, String ownerId, String staffId, String deviceId) {
-
 
         ApiInterface apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
         Call<List<OrderDetails>> call;
@@ -255,12 +247,10 @@ public class SalesReportActivity extends BaseActivity {
             @Override
             public void onResponse(@NonNull Call<List<OrderDetails>> call, @NonNull Response<List<OrderDetails>> response) {
 
-
                 if (response.isSuccessful() && response.body() != null) {
                     List<OrderDetails> orderDetails;
                     orderDetails = response.body();
                     Log.d("reports", "" + orderDetails.toString());
-
 
                     if (orderDetails.isEmpty()) {
 
@@ -290,7 +280,6 @@ public class SalesReportActivity extends BaseActivity {
                         txtNoProducts.setVisibility(View.GONE);
                         layoutSummary.setVisibility(View.VISIBLE);
 
-
                     }
 
                 }
@@ -299,15 +288,12 @@ public class SalesReportActivity extends BaseActivity {
             @Override
             public void onFailure(@NonNull Call<List<OrderDetails>> call, @NonNull Throwable t) {
 
-
                 Toast.makeText(SalesReportActivity.this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show();
                 Log.d("Error : ", t.toString());
             }
         });
 
-
     }
-
 
 }
 

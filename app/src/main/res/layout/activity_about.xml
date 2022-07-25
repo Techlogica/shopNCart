@@ -7,6 +7,67 @@
     android:orientation="vertical"
     tools:context=".about.AboutActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
+        android:id="@+id/appbar"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:layout_height="?attr/actionBarSize">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <com.balysv.materialripple.MaterialRippleLayout
+            style="@style/RippleStyleWhite"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/menu_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:src="@drawable/ic_baseline_arrow_back_24"/>
+        </com.balysv.materialripple.MaterialRippleLayout>
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_anchor="@id/appbar"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@string/about_us"/>
+
+
+    </LinearLayout>
+    <com.balysv.materialripple.MaterialRippleLayout
+        android:layout_alignEnd="@+id/layout"
+        style="@style/RippleStyleWhite"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/edit_details"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_edit_24"/>
+    </com.balysv.materialripple.MaterialRippleLayout>
+
+</RelativeLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,29 +153,30 @@
             android:layout_width="150dp"
             android:layout_height="60dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/txt_tech"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/logo"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
+            android:autoLink="web"
             android:fontFamily="@font/sourcesanspro_semibold"
             android:text="www.techlogica.com" />
 
 
         <TextView
+            android:id="@+id/text_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
             android:autoLink="email"
             android:layout_below="@+id/txt_tech"
-            android:fontFamily="@font/sourcesanspro_semibold"
-            android:text="info@shopncart.co" />
+            android:fontFamily="@font/sourcesanspro_semibold" />
 
 
     </RelativeLayout>

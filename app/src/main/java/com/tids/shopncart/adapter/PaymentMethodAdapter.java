@@ -28,8 +28,8 @@ import static com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype.Slidetop;
 public class PaymentMethodAdapter extends RecyclerView.Adapter<PaymentMethodAdapter.MyViewHolder> {
 
 
-    private List<HashMap<String, String>> paymentMethodData;
-    private Context context;
+    private final List<HashMap<String, String>> paymentMethodData;
+    private final Context context;
 
 
     public PaymentMethodAdapter(Context context, List<HashMap<String, String>> paymentMethodData) {
@@ -57,53 +57,41 @@ public class PaymentMethodAdapter extends RecyclerView.Adapter<PaymentMethodAdap
         holder.txtPaymentMethodName.setText(paymentMethodName);
 
 
-        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.imgDelete.setOnClickListener(v -> {
 
 
-                NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
-                dialogBuilder
-                        .withTitle(context.getString(R.string.delete))
-                        .withMessage(context.getString(R.string.want_to_delete))
-                        .withEffect(Slidetop)
-                        .withDialogColor("#2979ff") //use color code for dialog
-                        .withButton1Text(context.getString(R.string.yes))
-                        .withButton2Text(context.getString(R.string.cancel))
-                        .setButton1Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+            NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+            dialogBuilder
+                    .withTitle(context.getString(R.string.delete))
+                    .withMessage(context.getString(R.string.want_to_delete))
+                    .withEffect(Slidetop)
+                    .withDialogColor("#2979ff") //use color code for dialog
+                    .withButton1Text(context.getString(R.string.yes))
+                    .withButton2Text(context.getString(R.string.cancel))
+                    .setButton1Click(v1 -> {
 
-                                DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
-                                databaseAccess.open();
-                                boolean deleteCustomer = databaseAccess.deletePaymentMethod(payment_method_id);
+                        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(context);
+                        databaseAccess.open();
+                        boolean deleteCustomer = databaseAccess.deletePaymentMethod(payment_method_id);
 
-                                if (deleteCustomer) {
-                                    Toasty.success(context, R.string.payment_method_deleted, Toast.LENGTH_SHORT).show();
+                        if (deleteCustomer) {
+                            Toasty.success(context, R.string.payment_method_deleted, Toast.LENGTH_SHORT).show();
 
-                                    paymentMethodData.remove(holder.getAdapterPosition());
+                            paymentMethodData.remove(holder.getAdapterPosition());
 
-                                    // Notify that item at position has been removed
-                                    notifyItemRemoved(holder.getAdapterPosition());
+                            // Notify that item at position has been removed
+                            notifyItemRemoved(holder.getAdapterPosition());
 
-                                } else {
-                                    Toasty.error(context, R.string.failed, Toast.LENGTH_SHORT).show();
-                                }
+                        } else {
+                            Toasty.error(context, R.string.failed, Toast.LENGTH_SHORT).show();
+                        }
 
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .setButton2Click(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                dialogBuilder.dismiss();
-                            }
-                        })
-                        .show();
+                        dialogBuilder.dismiss();
+                    })
+                    .setButton2Click(v12 -> dialogBuilder.dismiss())
+                    .show();
 
 
-            }
         });
 
     }

@@ -14,6 +14,7 @@ import com.tids.shopncart.model.OrderDetails;
 import com.tids.shopncart.model.OrderList;
 import com.tids.shopncart.model.PayMethod;
 import com.tids.shopncart.model.Product;
+import com.tids.shopncart.model.ProductCartSubmit;
 import com.tids.shopncart.model.SalesReport;
 import com.tids.shopncart.model.ShopInformation;
 import com.tids.shopncart.model.Suppliers;
@@ -28,6 +29,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -58,7 +60,6 @@ public interface ApiInterface {
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId
-
     );
 
     //get customers data
@@ -72,7 +73,6 @@ public interface ApiInterface {
             @Query(Constant.TIME1) String fromTime,
             @Query(Constant.TIME2) String toTime,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
@@ -84,8 +84,6 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String owner,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
-
     );
 
 
@@ -105,7 +103,6 @@ public interface ApiInterface {
             @Query(Constant.SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId
-
     );
 
 
@@ -116,7 +113,6 @@ public interface ApiInterface {
             @Query(Constant.SHOP_ID) String shopId,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
@@ -124,7 +120,6 @@ public interface ApiInterface {
     @GET("order_details_by_invoice.php")
     Call<List<OrderDetails>> OrderDetailsByInvoice(
             @Query(Constant.INVOICE_ID) String invoiceId
-
     );
 
 
@@ -136,7 +131,6 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
@@ -144,32 +138,27 @@ public interface ApiInterface {
     @GET("shop_information.php")
     Call<List<ShopInformation>> shopInformation(
             @Query(Constant.SHOP_ID) String shopId
-
     );
 
 
     //get order data
     @GET("get_sales_report.php")
     Call<List<SalesReport>> getSalesReport(
-
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
     //get expense data
     @GET("get_expense_report.php")
     Call<List<ExpenseReport>> getExpenseReport(
-
             @Query(Constant.KEY_TYPE) String type,
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId
-
     );
 
 
@@ -180,7 +169,6 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
@@ -191,7 +179,6 @@ public interface ApiInterface {
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId,
             @Query(Constant.SP_DEVICE_ID) String deviceId
-
     );
 
 
@@ -201,7 +188,6 @@ public interface ApiInterface {
             @Query(Constant.SP_SHOP_ID) String shopId,
             @Query(Constant.SP_OWNER_ID) String ownerId,
             @Query(Constant.SP_STAFF_ID) String staffId
-
     );
 
     //for category data
@@ -238,7 +224,6 @@ public interface ApiInterface {
             @Field(Constant.SP_SHOP_ID) String shopId,
             @Field(Constant.SP_OWNER_ID) String ownerId,
             @Field(Constant.SP_STAFF_ID) String staffId);
-
 
     @FormUrlEncoded
     @POST("add_category.php")

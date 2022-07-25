@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.login.LoginActivity;
 
@@ -20,6 +21,7 @@ public class SplashActivity extends AppCompatActivity {
     ImageView logo, appName, cart, shade;
     Animation side, fade, bottamAnim, sideAnim;
     View text;
+    String imageUrl = "";
     TextView txtVersion;
     String version = "";
     PrefManager pref;
@@ -61,6 +63,17 @@ public class SplashActivity extends AppCompatActivity {
             txtVersion.setText("v " + version);
         } else {
             txtVersion.setVisibility(View.GONE);
+        }
+
+//        imageUrl = "https://lh3.googleusercontent.com/u/0/d/1haABwN9lTWELdSmBfolDCQCxbT-hSmXo=w462-h345-p-k-nu-iv1";
+        if (!pref.getImageUrl().isEmpty()) {
+            Glide.with(getApplicationContext())
+                    .load(pref.getImageUrl())
+                    .into(logo);
+        }else  {
+            Glide.with(getApplicationContext())
+                    .load(R.drawable.applogo)
+                    .into(logo);
         }
 
         logo.setAnimation(fade);

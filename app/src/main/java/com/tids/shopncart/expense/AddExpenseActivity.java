@@ -1,5 +1,6 @@
 package com.tids.shopncart.expense;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -8,15 +9,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
@@ -43,18 +43,20 @@ public class AddExpenseActivity extends BaseActivity {
     int mYear, mMonth, mDay, mHour, mMinute;
     ProgressDialog loading;
     PrefManager pref;
-
+    ImageView backBtn;
     EditText etxtExpenseName, etxtExpenseNote, etxtExpenseAmount, etxtDate, etxtTime;
     TextView txtAddExpense;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_expense);
         pref = new PrefManager(this);
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.add_expense);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(view -> finish());
 
         etxtExpenseName = findViewById(R.id.etxt_expense_title);
         etxtExpenseNote = findViewById(R.id.etxt_expense_note);
@@ -78,45 +80,28 @@ public class AddExpenseActivity extends BaseActivity {
         etxtDate.setText(currentDate);
         etxtTime.setText(currentTime);
 
-        etxtDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        etxtDate.setOnClickListener(v -> datePicker());
 
-                datePicker();
-            }
-        });
+        etxtTime.setOnClickListener(v -> timePicker());
 
-        etxtTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        txtAddExpense.setOnClickListener(v -> {
 
-                timePicker();
-            }
-        });
-
-        txtAddExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String expenseName = etxtExpenseName.getText().toString();
-                String expenseNote = etxtExpenseNote.getText().toString();
-                String expenseAmount = etxtExpenseAmount.getText().toString();
-                String expenseDate = etxtDate.getText().toString();
-                String expenseTime = etxtTime.getText().toString();
+            String expenseName = etxtExpenseName.getText().toString();
+            String expenseNote = etxtExpenseNote.getText().toString();
+            String expenseAmount = etxtExpenseAmount.getText().toString();
+            String expenseDate = etxtDate.getText().toString();
+            String expenseTime = etxtTime.getText().toString();
 
 
-                if (expenseName.isEmpty()) {
-                    etxtExpenseName.setError(getString(R.string.expense_name_cannot_be_empty));
-                    etxtExpenseName.requestFocus();
-                } else if (expenseAmount.isEmpty()) {
-                    etxtExpenseAmount.setError(getString(R.string.expense_amount_cannot_be_empty));
-                    etxtExpenseAmount.requestFocus();
-                } else {
+            if (expenseName.isEmpty()) {
+                etxtExpenseName.setError(getString(R.string.expense_name_cannot_be_empty));
+                etxtExpenseName.requestFocus();
+            } else if (expenseAmount.isEmpty()) {
+                etxtExpenseAmount.setError(getString(R.string.expense_amount_cannot_be_empty));
+                etxtExpenseAmount.requestFocus();
+            } else {
 
-                    addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime, shopID, ownerId, staffId,deviceId);
-
-
-                }
+                addExpense(expenseName, expenseAmount, expenseNote, expenseDate, expenseTime, shopID, ownerId, staffId,deviceId);
 
 
             }
@@ -137,26 +122,22 @@ public class AddExpenseActivity extends BaseActivity {
         mDay = c.get(Calendar.DAY_OF_MONTH);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(AddExpenseActivity.this,
-                new DatePickerDialog.OnDateSetListener() {
+                (view, year, monthOfYear, dayOfMonth) -> {
 
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    int month = monthOfYear + 1;
+                    String fm = "" + month;
+                    String fd = "" + dayOfMonth;
 
-                        int month = monthOfYear + 1;
-                        String fm = "" + month;
-                        String fd = "" + dayOfMonth;
-
-                        if (monthOfYear < 9) {
-                            fm = "0" + month;
-                        }
-                        if (dayOfMonth < 10) {
-                            fd = "0" + dayOfMonth;
-                        }
-                        dateTime = year + "-" + (fm) + "-" + fd;
-
-
-                        etxtDate.setText(dateTime);
+                    if (monthOfYear < 9) {
+                        fm = "0" + month;
                     }
+                    if (dayOfMonth < 10) {
+                        fd = "0" + dayOfMonth;
+                    }
+                    dateTime = year + "-" + (fm) + "-" + fd;
+
+
+                    etxtDate.setText(dateTime);
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
     }
@@ -170,25 +151,21 @@ public class AddExpenseActivity extends BaseActivity {
         mMinute = c.get(Calendar.MINUTE);
 
         // Launch Time Picker Dialog
-        TimePickerDialog timePickerDialog = new TimePickerDialog(AddExpenseActivity.this,
-                new TimePickerDialog.OnTimeSetListener() {
+        @SuppressLint("SetTextI18n") TimePickerDialog timePickerDialog = new TimePickerDialog(AddExpenseActivity.this,
+                (view, hourOfDay, minute) -> {
+                    String amPm;
+                    mHour = hourOfDay;
+                    mMinute = minute;
 
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        String amPm;
-                        mHour = hourOfDay;
-                        mMinute = minute;
+                    if (mHour < 12) {
+                        amPm = "AM";
 
-                        if (mHour < 12) {
-                            amPm = "AM";
-
-                        } else {
-                            amPm = "PM";
-                            mHour = hourOfDay - 12;
-                        }
-
-                        etxtTime.setText(mHour + ":" + minute + " " + amPm);
+                    } else {
+                        amPm = "PM";
+                        mHour = hourOfDay - 12;
                     }
+
+                    etxtTime.setText(mHour + ":" + minute + " " + amPm);
                 }, mHour, mMinute, false);
         timePickerDialog.show();
     }
@@ -245,17 +222,4 @@ public class AddExpenseActivity extends BaseActivity {
             }
         });
     }
-
-
-    //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
 }

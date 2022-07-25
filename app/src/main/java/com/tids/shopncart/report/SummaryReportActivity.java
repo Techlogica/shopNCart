@@ -9,11 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,10 +23,13 @@ import com.ahmedelsayed.sunmiprinterutill.PrintMe;
 import com.tids.shopncart.Constant;
 import com.tids.shopncart.R;
 import com.tids.shopncart.adapter.PayMethodAdapter;
+import com.tids.shopncart.database.DatabaseAccess;
 import com.tids.shopncart.helper.PrefManager;
 import com.tids.shopncart.model.PayMethod;
+import com.tids.shopncart.model.ProductCartSubmit;
 import com.tids.shopncart.networking.ApiClient;
 import com.tids.shopncart.networking.ApiInterface;
+import com.tids.shopncart.settings.sync.SyncActivity;
 import com.tids.shopncart.utils.BaseActivity;
 import com.tids.shopncart.utils.Utils;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -33,13 +38,17 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
 import es.dmoral.toasty.Toasty;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -86,6 +95,11 @@ public class SummaryReportActivity extends BaseActivity {
     List<PayMethod> payMethodList;
     PrefManager pref;
     SimpleDateFormat sdf = new SimpleDateFormat(APP_DATE_FORMAT, Locale.ENGLISH);
+    DatabaseAccess databaseAccess;
+    ApiInterface apiInterface;
+    ArrayList<HashMap<String, String>> cartArrayList = new ArrayList<>();
+    ImageView backBtn;
+    Toolbar toolbar;
 
 
     @Override
@@ -93,12 +107,22 @@ public class SummaryReportActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_summary_report);
 
-
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.summary_report);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.summary_report);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         printMe = new PrintMe(this);
         pref = new PrefManager(this);
+        databaseAccess = DatabaseAccess.getInstance(SummaryReportActivity.this);
+        apiInterface = ApiClient.getApiClient().create(ApiInterface.class);
 
         recyclerView = findViewById(R.id.recyclerview);
         txtTotalSales = findViewById(R.id.txt_total_sale);
@@ -129,6 +153,8 @@ public class SummaryReportActivity extends BaseActivity {
         contact = sp.getString(Constant.SP_SHOP_CONTACT, "");
         servedBy = sp.getString(Constant.SP_STAFF_NAME, "");
 
+        uploadCartData();
+
         // set a GridLayoutManager with default vertical orientation and 3 number of columns
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager); // set LayoutManager to RecyclerView
@@ -147,9 +173,77 @@ public class SummaryReportActivity extends BaseActivity {
                 new IntentFilter("custom-message"));*/
     }
 
+    private void uploadCartData() {
+
+        databaseAccess.open();
+        int count = databaseAccess.invoiceTableCount();
+
+        if (count !=0){
+
+            cartArrayList.clear();
+            databaseAccess.open();
+            cartArrayList = databaseAccess.getSyncCart();
+
+            if (cartArrayList.size() != 0) {
+
+                loading.setVisibility(View.VISIBLE);
+
+                for (int i = 0; i < cartArrayList.size(); ++i) {
+
+                    try {
+
+                        String cart_json_object = cartArrayList.get(i).get("cart_json_object");
+                        RequestBody body2 = RequestBody.create(MediaType.
+                                parse("application/json; charset=utf-8"), cart_json_object);
+
+//                        Call<ProductCartSubmit> call = apiInterface.submitOrders(body2);
+//                        call.enqueue(new Callback<String>() {
+//                            @Override
+//                            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+//
+////                        if (response.isSuccessful()) {
+////                            Toasty.success(SyncActivity.this, R.string.order_successfully_done, Toast.LENGTH_SHORT).show();
+////                        } else {
+////                            Toasty.error(SyncActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+////                            Log.d("error", response.toString());
+////                        }
+//                            }
+//
+//                            @Override
+//                            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+//
+//                                Log.d("onFailure", t.toString());
+//                                loading.setVisibility(View.GONE);
+//                            }
+//                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loading.setVisibility(View.GONE);
+                    }
+
+                    if (i == count){
+                        loading.setVisibility(View.GONE);
+                        databaseAccess.open();
+                        databaseAccess.emptySyncCart();
+                    }
+                }
+            }
+
+        }
+    }
+
     private void getDataFromServer() {
         if (isNetworkAvailable(SummaryReportActivity.this)) {
-            getPayMethodData(shopID, ownerId,staffId,deviceId);
+
+            databaseAccess.open();
+            int count = databaseAccess.invoiceTableCount();
+            if (count == 0){
+                getPayMethodData(shopID, ownerId,staffId,deviceId);
+            }else {
+                Toasty.error(SummaryReportActivity.this, "Please sync invoices and try again", Toast.LENGTH_SHORT).show();
+            }
+
         } else {
             Toasty.error(SummaryReportActivity.this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
@@ -225,7 +319,6 @@ public class SummaryReportActivity extends BaseActivity {
             }
 
         });
-
 
     }
 
@@ -385,43 +478,44 @@ public class SummaryReportActivity extends BaseActivity {
     private void setTimePickerStart() {
 
 
-        com.wdullaer.materialdatetimepicker.time.TimePickerDialog tpd = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
-                                                                                                                                                  @Override
-                                                                                                                                                  public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
+        com.wdullaer.materialdatetimepicker.time.TimePickerDialog tpd =
+                com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
 
-                                                                                                                                                      if (mode) {
-                                                                                                                                                          startTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                                                                                                                                                          startTimeCalendar.set(Calendar.MINUTE, minute);
-                                                                                                                                                          startTimeCalendar.set(Calendar.SECOND, second);
-                                                                                                                                                      } else {
-                                                                                                                                                          mode = true;
-                                                                                                                                                          startTimeCalendar.set(Calendar.HOUR_OF_DAY, 9);
-                                                                                                                                                          startTimeCalendar.set(Calendar.MINUTE, 0);
-                                                                                                                                                          startTimeCalendar.set(Calendar.SECOND, 0);
-                                                                                                                                                      }
+                        if (mode) {
+                            startTimeCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                            startTimeCalendar.set(Calendar.MINUTE, minute);
+                            startTimeCalendar.set(Calendar.SECOND, second);
+                        } else {
+                            mode = true;
+                            startTimeCalendar.set(Calendar.HOUR_OF_DAY, 9);
+                            startTimeCalendar.set(Calendar.MINUTE, 0);
+                            startTimeCalendar.set(Calendar.SECOND, 0);
+                        }
 
 
-                                                                                                                                                      fromTime = String.format(Locale.ENGLISH, "%02d", hourOfDay) + "" + String.format(Locale.ENGLISH, "%02d", minute) + "" + String.format(Locale.ENGLISH, "%02d", second);
+                        fromTime = String.format(Locale.ENGLISH, "%02d", hourOfDay) + "" + String.format(Locale.ENGLISH, "%02d", minute) + "" + String.format(Locale.ENGLISH, "%02d", second);
 
 //                                                                                                                                                      mLog("startTime", fromTime);
-                                                                                                                                                      String output = "";
+                        String output = "";
 
-                                                                                                                                                      if (!fromTime.isEmpty()) {
-                                                                                                                                                          try {
-                                                                                                                                                              SimpleDateFormat format = new SimpleDateFormat("HHmmss", Locale.ENGLISH);
-                                                                                                                                                              java.util.Date newDate = format.parse(fromTime);
+                        if (!fromTime.isEmpty()) {
+                            try {
+                                SimpleDateFormat format = new SimpleDateFormat("HHmmss", Locale.ENGLISH);
+                                java.util.Date newDate = format.parse(fromTime);
 
-                                                                                                                                                              format = new SimpleDateFormat(APP_TIME_FORMAT, Locale.ENGLISH);
-                                                                                                                                                              output = format.format(newDate);
-                                                                                                                                                          } catch (ParseException e) {
-                                                                                                                                                              e.printStackTrace();
-                                                                                                                                                          }
-                                                                                                                                                          getDataFromServer();
-                                                                                                                                                      }
-                                                                                                                                                      txt_starttime.setText(output);
+                                format = new SimpleDateFormat(APP_TIME_FORMAT, Locale.ENGLISH);
+                                output = format.format(newDate);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            getDataFromServer();
+                        }
+                        txt_starttime.setText(output);
 
-                                                                                                                                                  }
-                                                                                                                                              },
+                    }
+                },
                 startTimeCalendar.get(Calendar.HOUR_OF_DAY),
                 startTimeCalendar.get(Calendar.MINUTE),
                 startTimeCalendar.get(Calendar.SECOND),
@@ -527,16 +621,16 @@ public class SummaryReportActivity extends BaseActivity {
 
 
     //for back button
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            this.finish();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//        if (id == android.R.id.home) {
+//            this.finish();
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     public class PrintSummaryAdapter extends RecyclerView.Adapter<PrintSummaryAdapter.MyViewHolder> {

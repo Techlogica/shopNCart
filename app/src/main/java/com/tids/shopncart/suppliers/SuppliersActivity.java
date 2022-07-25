@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -45,26 +46,39 @@ public class SuppliersActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
 
-    ImageView imgNoProduct;
+    ImageView imgNoProduct, backBtn;
     FloatingActionButton fabAdd;
     private ShimmerFrameLayout mShimmerViewContainer;
     SwipeRefreshLayout mSwipeRefreshLayout;
     List<Suppliers> suppliersList;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_suppliers);
 
-        getSupportActionBar().setHomeButtonEnabled(true); //for back button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
-        getSupportActionBar().setTitle(R.string.all_suppliers);
+//        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setHomeButtonEnabled(true); //for back button
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);//for back button
+//        getSupportActionBar().setTitle(R.string.all_suppliers);
+        toolbar = findViewById(R.id.toolbar);
+        backBtn = findViewById(R.id.menu_back);
+        setSupportActionBar(toolbar);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         recyclerView = findViewById(R.id.cart_recyclerview);
         imgNoProduct = findViewById(R.id.image_no_product);
         fabAdd = findViewById(R.id.fab_add);
         mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
         mSwipeRefreshLayout =findViewById(R.id.swipeToRefresh);
+        backBtn = findViewById(R.id.menu_back);
         //set color of swipe refresh
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
 
@@ -124,6 +138,13 @@ public class SuppliersActivity extends BaseActivity {
             mShimmerViewContainer.setVisibility(View.GONE);
             Toasty.error(this, R.string.no_network_connection, Toast.LENGTH_SHORT).show();
         }
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
@@ -192,7 +213,6 @@ public class SuppliersActivity extends BaseActivity {
 
     }
 
-
     // searchview on toolbar
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -224,17 +244,16 @@ public class SuppliersActivity extends BaseActivity {
         return true;
     }
 
-    // home button click
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                break;
-        }
-        return true;
-    }
-
+//    // home button click
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                onBackPressed();
+//                break;
+//        }
+//        return true;
+//    }
 
     public void getSuppliersData(String searchText,String shopId,String ownerId,String staffId) {
 
